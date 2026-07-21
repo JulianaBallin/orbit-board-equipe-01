@@ -44,12 +44,42 @@ Não inclua tokens, senhas, emails pessoais, cookies ou outros segredos nas imag
 
 ## Verificações técnicas iniciais
 
+Verificação executada em 20 de julho de 2026, no commit `8249f2b`.
+
 | Comando | Resultado inicial | Execução final da equipe |
 |---|---|---|
-| `dotnet build --configuration Release` | Compilação sem erros e sem avisos | Confirmar e registrar |
-| `npm run build` | Build de produção concluído | Confirmar e registrar |
-| `docker compose config` | Configuração válida | Confirmar e registrar |
-| `docker compose up --build -d` | A validar após o build das imagens | Executar e registrar |
+| `dotnet build --configuration Release` | Aprovado, sem erros e sem avisos | Confirmar e registrar |
+| `npm run build` | Aprovado com Vite 8.1.5 | Confirmar e registrar |
+| `npm audit --audit-level=moderate` | Aprovado, nenhuma vulnerabilidade encontrada | Confirmar e registrar |
+| `docker compose config` | Aprovado | Confirmar e registrar |
+| `docker compose up --build -d` | Aprovado, dois serviços saudáveis | Executar e registrar |
+
+### Ambiente da verificação inicial
+
+| Ferramenta | Versão |
+|---|---|
+| Sistema operacional | Ubuntu 24.04 |
+| Docker | 28.5.1 |
+| Docker Compose | 2.40.3 |
+| .NET SDK | 8.0.415 |
+| Node.js | 20.19.5 |
+| npm | 10.8.2 |
+
+### Resultados HTTP iniciais
+
+| Verificação | Resultado |
+|---|---|
+| Backend `/health` | `200`, serviço saudável |
+| Frontend `/` | `200` |
+| Swagger `/swagger/index.html` | `200` |
+| CORS para `http://localhost:5173` | Origem autorizada |
+| Dashboard | 3 projetos, 5 tarefas e 1 tarefa concluída nos dados iniciais |
+| Criação temporária de projeto | Aprovada |
+| Tentativa de nome duplicado | `409`, conflito tratado corretamente |
+| Exclusão do projeto temporário | `204` |
+| Logs dos containers | Inicialização sem erro não tratado e aviso esperado para o conflito |
+
+Esses resultados comprovam a preparação técnica inicial. A equipe ainda deve repetir a execução, produzir as capturas e preencher os responsáveis antes da apresentação.
 
 ## Teste de uma chamada HTTP
 
@@ -64,7 +94,7 @@ curl --fail --silent http://localhost:5200/api/projects
 Cole abaixo somente um resumo do resultado, sem dados sensíveis:
 
 ```text
-Pendente de execução pela equipe.
+Verificação inicial aprovada. Repetir e anexar a evidência produzida pela equipe.
 ```
 
 ## Registro de falhas
