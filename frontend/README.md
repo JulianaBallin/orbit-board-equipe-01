@@ -15,7 +15,7 @@ Aplicação web em **React 18 + Vite** para consumir a API OrbitBoard e demonstr
 
 ## Requisitos
 
-- Node.js 20 ou superior.
+- Node.js 20.19 ou superior.
 - npm 10 ou superior.
 - Backend OrbitBoard executando em `http://localhost:5200`.
 
