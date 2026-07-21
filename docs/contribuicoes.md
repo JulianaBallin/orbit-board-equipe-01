@@ -4,11 +4,11 @@ As frentes abaixo são sugestões para distribuir o trabalho restante. A tabela 
 
 | Integrante | GitHub | Frente sugerida | Contribuição real | Evidência |
 |---|---|---|---|---|
-| Allef Oliveira Ramos | A informar | Testes da API e cenários de erro | Pendente | Pendente |
-| Camila Félix dos Reis | A informar | Validação do frontend e melhoria de usabilidade | Pendente | Pendente |
-| Fernanda de Oliveira da Costa | A informar | Docker Compose, logs e evidências de infraestrutura | Pendente | Pendente |
+| Allef Oliveira Ramos | [@allef-oliveira](https://github.com/allef-oliveira) | Testes da API e cenários de erro | Pendente | Pendente |
+| Camila Félix dos Reis | [@cawzkf](https://github.com/cawzkf) | Validação do frontend e melhoria de usabilidade | Pendente | Pendente |
+| Fernanda de Oliveira da Costa | [@nanda-costa](https://github.com/nanda-costa) | Docker Compose, logs e evidências de infraestrutura | Pendente | Pendente |
 | Juliana Ballin Lima | [@JulianaBallin](https://github.com/JulianaBallin) | Organização do repositório e revisão do README | Pendente | Pendente |
-| Pedro Henrique Oliveria Dias | A informar | Arquitetura e roteiro da apresentação | Pendente | Pendente |
+| Pedro Henrique Oliveria Dias | [@pedroddias-oss](https://github.com/pedroddias-oss) | Arquitetura e roteiro da apresentação | Pendente | Pendente |
 
 ## Como contribuir
 

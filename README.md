@@ -268,11 +268,11 @@ Não faça commits diretamente em `main` ou `develop`. O fluxo completo está em
 
 | Integrante | GitHub | Frente inicial sugerida | Contribuição final |
 |---|---|---|---|
-| Allef Oliveira Ramos | A informar | Testes da API e cenários de erro | A registrar após o MR |
-| Camila Félix dos Reis | A informar | Validação do frontend e usabilidade | A registrar após o MR |
-| Fernanda de Oliveira da Costa | A informar | Docker Compose, logs e infraestrutura | A registrar após o MR |
+| Allef Oliveira Ramos | [@allef-oliveira](https://github.com/allef-oliveira) | Testes da API e cenários de erro | A registrar após o MR |
+| Camila Félix dos Reis | [@cawzkf](https://github.com/cawzkf) | Validação do frontend e usabilidade | A registrar após o MR |
+| Fernanda de Oliveira da Costa | [@nanda-costa](https://github.com/nanda-costa) | Docker Compose, logs e infraestrutura | A registrar após o MR |
 | Juliana Ballin Lima | [@JulianaBallin](https://github.com/JulianaBallin) | Organização do repositório e revisão do README | A registrar após o MR |
-| Pedro Henrique Oliveria Dias | A informar | Arquitetura e apresentação técnica | A registrar após o MR |
+| Pedro Henrique Oliveria Dias | [@pedroddias-oss](https://github.com/pedroddias-oss) | Arquitetura e apresentação técnica | A registrar após o MR |
 
 As contribuições devem refletir o histórico real de commits e MRs. A distribuição pode ser ajustada pela equipe antes da entrega.
 
