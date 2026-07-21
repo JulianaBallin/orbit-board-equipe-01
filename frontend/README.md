@@ -1,4 +1,4 @@
-# OrbitBoard — Frontend
+# OrbitBoard | Frontend
 
 Aplicação web em **React 18 + Vite** para consumir a API OrbitBoard e demonstrar integração full stack.
 
@@ -67,6 +67,16 @@ Para visualizar o build localmente:
 ```bash
 npm run preview
 ```
+
+## Como executar com Docker
+
+A partir da raiz do repositório:
+
+```bash
+docker compose up --build frontend
+```
+
+O build usa `VITE_API_URL` para definir o endereço público da API. O Nginx publica o frontend na porta `5173` e disponibiliza seu health check em `/health`.
 
 ## Fluxos sugeridos para validação
 
