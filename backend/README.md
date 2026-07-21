@@ -1,4 +1,4 @@
-# OrbitBoard — Backend
+# OrbitBoard | Backend
 
 API REST em **.NET 8 / ASP.NET Core** para uma aplicação de acompanhamento de projetos, tarefas e equipe.
 
@@ -40,6 +40,20 @@ A API ficará disponível em:
 - API: `http://localhost:5200`
 - Swagger: `http://localhost:5200/swagger`
 - Health check: `http://localhost:5200/health`
+
+## Como executar com Docker
+
+A partir da raiz do repositório:
+
+```bash
+docker compose up --build backend
+```
+
+O container escuta na porta interna `8080`, publicada por padrão como `5200`.
+
+## Configuração
+
+As origens permitidas pelo CORS ficam em `Cors:AllowedOrigins`. No Docker Compose, a primeira origem é configurada pela variável `CORS_ALLOWED_ORIGIN`.
 
 ## Endpoints principais
 
