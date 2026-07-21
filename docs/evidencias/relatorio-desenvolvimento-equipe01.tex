@@ -1,0 +1,1051 @@
+\documentclass[12pt,a4paper,openany]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{geometry}
+\usepackage[table]{xcolor}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{titlesec}
+\usepackage{tikz}
+\usepackage[most]{tcolorbox}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{hyperref}
+\usepackage{url}
+
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,fit,backgrounds}
+
+\geometry{
+  top=2.8cm,
+  bottom=2.5cm,
+  left=2.5cm,
+  right=2.2cm,
+  headheight=38pt,
+  headsep=0.55cm,
+  footskip=1.25cm
+}
+
+\definecolor{OrbitNavy}{HTML}{0A1F44}
+\definecolor{OrbitBlue}{HTML}{00A9CE}
+\definecolor{OrbitViolet}{HTML}{7048E8}
+\definecolor{OrbitLight}{HTML}{F3F7FB}
+\definecolor{OrbitLine}{HTML}{C9D8E8}
+\definecolor{OrbitText}{HTML}{26364A}
+\definecolor{OrbitGreen}{HTML}{1B8A5A}
+\definecolor{OrbitYellow}{HTML}{E5A000}
+\definecolor{CodeBackground}{HTML}{F6F8FA}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=OrbitNavy,
+  urlcolor=OrbitViolet,
+  citecolor=OrbitBlue,
+  pdftitle={Relatório de Desenvolvimento do OrbitBoard},
+  pdfauthor={Equipe 01},
+  pdfsubject={Trabalho Final do Módulo 5 de Integração Full Stack},
+  pdfkeywords={OrbitBoard, React, ASP.NET Core, Docker, integração full stack}
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.65em}
+\renewcommand{\arraystretch}{1.25}
+\setlist[itemize]{leftmargin=1.4em,itemsep=0.25em,topsep=0.3em}
+\setlist[enumerate]{leftmargin=1.6em,itemsep=0.3em,topsep=0.3em}
+
+\titleformat{\chapter}[display]
+  {\normalfont\bfseries\color{OrbitNavy}}
+  {\filleft\color{OrbitBlue}\fontsize{42}{42}\selectfont\thechapter}
+  {-1.5ex}
+  {\titlerule[1.2pt]\vspace{1.2ex}\Huge}
+  [\vspace{0.8ex}\titlerule]
+
+\titleformat{\section}
+  {\Large\bfseries\color{OrbitNavy}}
+  {\thesection}{0.7em}{}
+
+\titleformat{\subsection}
+  {\large\bfseries\color{OrbitViolet}}
+  {\thesubsection}{0.7em}{}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\includegraphics[height=1cm]{../assets/orbitboard-logo.png}}
+\fancyhead[C]{\small\color{OrbitNavy}\textbf{Relatório de Desenvolvimento}}
+\fancyhead[R]{\small\color{OrbitViolet}\textbf{Equipe 01}}
+\fancyfoot[L]{\scriptsize\color{OrbitText}Módulo 5 | Integração Full Stack}
+\fancyfoot[C]{\scriptsize\color{OrbitText}Página \thepage\ de \pageref{LastPage}}
+\fancyfoot[R]{\scriptsize\color{OrbitText}OrbitBoard | Versão 1.0}
+\renewcommand{\headrulewidth}{0.6pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{OrbitLine}\leaders\hrule height \headrulewidth\hfill}}
+\renewcommand{\footrule}{\hbox to\headwidth{\color{OrbitLine}\leaders\hrule height \footrulewidth\hfill}}
+
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyhead[L]{\includegraphics[height=1cm]{../assets/orbitboard-logo.png}}
+  \fancyhead[C]{\small\color{OrbitNavy}\textbf{Relatório de Desenvolvimento}}
+  \fancyhead[R]{\small\color{OrbitViolet}\textbf{Equipe 01}}
+  \fancyfoot[L]{\scriptsize\color{OrbitText}Módulo 5 | Integração Full Stack}
+  \fancyfoot[C]{\scriptsize\color{OrbitText}Página \thepage\ de \pageref{LastPage}}
+  \fancyfoot[R]{\scriptsize\color{OrbitText}OrbitBoard | Versão 1.0}
+  \renewcommand{\headrulewidth}{0.6pt}
+  \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\newtcolorbox{resumobox}[1][]{
+  enhanced,
+  breakable,
+  colback=OrbitLight,
+  colframe=OrbitBlue,
+  boxrule=0.8pt,
+  arc=2mm,
+  left=4mm,
+  right=4mm,
+  top=3mm,
+  bottom=3mm,
+  title=#1,
+  fonttitle=\bfseries,
+  coltitle=OrbitNavy
+}
+
+\newtcolorbox{statusbox}[1][]{
+  enhanced,
+  breakable,
+  colback=white,
+  colframe=OrbitViolet,
+  boxrule=0.7pt,
+  borderline west={3pt}{0pt}{OrbitViolet},
+  arc=1mm,
+  left=4mm,
+  right=4mm,
+  top=3mm,
+  bottom=3mm,
+  title=#1,
+  fonttitle=\bfseries,
+  coltitle=OrbitNavy
+}
+
+\lstdefinestyle{orbit}{
+  backgroundcolor=\color{CodeBackground},
+  basicstyle=\ttfamily\small\color{OrbitText},
+  keywordstyle=\bfseries\color{OrbitViolet},
+  commentstyle=\itshape\color{OrbitGreen},
+  stringstyle=\color{OrbitBlue},
+  frame=single,
+  rulecolor=\color{OrbitLine},
+  breaklines=true,
+  showstringspaces=false,
+  columns=fullflexible,
+  keepspaces=true,
+  xleftmargin=0.5em,
+  xrightmargin=0.5em,
+  aboveskip=0.8em,
+  belowskip=0.8em
+}
+\lstset{style=orbit}
+
+\newcommand{\statusok}{\textcolor{OrbitGreen}{\textbf{Aprovado}}}
+\newcommand{\statuspending}{\textcolor{OrbitYellow}{\textbf{Pendente}}}
+
+\newcommand{\evidencia}[3]{
+  \begin{figure}[H]
+    \centering
+    \IfFileExists{capturas/#1}{
+      \includegraphics[width=0.94\textwidth,height=0.52\textheight,keepaspectratio]{capturas/#1}
+    }{
+      \fcolorbox{OrbitLine}{OrbitLight}{
+        \parbox[c][5.4cm][c]{0.88\textwidth}{
+          \centering
+          {\Large\bfseries\color{OrbitNavy}Evidência aguardando captura}\par
+          \vspace{0.8em}
+          {\color{OrbitViolet}\texttt{\detokenize{#1}}}\par
+          \vspace{0.8em}
+          {\small\color{OrbitText}Adicione a imagem em \texttt{docs/evidencias/capturas/} e execute \texttt{make report}.}
+        }
+      }
+    }
+    \caption{#2. Situação atual: #3.}
+  \end{figure}
+}
+
+\begin{document}
+
+\begin{titlepage}
+  \thispagestyle{empty}
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[OrbitNavy] (current page.north west) rectangle ([yshift=-5.4cm]current page.north east);
+    \fill[OrbitBlue] ([yshift=-5.4cm]current page.north west) rectangle ([yshift=-5.58cm]current page.north east);
+    \fill[OrbitViolet] ([xshift=-2.1cm]current page.south east) rectangle (current page.south east);
+    \draw[OrbitBlue,line width=2.5pt] ([xshift=1.2cm,yshift=1.4cm]current page.south west) -- ([xshift=-2.7cm,yshift=1.4cm]current page.south east);
+  \end{tikzpicture}
+
+  \vspace*{0.7cm}
+  \begin{center}
+    \begin{tikzpicture}
+      \path[use as bounding box] (0,0) rectangle (0.78\textwidth,0.37085\textwidth);
+      \clip[rounded corners=5mm] (0,0) rectangle (0.78\textwidth,0.37085\textwidth);
+      \node[anchor=south west,inner sep=0] at (0,0) {
+        \includegraphics[width=0.78\textwidth]{../assets/orbitboard-logo.png}
+      };
+    \end{tikzpicture}
+
+    \vspace{2.2cm}
+    {\fontsize{28}{34}\selectfont\bfseries\color{OrbitNavy}RELATÓRIO DE DESENVOLVIMENTO\par}
+    \vspace{0.35cm}
+    {\Large\color{OrbitViolet}Aplicação de Gestão de Projetos e Tarefas\par}
+    \vspace{0.6cm}
+    {\large\color{OrbitText}Trabalho Final | Módulo 5 | Integração Full Stack\par}
+
+    \vspace{1.6cm}
+    \begin{tcolorbox}[
+      width=0.88\textwidth,
+      colback=OrbitLight,
+      colframe=OrbitLine,
+      boxrule=0.7pt,
+      arc=2mm,
+      left=5mm,
+      right=5mm,
+      top=4mm,
+      bottom=4mm
+    ]
+      \centering
+      \textbf{Equipe 01}\par
+      \vspace{0.45cm}
+      \begin{tabular}{>{\bfseries}l l}
+        Allef Oliveira Ramos & \href{https://github.com/allef-oliveira}{@allef-oliveira} \\
+        Camila Félix dos Reis & \href{https://github.com/cawzkf}{@cawzkf} \\
+        Fernanda de Oliveira da Costa & \href{https://github.com/nanda-costa}{@nanda-costa} \\
+        Juliana Ballin Lima & \href{https://github.com/JulianaBallin}{@JulianaBallin} \\
+        Pedro Henrique Oliveria Dias & \href{https://github.com/pedroddias-oss}{@pedroddias-oss} \\
+      \end{tabular}
+    \end{tcolorbox}
+
+    \vfill
+    {\color{OrbitText}Manaus | 2026\par}
+    \vspace{0.2cm}
+    {\small\color{OrbitText}Capacitação em IA e Transformação Digital\par}
+  \end{center}
+\end{titlepage}
+
+\pagenumbering{roman}
+
+\chapter*{Identificação do documento}
+\addcontentsline{toc}{chapter}{Identificação do documento}
+
+\begin{tabularx}{\textwidth}{>{\bfseries\color{OrbitNavy}}p{0.36\textwidth} X}
+  Projeto & OrbitBoard \\
+  Documento & Relatório de Desenvolvimento da Equipe 01 \\
+  Curso & Capacitação em IA e Transformação Digital \\
+  Módulo & Módulo 5 de Integração Full Stack \\
+  Repositório & \url{https://github.com/JulianaBallin/orbit-board-equipe-01} \\
+  Branch de desenvolvimento & \texttt{develop} \\
+  Versão & 1.0 \\
+  Data de referência & 20 de julho de 2026 \\
+  Situação & Fundação técnica concluída e evidências finais em preparação \\
+\end{tabularx}
+
+\begin{resumobox}[Controle de revisão]
+Este documento foi preparado para registrar a arquitetura, a integração, a infraestrutura, os ajustes técnicos, os testes e as evidências do OrbitBoard. As áreas marcadas como pendentes devem ser atualizadas pelos integrantes responsáveis antes da apresentação final.
+\end{resumobox}
+
+\chapter*{Resumo executivo}
+\addcontentsline{toc}{chapter}{Resumo executivo}
+
+O OrbitBoard é uma aplicação full stack para gestão de projetos, tarefas e responsabilidades de uma equipe. O frontend foi construído com React e Vite. O backend usa ASP.NET Core 8 e expõe uma API REST documentada por Swagger. A execução integrada ocorre por Docker Compose, com Nginx servindo o frontend e health checks para os dois serviços.
+
+A equipe adotou a aplicação base fornecida pelo docente e concentrou o desenvolvimento na revisão da arquitetura, conteinerização, configuração de CORS, atualização de dependências, documentação, validação da comunicação HTTP e organização do fluxo Git. Os dados permanecem em memória para manter o foco didático na integração entre camadas.
+
+\begin{resumobox}[Resultado técnico atual]
+  \begin{itemize}
+    \item Backend compilado sem erros e sem avisos.
+    \item Frontend compilado com Vite 8.1.5 e auditoria sem vulnerabilidades conhecidas.
+    \item Docker Compose validado com backend e frontend saudáveis.
+    \item Swagger, frontend e endpoints de saúde acessíveis nas portas documentadas.
+    \item Pipeline do GitHub Actions aprovada para backend, frontend e containers.
+    \item Roteiro com doze evidências preparado para execução final da equipe.
+  \end{itemize}
+\end{resumobox}
+
+\tableofcontents
+\clearpage
+
+\pagenumbering{arabic}
+
+\chapter{Contexto e objetivos}
+
+\section{Contexto acadêmico}
+
+O trabalho final do Módulo 5 utiliza uma aplicação full stack como estudo de caso. A avaliação considera a compreensão da arquitetura, a organização do repositório, a integração entre frontend e backend, os ajustes técnicos, a execução por Docker, os testes, as evidências e a apresentação da equipe.
+
+\section{Objetivo geral}
+
+Preparar, executar, analisar, documentar e apresentar uma aplicação full stack que demonstre comunicação HTTP e JSON entre um frontend React e uma API ASP.NET Core, com ambiente reproduzível por Docker Compose.
+
+\section{Objetivos específicos}
+
+\begin{itemize}
+  \item Compreender a responsabilidade de cada camada da solução.
+  \item Validar o consumo real da API pelo frontend.
+  \item Documentar endpoints, contratos JSON, portas e variáveis de ambiente.
+  \item Configurar CORS para permitir somente origens conhecidas.
+  \item Criar imagens Docker reproduzíveis para frontend e backend.
+  \item Automatizar builds por integração contínua.
+  \item Executar testes positivos e cenários de erro.
+  \item Registrar evidências visuais e logs sem dados sensíveis.
+  \item Organizar contribuições por branches, commits e MRs.
+\end{itemize}
+
+\section{Escopo adotado}
+
+A equipe escolheu a aplicação fornecida pelo docente. O escopo preserva os dados em memória e não inclui autenticação, banco de dados persistente ou pipeline de implantação. Essas escolhas mantêm o foco na integração full stack e atendem ao escopo mínimo do módulo.
+
+\begin{statusbox}[Matriz do escopo obrigatório]
+\begin{tabularx}{\textwidth}{>{\bfseries}p{0.22\textwidth} X p{0.18\textwidth}}
+\toprule
+Área & Entrega & Situação \\
+\midrule
+Backend & API, Swagger, CORS, JSON, validação e erros & \statusok \\
+Frontend & Consumo da API, formulários, filtros e estados & \statusok \\
+Docker & Dois Dockerfiles, Compose, portas e health checks & \statusok \\
+Git & Branches, commits convencionais, CI e MRs & \statusok \\
+Documentação & README, arquitetura, contrato e roteiro & \statusok \\
+Evidências & Doze capturas planejadas e relatório preparado & \statuspending \\
+Apresentação & Roteiro de 10 minutos preparado & \statuspending \\
+\bottomrule
+\end{tabularx}
+\end{statusbox}
+
+\chapter{Visão funcional}
+
+\section{Descrição da aplicação}
+
+O OrbitBoard centraliza o acompanhamento de projetos e tarefas. A interface apresenta métricas, projetos, quadro de tarefas e integrantes. A API mantém as regras de negócio, valida os contratos e devolve respostas em JSON. O sistema inclui dados iniciais para facilitar a demonstração sem dependências externas.
+
+\section{Funcionalidades}
+
+\begin{longtable}{>{\bfseries}p{0.27\textwidth} p{0.64\textwidth}}
+\toprule
+Funcionalidade & Comportamento \\
+\midrule
+\endhead
+Dashboard & Exibe projetos, tarefas, itens concluídos, atrasos, atividades recentes e distribuição por status. \\
+Projetos & Permite cadastrar, consultar, editar e excluir projetos que não possuam tarefas vinculadas. \\
+Tarefas & Permite cadastrar, consultar, editar, excluir e alterar rapidamente o status de uma tarefa. \\
+Filtros & Restringe tarefas por projeto, status, prioridade, responsável e texto. \\
+Equipe & Lista os integrantes fictícios cadastrados nos dados iniciais da aplicação. \\
+Validação & Verifica campos obrigatórios, limites de texto, datas, referências e nomes duplicados. \\
+Erros & Responde com \texttt{ProblemDetails} e apresenta mensagens compreensíveis no frontend. \\
+Swagger & Disponibiliza documentação interativa dos endpoints. \\
+Health checks & Permite verificar a disponibilidade do backend e do frontend. \\
+\bottomrule
+\end{longtable}
+
+\section{Fluxos principais}
+
+\subsection{Cadastro de projeto}
+
+O usuário abre a tela de projetos, preenche nome, descrição, status, datas e responsável. O frontend serializa o formulário em JSON e envia uma requisição \texttt{POST}. A API valida os dados, aplica regras de unicidade e devolve \texttt{201 Created}. O frontend então recarrega a listagem e apresenta uma mensagem de sucesso.
+
+\subsection{Cadastro e movimentação de tarefa}
+
+A tarefa é criada para um projeto existente. O usuário informa título, descrição, prioridade, responsável, prazo e estimativa. Depois da criação, a tarefa aparece no quadro. A mudança de coluna envia uma requisição \texttt{PATCH} contendo apenas o novo status.
+
+\subsection{Tratamento de conflito}
+
+Ao tentar criar um projeto com nome já existente ou excluir um projeto que ainda possui tarefas, a API responde com código \texttt{409}. O middleware padroniza a resposta e o frontend apresenta a mensagem sem perder o estado da tela.
+
+\chapter{Arquitetura da solução}
+
+\section{Visão de contêineres}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  node distance=1.3cm and 1.4cm,
+  box/.style={draw=OrbitLine, very thick, rounded corners=2mm, minimum width=3.4cm, minimum height=1.2cm, align=center, fill=white, text=OrbitNavy},
+  service/.style={box, fill=OrbitLight},
+  data/.style={draw=OrbitViolet, thick, cylinder, shape border rotate=90, aspect=0.25, minimum height=1.3cm, minimum width=2.7cm, align=center, fill=white, text=OrbitNavy},
+  arrow/.style={-{Latex[length=3mm]}, thick, draw=OrbitBlue}
+]
+  \node[box] (user) {Usuário\\Navegador};
+  \node[service, right=of user] (front) {Frontend React\\Vite e Nginx};
+  \node[service, right=of front] (api) {API ASP.NET Core\\Controllers e DTOs};
+  \node[service, below=of api] (svc) {WorkspaceService\\Regras de negócio};
+  \node[data, left=of svc] (memory) {Dados\\em memória};
+  \node[service, above=of api] (swagger) {Swagger\\OpenAPI};
+
+  \draw[arrow] (user) -- node[above,sloped]{HTTP} (front);
+  \draw[arrow] (front) -- node[above,sloped]{HTTP e JSON} (api);
+  \draw[arrow] (api) -- (svc);
+  \draw[arrow] (svc) -- (memory);
+  \draw[arrow] (api) -- (swagger);
+
+  \begin{scope}[on background layer]
+    \node[draw=OrbitViolet,dashed,rounded corners=3mm,fit=(front)(api)(svc)(memory)(swagger),inner sep=7mm,label={[OrbitViolet]below:Docker Compose}] {};
+  \end{scope}
+\end{tikzpicture}
+\caption{Arquitetura lógica e componentes executáveis do OrbitBoard.}
+\end{figure}
+
+\section{Responsabilidades por camada}
+
+\begin{tabularx}{\textwidth}{>{\bfseries}p{0.20\textwidth} X X}
+\toprule
+Camada & Responsabilidade & Tecnologia \\
+\midrule
+Interface & Navegação, formulários, filtros, mensagens e apresentação do estado & React 18, React Router e Vite 8 \\
+Cliente HTTP & Montagem de URLs, serialização JSON e interpretação de erros & Fetch API \\
+API & Endpoints, validação, CORS, Swagger e orquestração das regras & ASP.NET Core 8 \\
+Domínio & Projetos, tarefas, integrantes, enums e regras de consistência & C\# e \texttt{WorkspaceService} \\
+Dados & Armazenamento temporário e carga de exemplos & Coleções em memória \\
+Infraestrutura & Build, execução, rede, portas e health checks & Docker, Compose e Nginx \\
+\bottomrule
+\end{tabularx}
+
+\section{Fluxo HTTP e JSON}
+
+\begin{enumerate}
+  \item O usuário executa uma ação na interface.
+  \item O cliente em \texttt{frontend/src/api/client.js} cria a requisição.
+  \item A URL base é obtida de \texttt{VITE\_API\_URL}.
+  \item O controller recebe o JSON e o ASP.NET Core valida o DTO.
+  \item O serviço aplica a regra de negócio e atualiza as coleções em memória.
+  \item A API devolve JSON, resposta sem conteúdo ou \texttt{ProblemDetails}.
+  \item O frontend atualiza a tela ou apresenta a mensagem correspondente.
+\end{enumerate}
+
+\section{CORS}
+
+O navegador abre o frontend em \url{http://localhost:5173} e acessa a API em \url{http://localhost:5200}. Como as origens são diferentes, a API usa a política \texttt{Frontend}. A lista de origens é lida da seção \path{Cors:AllowedOrigins}. No Compose, a variável \path{CORS_ALLOWED_ORIGIN} preenche \path{Cors__AllowedOrigins__0}.
+
+\section{Persistência em memória}
+
+O serviço usa listas protegidas por bloqueio de sincronização. Essa implementação é suficiente para o protótipo acadêmico, reduz a configuração inicial e permite demonstrar todas as operações HTTP. A limitação principal é a perda dos dados quando a API reinicia.
+
+\chapter{Tecnologias e organização}
+
+\section{Tecnologias utilizadas}
+
+\begin{tabularx}{\textwidth}{>{\bfseries}p{0.26\textwidth} p{0.19\textwidth} X}
+\toprule
+Tecnologia & Versão & Aplicação \\
+\midrule
+.NET e ASP.NET Core & 8 & API REST, controllers, validação, middleware e health check \\
+Swashbuckle & 6.6.2 & Geração do Swagger e OpenAPI \\
+React & 18.3 & Interface e componentes \\
+React Router & 6.28 & Navegação entre páginas \\
+Vite & 8.1.5 & Servidor de desenvolvimento e build do frontend \\
+Node.js & 20.19 ou superior & Ambiente de build do frontend \\
+Nginx & 1.27 & Publicação dos arquivos estáticos no container \\
+Docker Compose & 2.20 ou superior & Orquestração dos serviços \\
+GitHub Actions & Actions oficiais & Integração contínua \\
+LaTeX & pdfLaTeX & Geração deste relatório \\
+\bottomrule
+\end{tabularx}
+
+\section{Estrutura do repositório}
+
+\begin{lstlisting}
+orbit-board-equipe-01/
+|-- backend/
+|   |-- Dockerfile
+|   |-- OrbitBoard.Api.sln
+|   `-- OrbitBoard.Api/
+|       |-- Controllers/
+|       |-- DTOs/
+|       |-- Exceptions/
+|       |-- Middleware/
+|       |-- Models/
+|       `-- Services/
+|-- frontend/
+|   |-- Dockerfile
+|   |-- nginx.conf
+|   `-- src/
+|       |-- api/
+|       |-- components/
+|       |-- pages/
+|       `-- utils/
+|-- docs/
+|   |-- assets/
+|   |-- evidencias/
+|   |   |-- capturas/
+|   |   |-- relatorio-desenvolvimento-equipe01.tex
+|   |   `-- relatorio-desenvolvimento-equipe01.pdf
+|   |-- arquitetura.md
+|   |-- contrato-api.md
+|   |-- contribuicoes.md
+|   |-- evidencias-testes.md
+|   |-- fluxo-git.md
+|   |-- registro-ajustes.md
+|   `-- roteiro-apresentacao.md
+|-- .env.example
+|-- .github/workflows/ci.yml
+|-- docker-compose.yml
+|-- Makefile
+`-- README.md
+\end{lstlisting}
+
+\section{Decisões técnicas}
+
+\begin{longtable}{>{\bfseries}p{0.30\textwidth} p{0.60\textwidth}}
+\toprule
+Decisão & Justificativa \\
+\midrule
+\endhead
+React com Vite & Oferece desenvolvimento rápido, componentes reutilizáveis e separação clara da API. \\
+ASP.NET Core 8 & Fornece controllers, DTOs, validação, injeção de dependência, middleware e Swagger. \\
+Dados em memória & Mantém o foco na integração e elimina a necessidade de configurar um banco de dados. \\
+Nginx no frontend & Publica o build estático e mantém suporte às rotas da aplicação. \\
+Dockerfiles em múltiplos estágios & Separam compilação e execução, reduzindo o conteúdo das imagens finais. \\
+CORS configurável & Permite alterar a origem autorizada sem modificar o código da API. \\
+Health checks & Tornam o estado dos serviços observável e coordenam a inicialização do frontend. \\
+Branches de integração & Mantêm \texttt{main} estável e concentram validações em \texttt{develop}. \\
+Makefile & Padroniza comandos e reduz erros na execução por diferentes integrantes. \\
+\bottomrule
+\end{longtable}
+
+\chapter{Backend e contrato da API}
+
+\section{Organização interna}
+
+Os controllers expõem endpoints HTTP e delegam operações ao \texttt{IWorkspaceService}. Os DTOs definem contratos de entrada e saída. As entidades e enums ficam em \texttt{Models}. O middleware captura exceções e devolve \texttt{ProblemDetails}. O serviço singleton mantém os dados iniciais e aplica as regras de negócio.
+
+\section{Endpoints principais}
+
+\begin{longtable}{>{\ttfamily}p{0.12\textwidth} >{\ttfamily}p{0.38\textwidth} p{0.39\textwidth}}
+\toprule
+\normalfont\textbf{Método} & \normalfont\textbf{Endpoint} & \normalfont\textbf{Finalidade} \\
+\midrule
+\endhead
+GET & /health & Verificar a saúde da API \\
+GET & /api/dashboard & Consultar métricas e tarefas recentes \\
+GET & /api/projects & Listar projetos \\
+GET & /api/projects/\{id\} & Consultar um projeto \\
+POST & /api/projects & Criar um projeto \\
+PUT & /api/projects/\{id\} & Atualizar um projeto \\
+DELETE & /api/projects/\{id\} & Excluir projeto sem tarefas \\
+GET & /api/tasks & Listar e filtrar tarefas \\
+GET & /api/tasks/\{id\} & Consultar uma tarefa \\
+POST & /api/tasks & Criar uma tarefa \\
+PUT & /api/tasks/\{id\} & Atualizar uma tarefa \\
+PATCH & /api/tasks/\{id\}/status & Alterar somente o status \\
+DELETE & /api/tasks/\{id\} & Excluir uma tarefa \\
+GET & /api/team-members & Listar integrantes da aplicação \\
+\bottomrule
+\end{longtable}
+
+\section{Exemplo de criação de projeto}
+
+\begin{lstlisting}
+POST /api/projects
+Content-Type: application/json
+
+{
+  "name": "Integracao da equipe",
+  "description": "Projeto para validar o fluxo completo.",
+  "status": "Active",
+  "startDate": "2026-07-20",
+  "dueDate": "2026-08-20",
+  "ownerId": "UUID_DO_INTEGRANTE"
+}
+\end{lstlisting}
+
+\section{Validações e erros}
+
+\begin{tabularx}{\textwidth}{>{\bfseries}p{0.16\textwidth} X}
+\toprule
+Código & Situação \\
+\midrule
+\texttt{400} & Campo obrigatório ausente, tamanho inválido, data inconsistente ou referência inexistente \\
+\texttt{404} & Projeto ou tarefa não encontrado \\
+\texttt{409} & Projeto duplicado ou exclusão bloqueada pela existência de tarefas \\
+\texttt{500} & Erro interno não tratado, registrado nos logs \\
+\bottomrule
+\end{tabularx}
+
+\begin{lstlisting}
+{
+  "title": "Conflito de regra",
+  "status": 409,
+  "detail": "Ja existe um projeto com esse nome.",
+  "instance": "/api/projects",
+  "traceId": "IDENTIFICADOR_DA_REQUISICAO"
+}
+\end{lstlisting}
+
+\chapter{Frontend e experiência de uso}
+
+\section{Páginas}
+
+\begin{tabularx}{\textwidth}{>{\bfseries}p{0.24\textwidth} X}
+\toprule
+Página & Responsabilidade \\
+\midrule
+Dashboard & Apresentar métricas, distribuição por status e tarefas recentes \\
+Projetos & Listar, criar, editar e excluir projetos \\
+Tarefas & Exibir o quadro, aplicar filtros e alterar o status \\
+Equipe & Mostrar integrantes disponíveis nos dados da aplicação \\
+\bottomrule
+\end{tabularx}
+
+\section{Cliente HTTP}
+
+O arquivo \texttt{frontend/src/api/client.js} concentra a URL base, a serialização JSON, os métodos HTTP e a interpretação de respostas. Essa centralização reduz duplicação e garante que os erros da API sejam convertidos em mensagens consistentes para as páginas.
+
+\section{Estados da interface}
+
+As páginas apresentam carregamento durante as requisições, estado vazio quando não há registros, confirmação após operações bem-sucedidas e mensagens de erro quando a API rejeita a ação ou fica indisponível.
+
+\section{Publicação com Nginx}
+
+O build de produção gera arquivos estáticos na pasta \texttt{dist}. O Nginx publica esses arquivos na porta interna 80. A diretiva \texttt{try\_files} devolve \texttt{index.html} para rotas da aplicação, permitindo que o React Router controle a navegação.
+
+\chapter{Docker, ambiente e automação}
+
+\section{Containers}
+
+\begin{tabularx}{\textwidth}{>{\bfseries}p{0.20\textwidth} p{0.23\textwidth} X}
+\toprule
+Serviço & Imagem final & Características \\
+\midrule
+Backend & ASP.NET Core 8 & API na porta 8080, usuário sem privilégios e health check por \texttt{curl} \\
+Frontend & Nginx 1.27 Alpine & Arquivos estáticos na porta 80 e health check por \texttt{wget} \\
+\bottomrule
+\end{tabularx}
+
+\section{Variáveis de ambiente}
+
+\begin{tabularx}{\textwidth}{>{\ttfamily}p{0.30\textwidth} p{0.25\textwidth} X}
+\toprule
+\normalfont\textbf{Variável} & \normalfont\textbf{Padrão} & \normalfont\textbf{Finalidade} \\
+\midrule
+BACKEND\_PORT & 5200 & Porta pública da API \\
+FRONTEND\_PORT & 5173 & Porta pública do frontend \\
+VITE\_API\_URL & http://localhost:5200 & URL da API usada pelo navegador \\
+CORS\_ALLOWED\_ORIGIN & http://localhost:5173 & Origem aceita pela política de CORS \\
+\bottomrule
+\end{tabularx}
+
+\section{Execução com Docker Compose}
+
+\begin{lstlisting}[language=bash]
+cp .env.example .env
+docker compose up --build -d
+docker compose ps
+docker compose logs --follow
+docker compose down
+\end{lstlisting}
+
+O frontend depende do health check do backend. Essa condição evita que a interface seja iniciada antes que a API esteja disponível.
+
+\section{Menu de automação}
+
+O \texttt{Makefile} oferece uma interface única para os comandos mais importantes. O menu é aberto com:
+
+\begin{lstlisting}[language=bash]
+make menu
+\end{lstlisting}
+
+\begin{tabularx}{\textwidth}{>{\ttfamily}p{0.30\textwidth} X}
+\toprule
+\normalfont\textbf{Comando} & \normalfont\textbf{Resultado} \\
+\midrule
+make setup & Prepara \texttt{.env} e instala dependências \\
+make build & Compila backend e frontend \\
+make up & Compila e inicia os containers \\
+make down & Encerra os containers \\
+make status & Exibe a saúde e as portas publicadas \\
+make logs & Acompanha os logs dos serviços \\
+make health & Consulta os health checks \\
+make validate & Executa builds, auditoria e validação do Compose \\
+make report & Compila este relatório e incorpora capturas disponíveis \\
+\bottomrule
+\end{tabularx}
+
+\chapter{Integração contínua e fluxo Git}
+
+\section{Pipeline}
+
+A pipeline é executada em pushes e MRs destinados a \texttt{develop} e \texttt{main}. Ela possui três jobs:
+
+\begin{enumerate}
+  \item \textbf{Build backend}: restaura pacotes e compila a solução em modo Release.
+  \item \textbf{Build frontend}: instala dependências com \texttt{npm ci} e executa o build.
+  \item \textbf{Build containers}: valida o Compose e compila as duas imagens.
+\end{enumerate}
+
+O job de containers depende da aprovação dos builds das aplicações. Isso impede a criação das imagens quando alguma camada não compila.
+
+\section{Estratégia de branches}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  branch/.style={draw=OrbitLine,thick,rounded corners=2mm,minimum width=4.2cm,minimum height=1.0cm,align=center,fill=OrbitLight,text=OrbitNavy},
+  arrow/.style={-{Latex[length=3mm]},thick,draw=OrbitBlue},
+  node distance=1.2cm
+]
+  \node[branch] (feature) {feature/nome-da-atividade};
+  \node[branch, below=of feature] (develop) {develop};
+  \node[branch, below=of develop] (main) {main};
+  \draw[arrow] (feature) -- node[right]{MR e revisão} (develop);
+  \draw[arrow] (develop) -- node[right]{MR e homologação} (main);
+\end{tikzpicture}
+\caption{Fluxo de integração adotado pela equipe.}
+\end{figure}
+
+Não são feitos commits diretamente em \texttt{main} ou \texttt{develop}. Cada alteração nasce em uma branch de trabalho, recebe uma mensagem convencional em inglês e entra em \texttt{develop} por MR. Depois da validação integrada, \texttt{develop} é promovida para \texttt{main} por outro MR.
+
+\section{Padrão de commits}
+
+\begin{lstlisting}
+feat(tooling): add interactive project menu
+fix(frontend): update build dependencies
+docs(project): add architecture and delivery guides
+ci(build): validate application and container builds
+\end{lstlisting}
+
+\chapter{Ajustes técnicos realizados}
+
+\begin{longtable}{>{\bfseries}p{0.25\textwidth} p{0.31\textwidth} p{0.34\textwidth}}
+\toprule
+Item & Situação inicial & Ajuste \\
+\midrule
+\endhead
+Backend em container & Apenas execução local & Dockerfile em múltiplos estágios com imagem final ASP.NET Core \\
+Frontend em container & Apenas execução com Vite & Build em Node.js e publicação por Nginx \\
+Integração & Sem Compose & Compose com portas, rede, dependência e health checks \\
+CORS & Origem fixa no código & Origens carregadas da configuração e do ambiente \\
+Ambiente & Variável apenas no frontend & Arquivo central \texttt{.env.example} \\
+Dependências & Vite 5 com alertas & Vite 8.1.5 e plugin React compatível \\
+Integração contínua & Ausente & Pipeline com três jobs e actions atuais \\
+Documentação & READMEs da base & Guia completo e documentos especializados \\
+Automação local & Comandos manuais dispersos & Makefile com menu e validação completa \\
+Evidências & Sem estrutura de capturas & Catálogo, relatório e espaços automáticos para imagens \\
+\bottomrule
+\end{longtable}
+
+\section{Justificativa dos ajustes}
+
+Os ajustes reduzem diferenças entre os ambientes dos integrantes, tornam os comandos reproduzíveis, registram decisões e facilitam a demonstração. A configuração externa evita alterações de código para trocar portas ou origens. A pipeline detecta falhas antes da integração. O relatório concentra evidências e explicações em um documento único.
+
+\chapter{Testes e resultados}
+
+\section{Ambiente da verificação inicial}
+
+\begin{tabularx}{\textwidth}{>{\bfseries}p{0.35\textwidth} X}
+\toprule
+Ferramenta & Versão utilizada \\
+\midrule
+Sistema operacional & Ubuntu 24.04 \\
+Docker & 28.5.1 \\
+Docker Compose & 2.40.3 \\
+.NET SDK & 8.0.415 \\
+Node.js & 20.19.5 \\
+npm & 10.8.2 \\
+\bottomrule
+\end{tabularx}
+
+\section{Resultados técnicos iniciais}
+
+\begin{longtable}{p{0.43\textwidth} p{0.24\textwidth} p{0.23\textwidth}}
+\toprule
+Verificação & Resultado & Situação \\
+\midrule
+\endhead
+Build Release do backend & Sem erros e sem avisos & \statusok \\
+Build do frontend & Vite 8.1.5 concluído & \statusok \\
+Auditoria npm & Nenhuma vulnerabilidade & \statusok \\
+Validação do Compose & Configuração aceita & \statusok \\
+Containers & Dois serviços saudáveis & \statusok \\
+Frontend & Resposta HTTP 200 & \statusok \\
+Swagger & Resposta HTTP 200 & \statusok \\
+CORS & Origem do frontend autorizada & \statusok \\
+Dashboard & JSON com métricas iniciais & \statusok \\
+Criação de projeto & Operação concluída & \statusok \\
+Nome duplicado & Resposta HTTP 409 & \statusok \\
+Exclusão temporária & Resposta HTTP 204 & \statusok \\
+\bottomrule
+\end{longtable}
+
+\section{Matriz de testes manuais}
+
+\begin{longtable}{>{\bfseries}p{0.09\textwidth} p{0.42\textwidth} p{0.37\textwidth}}
+\toprule
+ID & Cenário & Resultado esperado \\
+\midrule
+\endhead
+E01 & Iniciar a solução com Docker Compose & Dois serviços saudáveis \\
+E02 & Abrir o dashboard & Métricas e tarefas exibidas \\
+E03 & Abrir o Swagger & Endpoints documentados \\
+E04 & Consultar \texttt{/health} & JSON com status saudável \\
+E05 & Criar um projeto válido & Resposta 201 e item na interface \\
+E06 & Repetir o nome do projeto & Resposta 409 e mensagem clara \\
+E07 & Criar uma tarefa & Resposta 201 e item no quadro \\
+E08 & Aplicar filtros & Lista compatível com os critérios \\
+E09 & Alterar o status & Tarefa movida e resposta 200 \\
+E10 & Excluir projeto com tarefa & Resposta 409 sem exclusão \\
+E11 & Interromper o backend & Mensagem de indisponibilidade \\
+E12 & Consultar logs & Inicialização sem erro não tratado \\
+\bottomrule
+\end{longtable}
+
+\chapter{Evidências visuais}
+
+As imagens desta seção são carregadas da pasta \texttt{docs/evidencias/capturas/}. Enquanto um arquivo não existe, o relatório apresenta um espaço reservado com o nome exato esperado. Depois de adicionar as capturas, execute \texttt{make report} para atualizar o PDF.
+
+\evidencia{E01-containers-saudaveis.png}{Containers do backend e frontend com health checks aprovados}{Pendente de captura final}
+\evidencia{E02-dashboard.png}{Dashboard carregado com métricas e tarefas recentes}{Pendente de captura final}
+\evidencia{E03-swagger.png}{Swagger com os endpoints da API}{Pendente de captura final}
+\evidencia{E04-health.png}{Resposta JSON do health check do backend}{Pendente de captura final}
+\evidencia{E05-criar-projeto.png}{Criação de um projeto válido pela interface}{Pendente de captura final}
+\evidencia{E06-projeto-duplicado.png}{Tratamento de conflito para nome duplicado}{Pendente de captura final}
+\evidencia{E07-criar-tarefa.png}{Criação de uma tarefa vinculada a um projeto}{Pendente de captura final}
+\evidencia{E08-filtrar-tarefas.png}{Aplicação de filtros no quadro de tarefas}{Pendente de captura final}
+\evidencia{E09-alterar-status.png}{Alteração do status de uma tarefa}{Pendente de captura final}
+\evidencia{E10-bloqueio-exclusao.png}{Bloqueio da exclusão de projeto com tarefas}{Pendente de captura final}
+\evidencia{E11-backend-indisponivel.png}{Tratamento do frontend quando a API fica indisponível}{Pendente de captura final}
+\evidencia{E12-logs-containers.png}{Logs de inicialização dos containers}{Pendente de captura final}
+
+\chapter{Equipe e contribuições}
+
+\section{Integrantes}
+
+\begin{longtable}{p{0.40\textwidth} p{0.29\textwidth} p{0.21\textwidth}}
+\toprule
+Integrante & GitHub & Situação do registro \\
+\midrule
+\endhead
+Allef Oliveira Ramos & \href{https://github.com/allef-oliveira}{@allef-oliveira} & \statuspending \\
+Camila Félix dos Reis & \href{https://github.com/cawzkf}{@cawzkf} & \statuspending \\
+Fernanda de Oliveira da Costa & \href{https://github.com/nanda-costa}{@nanda-costa} & \statuspending \\
+Juliana Ballin Lima & \href{https://github.com/JulianaBallin}{@JulianaBallin} & Em atualização \\
+Pedro Henrique Oliveria Dias & \href{https://github.com/pedroddias-oss}{@pedroddias-oss} & \statuspending \\
+\bottomrule
+\end{longtable}
+
+\section{Frentes sugeridas}
+
+\begin{tabularx}{\textwidth}{>{\bfseries}p{0.29\textwidth} X}
+\toprule
+Integrante & Frente inicial \\
+\midrule
+Allef & Testes da API e cenários de erro \\
+Camila & Validação do frontend e melhoria de usabilidade \\
+Fernanda & Docker Compose, logs e evidências de infraestrutura \\
+Juliana & Organização do repositório, automação e documentação \\
+Pedro & Arquitetura e roteiro da apresentação \\
+\bottomrule
+\end{tabularx}
+
+\begin{statusbox}[Regra de autoria]
+A tabela final de contribuições deve refletir commits e MRs reais. Nenhum integrante deve registrar trabalho em nome de outra pessoa. Cada contribuição precisa ser associada ao usuário correto no GitHub.
+\end{statusbox}
+
+\chapter{Plano de apresentação}
+
+\section{Roteiro de 10 minutos}
+
+\begin{longtable}{p{0.16\textwidth} p{0.24\textwidth} p{0.49\textwidth}}
+\toprule
+Tempo & Tema & Conteúdo \\
+\midrule
+\endhead
+0:00 a 1:00 & Abertura & Nome, objetivo didático e integrantes \\
+1:00 a 2:30 & Arquitetura & Frontend, API, dados e Docker \\
+2:30 a 4:30 & Demonstração & Dashboard, projeto, tarefa, filtro e status \\
+4:30 a 5:45 & API & Swagger, JSON, health check e erros \\
+5:45 a 7:00 & Infraestrutura & Dockerfiles, Compose, portas, variáveis e logs \\
+7:00 a 8:30 & Testes & Cenários positivos, conflito e indisponibilidade \\
+8:30 a 9:30 & Ajustes & Melhorias realizadas e justificativas \\
+9:30 a 10:00 & Encerramento & Contribuições, limitações e próximos passos \\
+\bottomrule
+\end{longtable}
+
+\section{Sequência de demonstração}
+
+\begin{enumerate}
+  \item Exibir \texttt{docker compose ps} com os serviços saudáveis.
+  \item Abrir o dashboard e relacionar as métricas à resposta da API.
+  \item Criar um projeto e mostrar a requisição no navegador.
+  \item Criar uma tarefa, aplicar filtros e alterar seu status.
+  \item Abrir o Swagger e executar uma consulta.
+  \item Demonstrar um conflito ao repetir o nome do projeto.
+  \item Mostrar os logs dos containers.
+  \item Encerrar com as decisões técnicas e contribuições.
+\end{enumerate}
+
+\section{Plano de contingência}
+
+As capturas deste relatório servem como apoio caso o ambiente não possa ser iniciado durante a apresentação. A equipe deve manter as imagens Docker prontas, verificar as portas e abrir previamente o frontend, o Swagger e um terminal com os comandos principais.
+
+\chapter{Limitações, riscos e próximos passos}
+
+\section{Limitações conhecidas}
+
+\begin{itemize}
+  \item Os dados são apagados quando a API reinicia.
+  \item Não existe autenticação ou autorização.
+  \item A URL da API é incorporada ao frontend durante o build.
+  \item O estado em memória não permite escalar o backend horizontalmente.
+  \item A aplicação foi projetada para uso didático e execução local.
+\end{itemize}
+
+\section{Riscos para a apresentação}
+
+\begin{tabularx}{\textwidth}{>{\bfseries}p{0.28\textwidth} X}
+\toprule
+Risco & Mitigação \\
+\midrule
+Porta ocupada & Encerrar processos anteriores ou ajustar o arquivo \texttt{.env} \\
+Imagem não compilada & Executar \texttt{make up} antes da apresentação \\
+Backend indisponível & Conferir \texttt{make status}, \texttt{make logs} e o health check \\
+Falha de rede & Manter capturas e PDF disponíveis localmente \\
+Dados inconsistentes & Reiniciar o backend para restaurar os dados iniciais \\
+Tempo excedido & Ensaiar o roteiro e limitar a demonstração aos fluxos principais \\
+\bottomrule
+\end{tabularx}
+
+\section{Próximos passos obrigatórios}
+
+\begin{enumerate}
+  \item Executar os doze testes manuais em ambiente da equipe.
+  \item Adicionar as capturas com os nomes definidos.
+  \item Recompilar este relatório com \texttt{make report}.
+  \item Registrar as contribuições reais dos cinco integrantes.
+  \item Definir os responsáveis por cada parte da apresentação.
+  \item Ensaiar e confirmar duração entre 8 e 12 minutos.
+  \item Integrar as alterações em \texttt{develop} por MR.
+  \item Promover a versão validada de \texttt{develop} para \texttt{main} por MR.
+\end{enumerate}
+
+\section{Melhorias opcionais}
+
+\begin{itemize}
+  \item Adicionar testes automatizados para regras da API.
+  \item Criar testes de componentes e fluxos do frontend.
+  \item Persistir os dados em um banco executado por container.
+  \item Adicionar autenticação e autorização por perfis.
+  \item Publicar uma imagem versionada em um registro de containers.
+  \item Configurar monitoramento básico e métricas de aplicação.
+\end{itemize}
+
+\chapter{Conclusão}
+
+O OrbitBoard demonstra os elementos centrais de uma aplicação full stack: interface web, API REST, comunicação HTTP e JSON, validação, tratamento de erros, CORS, documentação OpenAPI e execução conteinerizada. A infraestrutura criada permite reproduzir o ambiente com poucos comandos e a pipeline reduz o risco de integrar alterações que não compilam.
+
+A documentação registra a arquitetura, as decisões, os contratos, os ajustes e o processo de trabalho. O Makefile facilita a execução por todos os integrantes. A estrutura de evidências e este relatório tornam a preparação final objetiva, pois cada imagem pendente possui nome, cenário e resultado esperado.
+
+O estágio técnico está avançado. A conclusão depende principalmente da participação real dos integrantes, da produção das capturas, da atualização das contribuições e do ensaio da apresentação.
+
+\begin{resumobox}[Checklist final]
+\begin{tabularx}{\textwidth}{X p{0.22\textwidth}}
+\toprule
+Item & Situação \\
+\midrule
+Repositório organizado & \statusok \\
+README completo & \statusok \\
+Backend e Swagger & \statusok \\
+Frontend integrado & \statusok \\
+Dockerfiles e Compose & \statusok \\
+Pipeline de integração contínua & \statusok \\
+Makefile com menu & \statusok \\
+Relatório técnico & \statusok \\
+Capturas finais & \statuspending \\
+Contribuições dos integrantes & \statuspending \\
+Ensaio da apresentação & \statuspending \\
+MR final para \texttt{main} & \statuspending \\
+\bottomrule
+\end{tabularx}
+\end{resumobox}
+
+\appendix
+
+\chapter{Comandos de referência}
+
+\section{Fluxo rápido pelo Makefile}
+
+\begin{lstlisting}[language=bash]
+make menu
+make setup
+make validate
+make up
+make health
+make logs
+make down
+make report
+\end{lstlisting}
+
+\section{Execução local sem Docker}
+
+\begin{lstlisting}[language=bash]
+# Terminal 1
+dotnet run --project backend/OrbitBoard.Api
+
+# Terminal 2
+npm ci --prefix frontend
+npm run dev --prefix frontend
+\end{lstlisting}
+
+\section{Fluxo Git}
+
+\begin{lstlisting}[language=bash]
+git switch develop
+git pull origin develop
+git switch -c feature/nome-da-atividade
+git add .
+git commit -m "feat(scope): describe the change"
+git push -u origin feature/nome-da-atividade
+\end{lstlisting}
+
+\chapter{Catálogo de evidências}
+
+\begin{longtable}{>{\ttfamily}p{0.44\textwidth} p{0.46\textwidth}}
+\toprule
+\normalfont\textbf{Arquivo} & \normalfont\textbf{Conteúdo} \\
+\midrule
+\endhead
+E01-containers-saudaveis.png & Containers saudáveis \\
+E02-dashboard.png & Dashboard com métricas \\
+E03-swagger.png & Endpoints no Swagger \\
+E04-health.png & Resposta do health check \\
+E05-criar-projeto.png & Projeto criado \\
+E06-projeto-duplicado.png & Conflito de nome \\
+E07-criar-tarefa.png & Tarefa criada \\
+E08-filtrar-tarefas.png & Filtros aplicados \\
+E09-alterar-status.png & Mudança de status \\
+E10-bloqueio-exclusao.png & Exclusão bloqueada \\
+E11-backend-indisponivel.png & Erro de conexão tratado \\
+E12-logs-containers.png & Logs dos serviços \\
+\bottomrule
+\end{longtable}
+
+\chapter{Atualização deste relatório}
+
+Para substituir os espaços reservados por capturas reais:
+
+\begin{enumerate}
+  \item Salve os arquivos em \texttt{docs/evidencias/capturas/}.
+  \item Mantenha os nomes definidos no catálogo.
+  \item Revise as imagens para remover dados sensíveis.
+  \item Execute \texttt{make report} na raiz do projeto.
+  \item Abra o PDF e confira enquadramento, legibilidade e paginação.
+  \item Atualize o status das evidências no arquivo LaTeX e em \texttt{docs/evidencias-testes.md}.
+\end{enumerate}
+
+\begin{statusbox}[Resultado esperado]
+Quando a imagem existe, a macro de evidência a incorpora automaticamente. Quando não existe, o relatório mantém um quadro informativo com o nome esperado, permitindo que o PDF seja compilado em qualquer estágio do trabalho.
+\end{statusbox}
+
+\end{document}

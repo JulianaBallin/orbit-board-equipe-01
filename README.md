@@ -77,6 +77,32 @@ A explicação detalhada, o diagrama e as decisões técnicas estão em [docs/ar
 
 ---
 
+<h2 align="center">Menu de comandos</h2>
+
+O `Makefile` reúne as operações mais frequentes do projeto. Para abrir o menu interativo, execute:
+
+```bash
+make menu
+```
+
+Também é possível chamar cada operação diretamente:
+
+| Comando | Finalidade |
+|---|---|
+| `make setup` | Verifica as ferramentas, cria o `.env` e instala as dependências |
+| `make build` | Compila o backend e o frontend |
+| `make up` | Compila e inicia a aplicação com Docker Compose |
+| `make down` | Encerra os containers |
+| `make status` | Exibe o estado dos containers |
+| `make logs` | Acompanha os logs da aplicação |
+| `make health` | Consulta os health checks do backend e do frontend |
+| `make validate` | Executa builds, auditoria e validação do Compose |
+| `make report` | Compila o relatório de desenvolvimento em PDF |
+
+Use `make help` para consultar a lista completa.
+
+---
+
 <h2 align="center">Como executar com Docker</h2>
 
 ### Requisitos
@@ -202,6 +228,9 @@ orbit-board-equipe-01/
 ├── docs/
 │   ├── assets/
 │   ├── evidencias/
+│   │   ├── capturas/
+│   │   ├── relatorio-desenvolvimento-equipe01.pdf
+│   │   └── relatorio-desenvolvimento-equipe01.tex
 │   ├── arquitetura.md
 │   ├── contrato-api.md
 │   ├── contribuicoes.md
@@ -210,6 +239,7 @@ orbit-board-equipe-01/
 │   └── roteiro-apresentacao.md
 ├── .env.example
 ├── .gitignore
+├── Makefile
 ├── docker-compose.yml
 └── README.md
 ```
@@ -223,12 +253,15 @@ O roteiro inclui execução dos containers, dashboard, Swagger, health checks, c
 | Documento | Conteúdo |
 |---|---|
 | [Evidências e testes](docs/evidencias-testes.md) | Cenários, resultados esperados e nomes das capturas |
+| [Catálogo de capturas](docs/evidencias/capturas/README.md) | Nomes padronizados e conteúdo esperado de cada imagem |
+| [Relatório de desenvolvimento](docs/evidencias/relatorio-desenvolvimento-equipe01.pdf) | Arquitetura, implementação, testes, evidências e apresentação da equipe |
+| [Fonte do relatório](docs/evidencias/relatorio-desenvolvimento-equipe01.tex) | Documento LaTeX editável e preparado para receber as capturas |
 | [Registro de ajustes](docs/registro-ajustes.md) | Estado inicial, alterações e formas de validação |
 | [Roteiro da apresentação](docs/roteiro-apresentacao.md) | Sequência sugerida para uma apresentação de 10 minutos |
 | [Plano de contribuições](docs/contribuicoes.md) | Frentes sugeridas e espaço para commits e MRs reais |
 | [Fluxo Git](docs/fluxo-git.md) | Regras das branches, commits e MRs |
 
-As capturas finais serão produzidas e adicionadas pelos integrantes durante a validação conjunta.
+As capturas finais devem ser adicionadas em `docs/evidencias/capturas/` com os nomes definidos no catálogo. Depois, execute `make report` para atualizar automaticamente o PDF.
 
 ---
 
