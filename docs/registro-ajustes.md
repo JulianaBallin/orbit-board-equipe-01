@@ -18,4 +18,4 @@ Este registro relaciona o estado inicial, as alterações da equipe e as evidên
 - Registrar problemas encontrados em computadores diferentes.
 - Aplicar ao menos uma melhoria técnica ou de usabilidade definida pelos integrantes.
 - Confirmar a divisão da apresentação e ensaiar entre 8 e 12 minutos.
-- Atualizar a contribuição real de cada pessoa com links para commits ou Pull Requests.
+- Atualizar a contribuição real de cada pessoa com links para commits ou MRs.

@@ -107,5 +107,5 @@ Para cada falha encontrada, registre:
 | Sintoma | Mensagem ou comportamento observado |
 | Causa | Motivo identificado |
 | Correção | Alteração realizada |
-| Evidência | Captura, log, commit ou Pull Request |
+| Evidência | Captura, log, commit ou MR |
 | Responsável | Integrante que investigou |

@@ -225,7 +225,8 @@ O roteiro inclui execução dos containers, dashboard, Swagger, health checks, c
 | [Evidências e testes](docs/evidencias-testes.md) | Cenários, resultados esperados e nomes das capturas |
 | [Registro de ajustes](docs/registro-ajustes.md) | Estado inicial, alterações e formas de validação |
 | [Roteiro da apresentação](docs/roteiro-apresentacao.md) | Sequência sugerida para uma apresentação de 10 minutos |
-| [Plano de contribuições](docs/contribuicoes.md) | Frentes sugeridas e espaço para commits e Pull Requests reais |
+| [Plano de contribuições](docs/contribuicoes.md) | Frentes sugeridas e espaço para commits e MRs reais |
+| [Fluxo Git](docs/fluxo-git.md) | Regras das branches, commits e MRs |
 
 As capturas finais serão produzidas e adicionadas pelos integrantes durante a validação conjunta.
 
@@ -234,8 +235,8 @@ As capturas finais serão produzidas e adicionadas pelos integrantes durante a v
 <h2 align="center">Fluxo de contribuição</h2>
 
 ```bash
-git switch main
-git pull origin main
+git switch develop
+git pull origin develop
 git switch -c feature/nome-da-atividade
 ```
 
@@ -247,7 +248,9 @@ git commit -m "feat(scope): describe the change"
 git push -u origin feature/nome-da-atividade
 ```
 
-Abra um Pull Request, peça a revisão de outro integrante e só então integre a branch principal.
+Abra um MR da branch de trabalho para `develop` e peça a revisão de outro integrante. Depois de validar a versão integrada, abra outro MR de `develop` para `main`.
+
+Não faça commits diretamente em `main` ou `develop`. O fluxo completo está em [docs/fluxo-git.md](docs/fluxo-git.md).
 
 ---
 
@@ -263,15 +266,15 @@ Abra um Pull Request, peça a revisão de outro integrante e só então integre 
 
 <h2 align="center">Equipe</h2>
 
-| Integrante | Frente inicial sugerida | Contribuição final |
-|---|---|---|
-| Allef Oliveira Ramos | Testes da API e cenários de erro | A registrar após o Pull Request |
-| Camila Félix dos Reis | Validação do frontend e usabilidade | A registrar após o Pull Request |
-| Fernanda de Oliveira da Costa | Docker Compose, logs e infraestrutura | A registrar após o Pull Request |
-| Juliana Ballin Lima | Organização do repositório e revisão do README | A registrar após o Pull Request |
-| Pedro Henrique Oliveria Dias | Arquitetura e apresentação técnica | A registrar após o Pull Request |
+| Integrante | GitHub | Frente inicial sugerida | Contribuição final |
+|---|---|---|---|
+| Allef Oliveira Ramos | A informar | Testes da API e cenários de erro | A registrar após o MR |
+| Camila Félix dos Reis | A informar | Validação do frontend e usabilidade | A registrar após o MR |
+| Fernanda de Oliveira da Costa | A informar | Docker Compose, logs e infraestrutura | A registrar após o MR |
+| Juliana Ballin Lima | [@JulianaBallin](https://github.com/JulianaBallin) | Organização do repositório e revisão do README | A registrar após o MR |
+| Pedro Henrique Oliveria Dias | A informar | Arquitetura e apresentação técnica | A registrar após o MR |
 
-As contribuições devem refletir o histórico real de commits e Pull Requests. A distribuição pode ser ajustada pela equipe antes da entrega.
+As contribuições devem refletir o histórico real de commits e MRs. A distribuição pode ser ajustada pela equipe antes da entrega.
 
 ---
 
