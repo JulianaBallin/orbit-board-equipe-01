@@ -4,7 +4,7 @@ Este documento organiza as validações exigidas no trabalho final. Capturas, re
 
 ## Convenção dos arquivos
 
-Salve as capturas em `docs/evidencias/` com o padrão:
+Salve as capturas em `docs/evidencias/capturas/` com o padrão:
 
 ```text
 E<numero>-<descricao-curta>.png
@@ -44,7 +44,7 @@ Não inclua tokens, senhas, emails pessoais, cookies ou outros segredos nas imag
 
 ## Verificações técnicas iniciais
 
-Verificação executada em 20 de julho de 2026, no commit `8249f2b`.
+Verificação executada em 20 de julho de 2026 na branch `feature/project-foundation`.
 
 | Comando | Resultado inicial | Execução final da equipe |
 |---|---|---|
