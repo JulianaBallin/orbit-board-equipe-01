@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../api/client';
 import { Badge, EmptyState, ErrorState, LoadingState, Notice } from '../components/Common';
+import TaskTable from '../components/TaskTable';
 import { priorityLabel, priorityTone, statusLabel } from '../utils/labels';
 
 const initialFilters = { projectId: '', status: '', priority: '', assigneeId: '', search: '' };
@@ -15,6 +16,7 @@ export default function TasksPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
+  const [viewMode, setViewMode] = useState('board');
 
   const loadReferenceData = useCallback(async () => {
     setProjects(await api.projects.list());
@@ -71,9 +73,29 @@ export default function TasksPage() {
           <h2>Tarefas</h2>
           <p>Filtre, crie e mova demandas entre os estágios do fluxo.</p>
         </div>
-        <button className="button primary" onClick={() => navigate('/tasks/new')}>
-          Nova tarefa
-        </button>
+        <div className="card-actions">
+          <div className="view-switcher" role="group" aria-label="Visualização das tarefas">
+            <button
+              type="button"
+              className={`button small ${viewMode === 'board' ? 'primary' : 'secondary'}`}
+              onClick={() => setViewMode('board')}
+              aria-pressed={viewMode === 'board'}
+            >
+              Quadro
+            </button>
+            <button
+              type="button"
+              className={`button small ${viewMode === 'table' ? 'primary' : 'secondary'}`}
+              onClick={() => setViewMode('table')}
+              aria-pressed={viewMode === 'table'}
+            >
+              Tabela
+            </button>
+          </div>
+          <button type="button" className="button primary" onClick={() => navigate('/tasks/new')}>
+            Nova tarefa
+          </button>
+        </div>
       </div>
 
       {notice && <Notice onClose={() => setNotice('')}>{notice}</Notice>}
@@ -95,10 +117,18 @@ export default function TasksPage() {
             <option key={priority} value={priority}>{priorityLabel(priority)}</option>
           ))}
         </select>
-        <button className="button secondary" onClick={() => setFilters(initialFilters)}>Limpar filtros</button>
+        <button type="button" className="button secondary" onClick={() => setFilters(initialFilters)}>Limpar filtros</button>
       </div>
 
-      {loading ? <LoadingState /> : (
+      {loading ? <LoadingState /> : viewMode === 'table' ? (
+        <TaskTable
+          tasks={tasks}
+          statuses={statuses}
+          onEdit={(task) => navigate(`/tasks/${task.id}/edit`)}
+          onDelete={remove}
+          onStatusChange={changeStatus}
+        />
+      ) : (
         <div className="task-board">
           {statuses.map((status) => {
             const columnTasks = tasks.filter((task) => task.status === status);
