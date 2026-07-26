@@ -119,7 +119,7 @@ export default function TaskForm({ projects, members, editing, onSubmit, onCance
       </div>
 
       <div className="form-actions">
-        {editing && <button type="button" className="button secondary" onClick={onCancel}>Cancelar</button>}
+        <button type="button" className="button secondary" onClick={onCancel}>Cancelar</button>
         <button className="button primary" disabled={busy}>{busy ? 'Salvando...' : 'Salvar tarefa'}</button>
       </div>
     </form>
