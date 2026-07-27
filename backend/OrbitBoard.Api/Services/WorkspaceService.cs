@@ -10,6 +10,7 @@ public sealed class WorkspaceService : IWorkspaceService
     private readonly List<Project> _projects = [];
     private readonly List<WorkItem> _workItems = [];
     private readonly List<TeamMember> _members = [];
+    private readonly List<TaskStatusHistoryEntry> _history = [];
 
     public WorkspaceService()
     {
@@ -157,6 +158,7 @@ public sealed class WorkspaceService : IWorkspaceService
             };
 
             _workItems.Add(item);
+            RecordStatusHistory(item.Id, null, item.Status);
             return ToWorkItemResponse(item);
         }
     }
@@ -170,6 +172,8 @@ public sealed class WorkspaceService : IWorkspaceService
             if (request.AssigneeId.HasValue)
                 EnsureMemberExists(request.AssigneeId.Value);
 
+            var previousStatus = item.Status;
+
             item.ProjectId = request.ProjectId;
             item.Title = request.Title.Trim();
             item.Description = request.Description.Trim();
@@ -180,6 +184,9 @@ public sealed class WorkspaceService : IWorkspaceService
             item.EstimatedHours = request.EstimatedHours;
             item.UpdatedAt = DateTimeOffset.UtcNow;
 
+            if (previousStatus != item.Status)
+                RecordStatusHistory(item.Id, previousStatus, item.Status);
+
             return ToWorkItemResponse(item);
         }
     }
@@ -189,8 +196,14 @@ public sealed class WorkspaceService : IWorkspaceService
         lock (_sync)
         {
             var item = FindWorkItem(id);
+            var previousStatus = item.Status;
+
             item.Status = request.Status;
             item.UpdatedAt = DateTimeOffset.UtcNow;
+
+            if (previousStatus != item.Status)
+                RecordStatusHistory(item.Id, previousStatus, item.Status);
+
             return ToWorkItemResponse(item);
         }
     }
@@ -200,6 +213,19 @@ public sealed class WorkspaceService : IWorkspaceService
         lock (_sync)
         {
             _workItems.Remove(FindWorkItem(id));
+        }
+    }
+
+    public IReadOnlyList<TaskHistoryEntryResponse> GetWorkItemHistory(Guid id)
+    {
+        lock (_sync)
+        {
+            FindWorkItem(id);
+            return _history
+                .Where(entry => entry.WorkItemId == id)
+                .OrderBy(entry => entry.ChangedAt)
+                .Select(ToHistoryResponse)
+                .ToList();
         }
     }
 
@@ -245,6 +271,14 @@ public sealed class WorkspaceService : IWorkspaceService
     private Project FindProject(Guid id) =>
         _projects.FirstOrDefault(project => project.Id == id)
         ?? throw new NotFoundException("Projeto não encontrado.");
+
+    private void RecordStatusHistory(Guid workItemId, WorkItemStatus? fromStatus, WorkItemStatus toStatus) =>
+        _history.Add(new TaskStatusHistoryEntry
+        {
+            WorkItemId = workItemId,
+            FromStatus = fromStatus,
+            ToStatus = toStatus
+        });
 
     private WorkItem FindWorkItem(Guid id) =>
         _workItems.FirstOrDefault(item => item.Id == id)
@@ -313,6 +347,9 @@ public sealed class WorkspaceService : IWorkspaceService
             item.CreatedAt,
             item.UpdatedAt);
     }
+
+    private static TaskHistoryEntryResponse ToHistoryResponse(TaskStatusHistoryEntry entry) =>
+        new(entry.Id, entry.WorkItemId, entry.FromStatus, entry.ToStatus, entry.ChangedAt);
 
     private void Seed()
     {

@@ -22,6 +22,7 @@ public interface IWorkspaceService
     WorkItemResponse UpdateWorkItem(Guid id, UpdateWorkItemRequest request);
     WorkItemResponse ChangeWorkItemStatus(Guid id, ChangeWorkItemStatusRequest request);
     void DeleteWorkItem(Guid id);
+    IReadOnlyList<TaskHistoryEntryResponse> GetWorkItemHistory(Guid id);
 
     IReadOnlyList<TeamMember> GetTeamMembers();
     DashboardResponse GetDashboard();

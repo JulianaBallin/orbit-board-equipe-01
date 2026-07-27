@@ -59,3 +59,12 @@ public sealed class TeamMember
     public required string Email { get; set; }
     public string Initials { get; set; } = string.Empty;
 }
+
+public sealed class TaskStatusHistoryEntry
+{
+    public Guid Id { get; init; } = Guid.NewGuid();
+    public Guid WorkItemId { get; set; }
+    public WorkItemStatus? FromStatus { get; set; }
+    public WorkItemStatus ToStatus { get; set; }
+    public DateTimeOffset ChangedAt { get; init; } = DateTimeOffset.UtcNow;
+}
