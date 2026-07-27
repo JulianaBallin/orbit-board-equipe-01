@@ -135,4 +135,33 @@ public sealed class ApiEndpointsTests : IDisposable
         Assert.Equal(projects!.Count, dashboard!.TotalProjects);
         Assert.True(dashboard.TotalTasks > 0);
     }
+
+    [Fact]
+    public async Task GetTaskHistory_AfterStatusChange_ReturnsEntry()
+    {
+        var task = (await _client.GetFromJsonAsync<List<WorkItemResponse>>("/api/tasks", JsonOptions))!.First();
+        var newStatus = task.Status == WorkItemStatus.Done ? WorkItemStatus.InProgress : WorkItemStatus.Done;
+
+        var patchResponse = await _client.PatchAsJsonAsync(
+            $"/api/tasks/{task.Id}/status",
+            new ChangeWorkItemStatusRequest { Status = newStatus },
+            JsonOptions);
+        Assert.Equal(HttpStatusCode.OK, patchResponse.StatusCode);
+
+        var history = await _client.GetFromJsonAsync<List<TaskHistoryEntryResponse>>(
+            $"/api/tasks/{task.Id}/history", JsonOptions);
+
+        Assert.NotNull(history);
+        var last = history!.Last();
+        Assert.Equal(task.Status, last.FromStatus);
+        Assert.Equal(newStatus, last.ToStatus);
+    }
+
+    [Fact]
+    public async Task GetTaskHistory_WhenTaskMissing_Returns404()
+    {
+        var response = await _client.GetAsync($"/api/tasks/{Guid.NewGuid()}/history");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
 }
