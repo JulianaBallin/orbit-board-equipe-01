@@ -58,3 +58,6 @@ app.MapGet("/health", () => Results.Ok(new
 })).WithTags("Health");
 
 app.Run();
+
+public partial class Program;
+

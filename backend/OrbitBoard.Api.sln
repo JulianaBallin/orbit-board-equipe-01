@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrbitBoard.Api", "OrbitBoar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrbitBoard.Api.Tests", "OrbitBoard.Api.Tests\OrbitBoard.Api.Tests.csproj", "{7B2E1A44-9C3D-4F5E-8A6B-1D2C3E4F5A6B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrbitBoard.Api.IntegrationTests", "OrbitBoard.Api.IntegrationTests\OrbitBoard.Api.IntegrationTests.csproj", "{8C3F2B55-AD4E-4A6F-9B7C-2E3D4F5A6B7C}"
+EndProject
 Global
     GlobalSection(SolutionConfigurationPlatforms) = preSolution
         Debug|Any CPU = Debug|Any CPU
@@ -20,5 +22,9 @@ Global
         {7B2E1A44-9C3D-4F5E-8A6B-1D2C3E4F5A6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
         {7B2E1A44-9C3D-4F5E-8A6B-1D2C3E4F5A6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
         {7B2E1A44-9C3D-4F5E-8A6B-1D2C3E4F5A6B}.Release|Any CPU.Build.0 = Release|Any CPU
+        {8C3F2B55-AD4E-4A6F-9B7C-2E3D4F5A6B7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {8C3F2B55-AD4E-4A6F-9B7C-2E3D4F5A6B7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {8C3F2B55-AD4E-4A6F-9B7C-2E3D4F5A6B7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {8C3F2B55-AD4E-4A6F-9B7C-2E3D4F5A6B7C}.Release|Any CPU.Build.0 = Release|Any CPU
     EndGlobalSection
 EndGlobal
