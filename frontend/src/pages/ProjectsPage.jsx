@@ -1,25 +1,21 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../api/client';
-import ProjectForm from '../components/ProjectForm';
 import { Badge, EmptyState, ErrorState, LoadingState, Notice } from '../components/Common';
 import { projectStatusLabel, projectStatusTone } from '../utils/labels';
 
 export default function ProjectsPage() {
+  const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
-  const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
-  const [editing, setEditing] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
-      const [projectData, memberData] = await Promise.all([api.projects.list(), api.team()]);
-      setProjects(projectData);
-      setMembers(memberData);
+      setProjects(await api.projects.list());
     } catch (err) {
       setError(err.message);
     } finally {
@@ -28,26 +24,6 @@ export default function ProjectsPage() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
-
-  const save = async (data) => {
-    setBusy(true);
-    setError('');
-    try {
-      if (editing) {
-        await api.projects.update(editing.id, data);
-        setNotice('Projeto atualizado com sucesso.');
-      } else {
-        await api.projects.create(data);
-        setNotice('Projeto criado com sucesso.');
-      }
-      setEditing(null);
-      await load();
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setBusy(false);
-    }
-  };
 
   const remove = async (project) => {
     if (!window.confirm(`Excluir o projeto “${project.name}”?`)) return;
@@ -68,24 +44,18 @@ export default function ProjectsPage() {
         <div>
           <span className="eyebrow">Portfólio</span>
           <h2>Projetos</h2>
-          <p>Cadastre iniciativas e acompanhe seu progresso.</p>
+          <p>Acompanhe as iniciativas e o progresso das entregas.</p>
         </div>
+        <button className="button primary" onClick={() => navigate('/projects/new')}>
+          Novo projeto
+        </button>
       </div>
 
       {notice && <Notice onClose={() => setNotice('')}>{notice}</Notice>}
       {error && <ErrorState message={error} onRetry={load} />}
 
-      <div className="two-column-layout">
-        <ProjectForm
-          members={members}
-          editing={editing}
-          onSubmit={save}
-          onCancel={() => setEditing(null)}
-          busy={busy}
-        />
-
-        <div className="cards-list">
-          {projects.length === 0 && <EmptyState title="Nenhum projeto" description="Crie o primeiro projeto pelo formulário." />}
+      <div className="cards-list">
+          {projects.length === 0 && <EmptyState title="Nenhum projeto" description="Crie o primeiro projeto para começar." />}
           {projects.map((project) => {
             const percent = project.totalTasks
               ? Math.round((project.completedTasks / project.totalTasks) * 100)
@@ -104,13 +74,17 @@ export default function ProjectsPage() {
                 </div>
                 <div className="progress-track"><span style={{ width: `${percent}%` }} /></div>
                 <div className="card-actions">
-                  <button className="button secondary small" onClick={() => setEditing(project)}>Editar</button>
+                  <button
+                    className="button secondary small"
+                    onClick={() => navigate(`/projects/${project.id}/edit`)}
+                  >
+                    Editar
+                  </button>
                   <button className="button danger small" onClick={() => remove(project)}>Excluir</button>
                 </div>
               </article>
             );
           })}
-        </div>
       </div>
     </section>
   );

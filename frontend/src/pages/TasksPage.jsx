@@ -1,27 +1,23 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../api/client';
-import TaskForm from '../components/TaskForm';
 import { Badge, EmptyState, ErrorState, LoadingState, Notice } from '../components/Common';
-import { priorityLabel, priorityTone, statusLabel, statusTone } from '../utils/labels';
+import { priorityLabel, priorityTone, statusLabel } from '../utils/labels';
 
 const initialFilters = { projectId: '', status: '', priority: '', assigneeId: '', search: '' };
 const statuses = ['Backlog', 'InProgress', 'Review', 'Done'];
 
 export default function TasksPage() {
+  const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
   const [projects, setProjects] = useState([]);
-  const [members, setMembers] = useState([]);
   const [filters, setFilters] = useState(initialFilters);
   const [loading, setLoading] = useState(true);
-  const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
-  const [editing, setEditing] = useState(null);
 
   const loadReferenceData = useCallback(async () => {
-    const [projectData, memberData] = await Promise.all([api.projects.list(), api.team()]);
-    setProjects(projectData);
-    setMembers(memberData);
+    setProjects(await api.projects.list());
   }, []);
 
   const loadTasks = useCallback(async () => {
@@ -45,26 +41,6 @@ export default function TasksPage() {
   const changeFilter = (event) => {
     const { name, value } = event.target;
     setFilters((current) => ({ ...current, [name]: value }));
-  };
-
-  const save = async (data) => {
-    setBusy(true);
-    setError('');
-    try {
-      if (editing) {
-        await api.tasks.update(editing.id, data);
-        setNotice('Tarefa atualizada com sucesso.');
-      } else {
-        await api.tasks.create(data);
-        setNotice('Tarefa criada com sucesso.');
-      }
-      setEditing(null);
-      await loadTasks();
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setBusy(false);
-    }
   };
 
   const changeStatus = async (id, status) => {
@@ -95,6 +71,9 @@ export default function TasksPage() {
           <h2>Tarefas</h2>
           <p>Filtre, crie e mova demandas entre os estágios do fluxo.</p>
         </div>
+        <button className="button primary" onClick={() => navigate('/tasks/new')}>
+          Nova tarefa
+        </button>
       </div>
 
       {notice && <Notice onClose={() => setNotice('')}>{notice}</Notice>}
@@ -118,15 +97,6 @@ export default function TasksPage() {
         </select>
         <button className="button secondary" onClick={() => setFilters(initialFilters)}>Limpar filtros</button>
       </div>
-
-      <TaskForm
-        projects={projects}
-        members={members}
-        editing={editing}
-        onSubmit={save}
-        onCancel={() => setEditing(null)}
-        busy={busy}
-      />
 
       {loading ? <LoadingState /> : (
         <div className="task-board">
@@ -159,7 +129,12 @@ export default function TasksPage() {
                       </select>
                     </label>
                     <div className="card-actions">
-                      <button className="button secondary small" onClick={() => setEditing(task)}>Editar</button>
+                      <button
+                        className="button secondary small"
+                        onClick={() => navigate(`/tasks/${task.id}/edit`)}
+                      >
+                        Editar
+                      </button>
                       <button className="button danger small" onClick={() => remove(task)}>Excluir</button>
                     </div>
                   </article>
