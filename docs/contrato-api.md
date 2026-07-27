@@ -36,6 +36,7 @@ As datas usam o formato `AAAA-MM-DD`. Identificadores usam UUID. Os enums são e
 | `PUT` | `/api/tasks/{id}` | `200` | Atualiza uma tarefa |
 | `PATCH` | `/api/tasks/{id}/status` | `200` | Altera o status de uma tarefa |
 | `DELETE` | `/api/tasks/{id}` | `204` | Exclui uma tarefa |
+| `GET` | `/api/tasks/{id}/history` | `200` | Lista o histórico de mudanças de status de uma tarefa |
 | `GET` | `/api/team-members` | `200` | Lista integrantes disponíveis na aplicação |
 
 ## Filtros de tarefas
@@ -117,6 +118,39 @@ Content-Type: application/json
   "status": "Done"
 }
 ```
+
+## Histórico de status da tarefa
+
+```http
+GET /api/tasks/{id}/history
+```
+
+Retorna a lista de mudanças de status da tarefa, em ordem cronológica (mais antiga primeiro):
+
+```json
+[
+  {
+    "id": "UUID_DO_EVENTO",
+    "workItemId": "UUID_DA_TAREFA",
+    "fromStatus": null,
+    "toStatus": "Backlog",
+    "changedAt": "2026-07-20T12:00:00Z"
+  },
+  {
+    "id": "UUID_DO_EVENTO",
+    "workItemId": "UUID_DA_TAREFA",
+    "fromStatus": "Backlog",
+    "toStatus": "InProgress",
+    "changedAt": "2026-07-22T09:30:00Z"
+  }
+]
+```
+
+Regras principais:
+
+- O primeiro evento tem `fromStatus` nulo e representa a criação da tarefa no status inicial.
+- Um novo evento só é registrado quando o status muda de fato (chamadas que repetem o status atual não geram entrada).
+- Retorna `404` quando a tarefa informada não existe.
 
 ## Formato de erro
 

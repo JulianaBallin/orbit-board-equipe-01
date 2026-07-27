@@ -106,4 +106,57 @@ public sealed class WorkspaceServiceTests
         Assert.Equal(_service.GetProjects().Count, dashboard.TotalProjects);
         Assert.True(dashboard.TotalTasks > 0);
     }
+
+    [Fact]
+    public void CreateWorkItem_RecordsInitialStatusInHistory()
+    {
+        var project = _service.GetProjects().First();
+        var created = _service.CreateWorkItem(new CreateWorkItemRequest
+        {
+            ProjectId = project.Id,
+            Title = "New task for history test",
+            Description = "Task created to validate the initial history entry.",
+            Status = WorkItemStatus.Backlog
+        });
+
+        var history = _service.GetWorkItemHistory(created.Id);
+
+        var entry = Assert.Single(history);
+        Assert.Null(entry.FromStatus);
+        Assert.Equal(WorkItemStatus.Backlog, entry.ToStatus);
+    }
+
+    [Fact]
+    public void ChangeWorkItemStatus_AppendsHistoryEntryInOrder()
+    {
+        var task = _service.GetWorkItems(null, null, null, null, null).First();
+
+        var updated = _service.ChangeWorkItemStatus(task.Id, new ChangeWorkItemStatusRequest
+        {
+            Status = WorkItemStatus.Review
+        });
+
+        var history = _service.GetWorkItemHistory(task.Id);
+
+        Assert.Equal(WorkItemStatus.Review, updated.Status);
+        var last = Assert.Single(history);
+        Assert.Equal(task.Status, last.FromStatus);
+        Assert.Equal(WorkItemStatus.Review, last.ToStatus);
+    }
+
+    [Fact]
+    public void ChangeWorkItemStatus_WithSameStatus_DoesNotDuplicateHistory()
+    {
+        var task = _service.GetWorkItems(null, null, null, null, null).First();
+
+        _service.ChangeWorkItemStatus(task.Id, new ChangeWorkItemStatusRequest { Status = task.Status });
+
+        Assert.Empty(_service.GetWorkItemHistory(task.Id));
+    }
+
+    [Fact]
+    public void GetWorkItemHistory_WhenTaskMissing_ThrowsNotFound()
+    {
+        Assert.Throws<NotFoundException>(() => _service.GetWorkItemHistory(Guid.NewGuid()));
+    }
 }
