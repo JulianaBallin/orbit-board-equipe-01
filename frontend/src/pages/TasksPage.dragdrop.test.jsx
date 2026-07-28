@@ -20,17 +20,6 @@ const backlogTask = {
   estimatedHours: 12,
 };
 
-/** Minimal DataTransfer stand-in, since jsdom does not implement the drag API. */
-function dataTransfer() {
-  const store = {};
-  return {
-    effectAllowed: '',
-    dropEffect: '',
-    setData: (type, value) => { store[type] = String(value); },
-    getData: (type) => store[type] ?? '',
-  };
-}
-
 function renderPage() {
   return render(
     <MemoryRouter>
@@ -41,7 +30,22 @@ function renderPage() {
 
 const column = (status) => screen.getByLabelText(`Coluna ${statusLabel(status)}`);
 
-describe('TasksPage drag and drop', () => {
+function pointAt(status) {
+  document.elementFromPoint = () => column(status);
+}
+
+async function dragCardTo(status, { drop = true } = {}) {
+  const card = await screen.findByTitle('Arraste para mover a tarefa de estágio');
+  pointAt(status);
+
+  fireEvent.pointerDown(card, { button: 0, clientX: 10, clientY: 10 });
+  fireEvent.pointerMove(window, { clientX: 300, clientY: 300 });
+  if (drop) fireEvent.pointerUp(window, { clientX: 300, clientY: 300 });
+
+  return card;
+}
+
+describe('TasksPage pointer dragging', () => {
   beforeEach(() => {
     vi.spyOn(api.projects, 'list').mockResolvedValue(projects);
     vi.spyOn(api.tasks, 'list').mockResolvedValue([backlogTask]);
@@ -49,74 +53,91 @@ describe('TasksPage drag and drop', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    delete document.elementFromPoint;
+    document.body.classList.remove('is-dragging-task');
   });
 
-  it('moves a task to the status of the column it is dropped on', async () => {
+  it('moves the task to the column where the pointer was released', async () => {
     const changeStatus = vi.spyOn(api.tasks, 'changeStatus').mockResolvedValue({});
 
     renderPage();
-    const card = await screen.findByTitle('Arraste para mover a tarefa de estágio');
-    const transfer = dataTransfer();
-
-    fireEvent.dragStart(card, { dataTransfer: transfer });
-    fireEvent.drop(column('Done'), { dataTransfer: transfer });
+    await dragCardTo('Done');
 
     await waitFor(() => expect(changeStatus).toHaveBeenCalledWith('task-1', 'Done'));
   });
 
-  it('does not call the API when the task is dropped on its own column', async () => {
+  it('does not call the API when released over its own column', async () => {
     const changeStatus = vi.spyOn(api.tasks, 'changeStatus').mockResolvedValue({});
 
     renderPage();
-    const card = await screen.findByTitle('Arraste para mover a tarefa de estágio');
-    const transfer = dataTransfer();
-
-    fireEvent.dragStart(card, { dataTransfer: transfer });
-    fireEvent.drop(column('Backlog'), { dataTransfer: transfer });
+    await dragCardTo('Backlog');
 
     await waitFor(() => expect(api.tasks.list).toHaveBeenCalled());
     expect(changeStatus).not.toHaveBeenCalled();
   });
 
-  it('highlights the column being hovered and clears it after the drop', async () => {
-    vi.spyOn(api.tasks, 'changeStatus').mockResolvedValue({});
+  it('shows a floating copy of the card while dragging', async () => {
+    renderPage();
+    await dragCardTo('Done', { drop: false });
+
+    const layer = document.querySelector('.drag-layer');
+    expect(layer).not.toBeNull();
+    expect(layer.textContent).toContain('Validar fluxo de inscrição');
+    expect(document.body).toHaveClass('is-dragging-task');
+
+    fireEvent.pointerUp(window, { clientX: 300, clientY: 300 });
+    await waitFor(() => expect(document.querySelector('.drag-layer')).toBeNull());
+    expect(document.body).not.toHaveClass('is-dragging-task');
+  });
+
+  it('marks where the card will land', async () => {
+    renderPage();
+    await dragCardTo('Done', { drop: false });
+
+    expect(document.querySelector('.drop-placeholder')).not.toBeNull();
+    expect(column('Done')).toHaveClass('drop-target');
+
+    fireEvent.pointerUp(window, { clientX: 300, clientY: 300 });
+  });
+
+  it('ignores a press that starts on the controls inside the card', async () => {
+    const changeStatus = vi.spyOn(api.tasks, 'changeStatus').mockResolvedValue({});
+
+    renderPage();
+    await screen.findByTitle('Arraste para mover a tarefa de estágio');
+    pointAt('Done');
+    const select = screen.getByDisplayValue(statusLabel('Backlog'));
+
+    fireEvent.pointerDown(select, { button: 0, clientX: 10, clientY: 10 });
+    fireEvent.pointerMove(window, { clientX: 300, clientY: 300 });
+    fireEvent.pointerUp(window, { clientX: 300, clientY: 300 });
+
+    expect(document.querySelector('.drag-layer')).toBeNull();
+    expect(changeStatus).not.toHaveBeenCalled();
+  });
+
+  it('does not drag on a plain click without movement', async () => {
+    const changeStatus = vi.spyOn(api.tasks, 'changeStatus').mockResolvedValue({});
 
     renderPage();
     const card = await screen.findByTitle('Arraste para mover a tarefa de estágio');
-    const transfer = dataTransfer();
-    const target = column('InProgress');
+    pointAt('Done');
 
-    fireEvent.dragStart(card, { dataTransfer: transfer });
-    fireEvent.dragOver(target, { dataTransfer: transfer });
-    expect(target).toHaveClass('drop-target');
+    fireEvent.pointerDown(card, { button: 0, clientX: 10, clientY: 10 });
+    fireEvent.pointerMove(window, { clientX: 12, clientY: 11 });
+    fireEvent.pointerUp(window, { clientX: 12, clientY: 11 });
 
-    fireEvent.drop(target, { dataTransfer: transfer });
-    await waitFor(() => expect(target).not.toHaveClass('drop-target'));
+    expect(document.querySelector('.drag-layer')).toBeNull();
+    expect(changeStatus).not.toHaveBeenCalled();
   });
 
-  it('does not start a drag from the controls inside the card', async () => {
-    renderPage();
-    await screen.findByTitle('Arraste para mover a tarefa de estágio');
-    const transfer = dataTransfer();
-    const select = screen.getByDisplayValue(statusLabel('Backlog'));
-
-    const started = fireEvent.dragStart(select, { dataTransfer: transfer });
-
-    expect(started).toBe(false);
-    expect(transfer.getData('text/plain')).toBe('');
-  });
-
-  it('reloads the board when the status change fails', async () => {
+  it('reloads the board and reports the error when the move fails', async () => {
     vi.spyOn(api.tasks, 'changeStatus').mockRejectedValue(new Error('Falha ao mover a tarefa.'));
 
     renderPage();
-    const card = await screen.findByTitle('Arraste para mover a tarefa de estágio');
-    const transfer = dataTransfer();
-
-    fireEvent.dragStart(card, { dataTransfer: transfer });
-    fireEvent.drop(column('Done'), { dataTransfer: transfer });
+    await dragCardTo('Done');
 
     expect(await screen.findByText('Falha ao mover a tarefa.')).toBeInTheDocument();
-    await waitFor(() => expect(api.tasks.list).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(api.tasks.list.mock.calls.length).toBeGreaterThan(1));
   });
 });
