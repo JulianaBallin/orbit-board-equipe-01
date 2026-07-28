@@ -159,4 +159,107 @@ public sealed class WorkspaceServiceTests
     {
         Assert.Throws<NotFoundException>(() => _service.GetWorkItemHistory(Guid.NewGuid()));
     }
+
+    [Fact]
+    public void CreateProject_WithInvalidStatus_ThrowsValidation()
+    {
+        var request = new CreateProjectRequest
+        {
+            Name = "Invalid Status Project",
+            Description = "A project with an out-of-range status must be rejected.",
+            Status = (ProjectStatus)999,
+            StartDate = DateOnly.FromDateTime(DateTime.UtcNow),
+            OwnerId = AnyMemberId()
+        };
+
+        Assert.Throws<ValidationException>(() => _service.CreateProject(request));
+    }
+
+    [Fact]
+    public void CreateWorkItem_WithInvalidStatus_ThrowsValidation()
+    {
+        var project = _service.GetProjects().First();
+        var request = new CreateWorkItemRequest
+        {
+            ProjectId = project.Id,
+            Title = "Task with invalid status",
+            Description = "A task with an out-of-range status must be rejected.",
+            Status = (WorkItemStatus)999
+        };
+
+        Assert.Throws<ValidationException>(() => _service.CreateWorkItem(request));
+    }
+
+    [Fact]
+    public void CreateWorkItem_WithInvalidPriority_ThrowsValidation()
+    {
+        var project = _service.GetProjects().First();
+        var request = new CreateWorkItemRequest
+        {
+            ProjectId = project.Id,
+            Title = "Task with invalid priority",
+            Description = "A task with an out-of-range priority must be rejected.",
+            Priority = (WorkItemPriority)999
+        };
+
+        Assert.Throws<ValidationException>(() => _service.CreateWorkItem(request));
+    }
+
+    [Fact]
+    public void ChangeWorkItemStatus_WithInvalidStatus_ThrowsValidation()
+    {
+        var task = _service.GetWorkItems(null, null, null, null, null).First();
+
+        Assert.Throws<ValidationException>(() => _service.ChangeWorkItemStatus(
+            task.Id,
+            new ChangeWorkItemStatusRequest { Status = (WorkItemStatus)999 }));
+    }
+
+    [Fact]
+    public void CreateWorkItem_WithDueDateBeforeProjectStart_ThrowsValidation()
+    {
+        var project = _service.GetProjects().First(project => project.Name == SeededProjectName);
+        var request = new CreateWorkItemRequest
+        {
+            ProjectId = project.Id,
+            Title = "Task due before project starts",
+            Description = "A task due date earlier than the project start date must be rejected.",
+            DueDate = project.StartDate.AddDays(-1)
+        };
+
+        Assert.Throws<ValidationException>(() => _service.CreateWorkItem(request));
+    }
+
+    [Fact]
+    public void CreateWorkItem_WithDueDateAfterProjectDueDate_ThrowsValidation()
+    {
+        var project = _service.GetProjects().First(project =>
+            project.Name == SeededProjectName && project.DueDate.HasValue);
+        var request = new CreateWorkItemRequest
+        {
+            ProjectId = project.Id,
+            Title = "Task due after project ends",
+            Description = "A task due date later than the project due date must be rejected.",
+            DueDate = project.DueDate!.Value.AddDays(1)
+        };
+
+        Assert.Throws<ValidationException>(() => _service.CreateWorkItem(request));
+    }
+
+    [Fact]
+    public void CreateWorkItem_WithDueDateWithinProjectRange_Succeeds()
+    {
+        var project = _service.GetProjects().First(project =>
+            project.Name == SeededProjectName && project.DueDate.HasValue);
+
+        var created = _service.CreateWorkItem(new CreateWorkItemRequest
+        {
+            ProjectId = project.Id,
+            Title = "Task due within project range",
+            Description = "A task due date within the project range must be accepted.",
+            DueDate = project.DueDate!.Value
+        });
+
+        Assert.Equal(project.DueDate, created.DueDate);
+    }
 }
