@@ -27,5 +27,7 @@ public interface IWorkspaceService
 
     IReadOnlyList<TeamMember> GetTeamMembers();
     TeamMember CreateTeamMember(CreateTeamMemberRequest request);
+    TeamMember UpdateTeamMember(Guid id, UpdateTeamMemberRequest request);
+    void DeleteTeamMember(Guid id);
     DashboardResponse GetDashboard();
 }
