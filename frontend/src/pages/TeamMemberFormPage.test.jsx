@@ -19,7 +19,7 @@ function renderPage() {
 
 async function fillForm() {
   await userEvent.type(screen.getByLabelText('Nome'), 'Renata Vasconcelos');
-  await userEvent.type(screen.getByLabelText('Cargo'), 'Backend Developer');
+  await userEvent.selectOptions(screen.getByLabelText('Cargo'), 'Backend Developer');
   await userEvent.type(screen.getByLabelText('Email'), 'renata.vasconcelos@example.com');
 }
 
@@ -42,6 +42,17 @@ describe('TeamMemberFormPage', () => {
       email: 'renata.vasconcelos@example.com',
     });
     expect(await screen.findByRole('heading', { name: 'Equipe' })).toBeInTheDocument();
+  });
+
+  it('offers the role as a preset list already filled in', async () => {
+    renderPage();
+
+    const role = screen.getByLabelText('Cargo');
+
+    expect(role.tagName).toBe('SELECT');
+    expect(role).toHaveValue('Backend Developer');
+    expect(screen.getByRole('option', { name: 'Frontend Developer' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'Tech Lead' })).toBeInTheDocument();
   });
 
   it('keeps the form and shows the reason when the API rejects the email', async () => {
