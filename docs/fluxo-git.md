@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/orbitboard-logo.png" alt="OrbitBoard" width="220" />
+</p>
+
 # Fluxo Git da equipe
 
 ## Branches permanentes e de trabalho

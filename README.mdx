@@ -265,13 +265,12 @@ orbit-board-equipe-01/
 │   ├── contrato-api.md
 │   ├── contribuicoes.md
 │   ├── evidencias-testes.md
-│   ├── registro-ajustes.md
-│   └── roteiro-apresentacao.md
+│   └── registro-ajustes.md
 ├── .env.example
 ├── .gitignore
 ├── Makefile
 ├── docker-compose.yml
-└── README.md
+└── README.mdx
 ```
 
 ---
@@ -287,7 +286,6 @@ O roteiro inclui execução dos containers, dashboard, Swagger, health checks, c
 | [Relatório de desenvolvimento](docs/evidencias/relatorio-desenvolvimento-equipe01.pdf) | Arquitetura, implementação, testes, evidências e apresentação da equipe |
 | [Fonte do relatório](docs/evidencias/relatorio-desenvolvimento-equipe01.tex)           | Documento LaTeX editável e preparado para receber as capturas           |
 | [Registro de ajustes](docs/registro-ajustes.md)                                        | Estado inicial, alterações e formas de validação                        |
-| [Roteiro da apresentação](docs/roteiro-apresentacao.md)                                | Sequência sugerida para uma apresentação de 10 minutos                  |
 | [Plano de contribuições](docs/contribuicoes.md)                                        | Frentes sugeridas e espaço para commits e MRs reais                     |
 | [Fluxo Git](docs/fluxo-git.md)                                                         | Regras das branches, commits e MRs                                      |
 
@@ -329,15 +327,15 @@ Não faça commits diretamente em `main` ou `develop`. O fluxo completo está em
 
 <h2 align="center">Equipe</h2>
 
-| Integrante                    | GitHub                                               | Frente inicial sugerida                        | Contribuição final    |
-| ----------------------------- | ---------------------------------------------------- | ---------------------------------------------- | --------------------- |
-| Allef Oliveira Ramos          | [@allef-oliveira](https://github.com/allef-oliveira) | Testes da API e cenários de erro               | A registrar após o MR |
-| Camila Félix dos Reis         | [@cawzkf](https://github.com/cawzkf)                 | Validação do frontend e usabilidade            | A registrar após o MR |
-| Fernanda de Oliveira da Costa | [@nanda-costa](https://github.com/nanda-costa)       | Docker Compose, logs e infraestrutura          | A registrar após o MR |
-| Juliana Ballin Lima           | [@JulianaBallin](https://github.com/JulianaBallin)   | Organização do repositório e revisão do README | A registrar após o MR |
-| Pedro Henrique Oliveria Dias  | [@pedroddias-oss](https://github.com/pedroddias-oss) | Arquitetura e apresentação técnica             | A registrar após o MR |
+| Integrante                    | GitHub                                               | Contribuição real                                                                                     |
+| ------------------------------ | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Juliana Ballin Lima           | [@JulianaBallin](https://github.com/JulianaBallin)   | Fundação do projeto: containers, CI, Makefile, README inicial, documentação e relatório iniciais; revisão e integração dos MRs #1 a #11 |
+| Allef Oliveira Ramos          | [@allef-oliveira](https://github.com/allef-oliveira) | Branding, rotas separadas de formulário, visualização de tarefas em tabela e migração do README para MDX |
+| Camila Félix dos Reis         | [@cawzkf](https://github.com/cawzkf)                 | Testes xUnit do `WorkspaceService`, testes de integração da API e execução do `dotnet test` na CI      |
+| Fernanda de Oliveira da Costa | [@nanda-costa](https://github.com/nanda-costa)       | Endpoint e testes do histórico de status, validação de enums e prazo de tarefas, e documentação do contrato da API |
+| Pedro Henrique Oliveria Dias  | [@pedroddias-oss](https://github.com/pedroddias-oss) | Modal de histórico de status no frontend, testes automatizados do frontend e pipeline de testes         |
 
-As contribuições devem refletir o histórico real de commits e MRs. A distribuição pode ser ajustada pela equipe antes da entrega.
+O detalhamento completo, com os MRs de origem de cada contribuição, está em [docs/contribuicoes.md](docs/contribuicoes.md).
 
 ---
 

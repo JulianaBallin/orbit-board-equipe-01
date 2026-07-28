@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/orbitboard-logo.png" alt="OrbitBoard" width="220" />
+</p>
+
 # Evidências e testes de integração
 
 Este documento organiza as validações exigidas no trabalho final. Capturas, resultados e responsáveis devem ser preenchidos pelos integrantes que executarem cada cenário.
@@ -41,6 +45,7 @@ Não inclua tokens, senhas, emails pessoais, cookies ou outros segredos nas imag
 | E10 | Excluir projeto com tarefa | Resposta `409` sem remover o projeto | `E10-bloqueio-exclusao.png` | Definir | Pendente |
 | E11 | Parar o backend e usar a interface | Frontend mostra erro de conexão | `E11-backend-indisponivel.png` | Definir | Pendente |
 | E12 | Consultar logs do Compose | Logs mostram inicialização sem erro não tratado | `E12-logs-containers.png` | Definir | Pendente |
+| E13 | Consultar `GET /api/tasks/{id}/history` pelo Swagger ou Postman | JSON com o histórico de transições de status em ordem cronológica | `E13-backend-task-history.png` | Definir | Pendente |
 | E14 | Abrir o histórico de status de uma tarefa pela interface (quadro ou tabela) | Modal exibe as transições de status em ordem cronológica, da mais recente para a mais antiga | `E14-historico-tarefa-frontend.png` | Definir | Pendente |
 
 ## Verificações técnicas iniciais
@@ -80,7 +85,26 @@ Verificação executada em 20 de julho de 2026 na branch `feature/project-founda
 | Exclusão do projeto temporário | `204` |
 | Logs dos containers | Inicialização sem erro não tratado e aviso esperado para o conflito |
 
-Esses resultados comprovam a preparação técnica inicial. A equipe ainda deve repetir a execução, produzir as capturas e preencher os responsáveis antes da apresentação.
+Esses resultados comprovam a preparação técnica inicial. A equipe ainda deve repetir a execução, produzir as capturas restantes e preencher os responsáveis antes da apresentação.
+
+### Reverificação técnica
+
+Reverificação executada em 27 de julho de 2026 na branch `chore/finalize-final-deliverables`, antes da abertura do MR final para `develop`.
+
+| Verificação | Resultado |
+|---|---|
+| `dotnet test backend/OrbitBoard.Api.sln` | Aprovado, 29 testes (19 unitários e 10 de integração) |
+| `npm test` (frontend) | Aprovado, 10 testes em 4 arquivos |
+| `npm run build` (frontend) | Aprovado com Vite 8.1.5 |
+| `dotnet build --configuration Release` | Aprovado, sem erros e sem avisos |
+| `npm audit --audit-level=moderate` | 2 vulnerabilidades moderadas em `react-router` (ver Registro de falhas) |
+| `docker compose config` | Aprovado |
+| `docker compose up --build -d` | Aprovado, backend e frontend saudáveis |
+| `GET /health`, `/api/dashboard`, `/api/projects`, `/api/tasks`, `/api/tasks/{id}/history` | Todos com `200` e JSON válido |
+| `POST /api/projects` com nome duplicado | `409` tratado corretamente |
+| CORS para `http://localhost:5173` | Origem autorizada |
+
+Essa reverificação confirma que as rotas, os endpoints e os testes automatizados continuam funcionando após as últimas contribuições da equipe. As capturas visuais e o roteiro manual completo continuam sendo responsabilidade da execução final da equipe descrita acima.
 
 ## Teste de uma chamada HTTP
 
@@ -110,3 +134,9 @@ Para cada falha encontrada, registre:
 | Correção | Alteração realizada |
 | Evidência | Captura, log, commit ou MR |
 | Responsável | Integrante que investigou |
+
+### Falhas registradas
+
+| Cenário | Sintoma | Causa | Correção | Evidência |
+|---|---|---|---|---|
+| `npm audit` no frontend | 2 vulnerabilidades moderadas relatadas para `react-router` (GHSA-wrjc-x8rr-h8h6 e GHSA-337j-9hxr-rhxg) | Todas as versões 6.x do `react-router` são afetadas; a correção exige migrar para a versão 7, que não é compatível sem revisar as rotas | Não aplicada nesta entrega; registrada como melhoria opcional em `docs/evidencias/relatorio-desenvolvimento-equipe01.tex` | `npm audit` |

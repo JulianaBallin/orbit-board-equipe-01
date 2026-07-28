@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/orbitboard-logo.png" alt="OrbitBoard" width="220" />
+</p>
+
 # Arquitetura do OrbitBoard
 
 ## Visão geral
@@ -12,7 +16,7 @@ flowchart LR
     S --> M[(Dados em memória)]
     A --> W[Swagger e OpenAPI]
 
-    subgraph Docker Compose
+    subgraph compose[Docker Compose]
         N[Nginx porta 80] --> F
         A
     end

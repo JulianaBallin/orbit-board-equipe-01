@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../docs/assets/orbitboard-logo.png" alt="OrbitBoard" width="220" />
+</p>
+
 # OrbitBoard | Backend
 
 API REST em **.NET 8 / ASP.NET Core** para uma aplicação de acompanhamento de projetos, tarefas e equipe.
@@ -8,6 +12,7 @@ API REST em **.NET 8 / ASP.NET Core** para uma aplicação de acompanhamento de 
 - Cadastro, consulta, edição e exclusão de projetos.
 - Cadastro, consulta, edição e exclusão de tarefas.
 - Alteração rápida do status de uma tarefa.
+- Histórico de mudanças de status de uma tarefa, em ordem cronológica.
 - Filtros por projeto, status, prioridade, responsável e texto.
 - Listagem dos integrantes da equipe.
 - Validação de entrada por Data Annotations.
@@ -83,6 +88,7 @@ As origens permitidas pelo CORS ficam em `Cors:AllowedOrigins`. No Docker Compos
 | PUT | `/api/tasks/{id}` | Atualiza uma tarefa. |
 | PATCH | `/api/tasks/{id}/status` | Altera somente o status. |
 | DELETE | `/api/tasks/{id}` | Exclui uma tarefa. |
+| GET | `/api/tasks/{id}/history` | Lista o histórico de mudanças de status da tarefa. |
 
 Filtros aceitos em `GET /api/tasks`:
 

@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../docs/assets/orbitboard-logo.png" alt="OrbitBoard" width="220" />
+</p>
+
 # OrbitBoard | Frontend
 
 Aplicação web em **React 18 + Vite** para consumir a API OrbitBoard e demonstrar integração full stack.

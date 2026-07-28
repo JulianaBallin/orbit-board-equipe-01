@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../../assets/orbitboard-logo.png" alt="OrbitBoard" width="220" />
+</p>
+
 # Catálogo de capturas
 
 Adicione nesta pasta as evidências visuais da execução final. O relatório LaTeX procura automaticamente os arquivos abaixo. Quando uma imagem ainda não existe, o PDF mostra um espaço reservado com seu nome.
@@ -13,7 +17,7 @@ Adicione nesta pasta as evidências visuais da execução final. O relatório La
 | `E07-criar-tarefa.png` | Tarefa criada e exibida no quadro |
 | `E08-filtrar-tarefas.png` | Filtros aplicados ao quadro de tarefas |
 | `E09-alterar-status.png` | Tarefa após alteração de status |
-| `E10-bloqueio-exclusao.png` | Bloqueio ao excluir projeto que possui tarefas | ||TODO precisa implementar no back e front
+| `E10-bloqueio-exclusao.png` | Bloqueio ao excluir projeto que possui tarefas |
 | `E11-backend-indisponivel.png` | Tratamento de erro do frontend sem acesso à API |
 | `E12-logs-containers.png` | Logs de inicialização dos dois containers |
 | `E13-backend-task-history.png` | Histórico de transição de status das tarefas |
