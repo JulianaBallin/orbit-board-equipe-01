@@ -55,6 +55,8 @@ Não inclua tokens, senhas, emails pessoais, cookies ou outros segredos nas imag
 | E20 | Abrir o formulário de novo colaborador e expandir o campo Cargo | Lista de cargos pré-definidos, já com um valor selecionado | `E20-cargo-lista-cadastro.png` | Camila Félix | Concluído |
 | E21 | Cadastrar um colaborador válido e voltar para a Equipe | Resposta `201` e integrante novo na grade, junto da equipe do projeto | `E21-colaborador-cadastrado.png` | Camila Félix | Concluído |
 | E22 | Cadastrar colaborador com email já usado | Resposta `409`, mensagem explicando o conflito e formulário preservado | `E22-colaborador-email-repetido.png` | Camila Félix | Concluído |
+| E23 | Alternar a interface para o tema escuro | Tema aplicado em toda a interface, com componentes legíveis e controle de alternância visível | `E23-tema-escuro.png` | Allef Oliveira | Concluído |
+| E24 | Executar os testes automatizados do frontend após as alterações | 49 testes em 10 arquivos aprovados, sem warnings | `E24-testes-frontend.png` | Allef Oliveira | Em progresso |
 
 ## Verificações técnicas iniciais
 
@@ -136,6 +138,21 @@ Cobertura automatizada adicionada nesta verificação:
 | `DeleteProject_WithUnfinishedTasks_Returns409` | API |
 | `DeleteProject_WithOnlyDoneTasks_Returns204` | API |
 | `ProjectsPage delete guard` (3 casos) | Interface |
+
+### Reverificação da alteração de tema
+
+Executada em 28 de julho de 2026 após a implementação dos temas claro e escuro e os ajustes nos testes do frontend.
+
+| Verificação | Resultado |
+|---|---|
+| `npm test` (frontend) | Aprovado, 49 testes em 10 arquivos |
+| Testes do `themeService` | Aprovado, 7 casos |
+| Inicialização do tema | Respeita o tema aplicado, a preferência salva e, na ausência deles, o tema do sistema |
+| Alternância e persistência | Alterna entre claro e escuro, persiste a escolha no `localStorage` e emite `themechange` |
+| Compatibilidade visual | Cores e componentes ajustados para preservar contraste e legibilidade |
+| Warnings da suíte | Execução sem warnings do React Router e de atualizações fora de `act(...)` |
+
+Os testes do `themeService` cobrem a preferência do sistema, o tema persistido, a prioridade do tema já aplicado, a persistência, o evento `themechange`, a alternância e a rejeição de valores inválidos. As capturas E23 e E24 devem registrar, respectivamente, o resultado visual e a saída final da suíte.
 
 ## Teste de uma chamada HTTP
 
