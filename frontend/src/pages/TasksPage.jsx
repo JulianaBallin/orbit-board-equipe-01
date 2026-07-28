@@ -19,6 +19,8 @@ export default function TasksPage() {
   const [notice, setNotice] = useState('');
   const [viewMode, setViewMode] = useState('board');
   const [historyTask, setHistoryTask] = useState(null);
+  const [draggingId, setDraggingId] = useState(null);
+  const [dropTarget, setDropTarget] = useState('');
 
   const loadReferenceData = useCallback(async () => {
     setProjects(await api.projects.list());
@@ -52,8 +54,49 @@ export default function TasksPage() {
       await api.tasks.changeStatus(id, status);
       await loadTasks();
     } catch (err) {
+      await loadTasks();
       setError(err.message);
     }
+  };
+
+  const startDrag = (event, task) => {
+    if (event.target.closest('button, select, input, textarea, label')) {
+      event.preventDefault();
+      return;
+    }
+
+    setDraggingId(task.id);
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', task.id);
+    event.dataTransfer.setDragImage(event.currentTarget, 24, 24);
+  };
+
+  const endDrag = () => {
+    setDraggingId(null);
+    setDropTarget('');
+  };
+
+  const allowDrop = (event, status) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+    setDropTarget(status);
+  };
+
+  const leaveColumn = (event, status) => {
+    if (event.currentTarget.contains(event.relatedTarget)) return;
+    setDropTarget((current) => (current === status ? '' : current));
+  };
+
+  const dropOnColumn = async (event, status) => {
+    event.preventDefault();
+    const id = event.dataTransfer.getData('text/plain') || draggingId;
+    endDrag();
+
+    const task = tasks.find((item) => item.id === id);
+    if (!task || task.status === status) return;
+
+    setTasks((current) => current.map((item) => (item.id === id ? { ...item, status } : item)));
+    await changeStatus(id, status);
   };
 
   const remove = async (task) => {
@@ -73,7 +116,7 @@ export default function TasksPage() {
         <div>
           <span className="eyebrow">Execução</span>
           <h2>Tarefas</h2>
-          <p>Filtre, crie e mova demandas entre os estágios do fluxo.</p>
+          <p>Filtre, crie e arraste as demandas entre os estágios do fluxo.</p>
         </div>
         <div className="card-actions">
           <div className="view-switcher" role="group" aria-label="Visualização das tarefas">
@@ -136,14 +179,28 @@ export default function TasksPage() {
           {statuses.map((status) => {
             const columnTasks = tasks.filter((task) => task.status === status);
             return (
-              <section className="task-column" key={status}>
+              <section
+                className={`task-column${dropTarget === status ? ' drop-target' : ''}`}
+                key={status}
+                onDragOver={(event) => allowDrop(event, status)}
+                onDragLeave={(event) => leaveColumn(event, status)}
+                onDrop={(event) => dropOnColumn(event, status)}
+                aria-label={`Coluna ${statusLabel(status)}`}
+              >
                 <div className="column-header">
                   <h3>{statusLabel(status)}</h3>
                   <span>{columnTasks.length}</span>
                 </div>
                 {columnTasks.length === 0 && <EmptyState title="Sem tarefas" description="Nenhuma demanda neste estágio." />}
                 {columnTasks.map((task) => (
-                  <article className="task-card" key={task.id}>
+                  <article
+                    className={`task-card${draggingId === task.id ? ' dragging' : ''}`}
+                    key={task.id}
+                    draggable
+                    onDragStart={(event) => startDrag(event, task)}
+                    onDragEnd={endDrag}
+                    title="Arraste para mover a tarefa de estágio"
+                  >
                     <div className="card-topline">
                       <Badge tone={priorityTone(task.priority)}>{priorityLabel(task.priority)}</Badge>
                       <span>{task.dueDate ? formatDate(task.dueDate) : 'Sem prazo'}</span>
