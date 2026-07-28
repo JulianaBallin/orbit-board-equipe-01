@@ -59,7 +59,7 @@ Não inclua tokens, senhas, emails pessoais, cookies ou outros segredos nas imag
 | E28 | Excluir integrante responsável por projeto e tarefa | Resposta `409` informando quantos vínculos existem, com a lista preservada | `E28-bloqueio-exclusao-colaborador.png` | Camila Félix | Concluído |
 | E29 | Excluir integrante sem vínculo | Resposta `204`, aviso de sucesso e grade sem o integrante | `E29-colaborador-excluido.png` | Camila Félix | Concluído |
 | E23 | Alternar a interface para o tema escuro | Tema aplicado em toda a interface, com componentes legíveis e controle de alternância visível | `E23-tema-escuro.png` | Allef Oliveira | Concluído |
-| E24 | Executar os testes automatizados do frontend após as alterações | 49 testes em 10 arquivos aprovados, sem warnings | `E24-testes-frontend.png` | Allef Oliveira | Em progresso |
+| E24 | Executar os testes automatizados do frontend após as alterações | 62 testes em 12 arquivos aprovados, sem warnings | `E24-testes-tema.png` | Allef Oliveira | Em progresso |
 | E30 | Acionar a exclusão de um colaborador | Modal de confirmação com o aviso de que integrantes vinculados não podem ser excluídos | `E30-modal-exclusao-colaborador.png` | Camila Félix | Concluído |
 
 ## Verificações técnicas iniciais
