@@ -22,4 +22,22 @@ public sealed class TeamMembersController(IWorkspaceService service) : Controlle
         var member = service.CreateTeamMember(request);
         return CreatedAtAction(nameof(GetAll), new { id = member.Id }, member);
     }
+
+    [HttpPut("{id:guid}")]
+    [ProducesResponseType<TeamMember>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public ActionResult<TeamMember> Update(Guid id, UpdateTeamMemberRequest request) =>
+        Ok(service.UpdateTeamMember(id, request));
+
+    [HttpDelete("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public IActionResult Delete(Guid id)
+    {
+        service.DeleteTeamMember(id);
+        return NoContent();
+    }
 }

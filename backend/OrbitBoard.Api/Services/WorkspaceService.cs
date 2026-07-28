@@ -312,6 +312,50 @@ public sealed class WorkspaceService : IWorkspaceService
         }
     }
 
+    public TeamMember UpdateTeamMember(Guid id, UpdateTeamMemberRequest request)
+    {
+        lock (_sync)
+        {
+            var member = FindMember(id);
+            var email = request.Email.Trim();
+
+            if (_members.Any(other => other.Id != id
+                && string.Equals(other.Email, email, StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new ConflictException("Já existe um integrante com esse email.");
+            }
+
+            member.Name = request.Name.Trim();
+            member.Role = request.Role.Trim();
+            member.Email = email;
+            member.Initials = BuildInitials(request.Name);
+
+            return member;
+        }
+    }
+
+    public void DeleteTeamMember(Guid id)
+    {
+        lock (_sync)
+        {
+            var member = FindMember(id);
+            var projects = _projects.Count(project => project.OwnerId == id);
+            var tasks = _workItems.Count(item => item.AssigneeId == id);
+
+            if (projects > 0 || tasks > 0)
+            {
+                throw new ConflictException(
+                    $"O integrante responde por {projects} projeto(s) e {tasks} tarefa(s) e não pode ser excluído.");
+            }
+
+            _members.Remove(member);
+        }
+    }
+
+    private TeamMember FindMember(Guid id) =>
+        _members.FirstOrDefault(member => member.Id == id)
+        ?? throw new NotFoundException("Integrante não encontrado.");
+
     private static string BuildInitials(string name)
     {
         var parts = name

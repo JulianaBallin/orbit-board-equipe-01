@@ -371,6 +371,121 @@ public sealed class WorkspaceServiceTests
         Assert.Equal(member.Name, project.OwnerName);
     }
 
+    private TeamMember SeedMember(string name, string email) =>
+        _service.CreateTeamMember(new CreateTeamMemberRequest
+        {
+            Name = name,
+            Role = "Backend Developer",
+            Email = email
+        });
+
+    [Fact]
+    public void UpdateTeamMember_ChangesDataAndRefreshesInitials()
+    {
+        var member = SeedMember("Marina Alves", "marina.alves@example.com");
+
+        var updated = _service.UpdateTeamMember(member.Id, new UpdateTeamMemberRequest
+        {
+            Name = "Marina Alves Peixoto",
+            Role = "Tech Lead",
+            Email = "marina.peixoto@example.com"
+        });
+
+        Assert.Equal("Marina Alves Peixoto", updated.Name);
+        Assert.Equal("Tech Lead", updated.Role);
+        Assert.Equal("MP", updated.Initials);
+    }
+
+    [Fact]
+    public void UpdateTeamMember_KeepingItsOwnEmail_IsAllowed()
+    {
+        var member = SeedMember("Marina Alves", "marina.alves@example.com");
+
+        var updated = _service.UpdateTeamMember(member.Id, new UpdateTeamMemberRequest
+        {
+            Name = "Marina Alves",
+            Role = "Tech Lead",
+            Email = "marina.alves@example.com"
+        });
+
+        Assert.Equal("Tech Lead", updated.Role);
+    }
+
+    [Fact]
+    public void UpdateTeamMember_WithEmailOfAnotherMember_ThrowsConflict()
+    {
+        var member = SeedMember("Marina Alves", "marina.alves@example.com");
+        var other = _service.GetTeamMembers().First(item => item.Id != member.Id);
+
+        Assert.Throws<ConflictException>(() => _service.UpdateTeamMember(member.Id, new UpdateTeamMemberRequest
+        {
+            Name = "Marina Alves",
+            Role = "Tech Lead",
+            Email = other.Email
+        }));
+    }
+
+    [Fact]
+    public void UpdateTeamMember_WhenMissing_ThrowsNotFound()
+    {
+        Assert.Throws<NotFoundException>(() => _service.UpdateTeamMember(Guid.NewGuid(), new UpdateTeamMemberRequest
+        {
+            Name = "Qualquer Nome",
+            Role = "Designer",
+            Email = "qualquer@example.com"
+        }));
+    }
+
+    [Fact]
+    public void DeleteTeamMember_WithoutLinks_RemovesIt()
+    {
+        var member = SeedMember("Marina Alves", "marina.alves@example.com");
+
+        _service.DeleteTeamMember(member.Id);
+
+        Assert.DoesNotContain(_service.GetTeamMembers(), item => item.Id == member.Id);
+    }
+
+    [Fact]
+    public void DeleteTeamMember_OwningAProject_ThrowsConflict()
+    {
+        var member = SeedMember("Marina Alves", "marina.alves@example.com");
+        _service.CreateProject(new CreateProjectRequest
+        {
+            Name = "Projeto da Marina",
+            Description = "Projeto usado para travar a exclusão do integrante.",
+            Status = ProjectStatus.Planning,
+            StartDate = DateOnly.FromDateTime(DateTime.UtcNow),
+            OwnerId = member.Id
+        });
+
+        Assert.Throws<ConflictException>(() => _service.DeleteTeamMember(member.Id));
+        Assert.Contains(_service.GetTeamMembers(), item => item.Id == member.Id);
+    }
+
+    [Fact]
+    public void DeleteTeamMember_AssignedToATask_ThrowsConflict()
+    {
+        var member = SeedMember("Marina Alves", "marina.alves@example.com");
+        var project = _service.GetProjects().First();
+        _service.CreateWorkItem(new CreateWorkItemRequest
+        {
+            ProjectId = project.Id,
+            Title = "Tarefa da Marina",
+            Description = "Tarefa usada para travar a exclusão do integrante.",
+            AssigneeId = member.Id,
+            EstimatedHours = 2
+        });
+
+        Assert.Throws<ConflictException>(() => _service.DeleteTeamMember(member.Id));
+    }
+
+    [Fact]
+    public void DeleteTeamMember_WhenMissing_ThrowsNotFound()
+    {
+        Assert.Throws<NotFoundException>(() => _service.DeleteTeamMember(Guid.NewGuid()));
+    }
+
     [Fact]
     public void GetDashboard_ReflectsProjectAndTaskCounts()
     {
