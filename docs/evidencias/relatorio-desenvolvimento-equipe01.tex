@@ -85,7 +85,7 @@
 \fancyhead[R]{\small\color{OrbitViolet}\textbf{Equipe 01}}
 \fancyfoot[L]{\scriptsize\color{OrbitText}Módulo 5 | Integração Full Stack}
 \fancyfoot[C]{\scriptsize\color{OrbitText}Página \thepage\ de \pageref{LastPage}}
-\fancyfoot[R]{\scriptsize\color{OrbitText}OrbitBoard | Versão 1.4}
+\fancyfoot[R]{\scriptsize\color{OrbitText}OrbitBoard | Versão 1.5}
 \renewcommand{\headrulewidth}{0.6pt}
 \renewcommand{\footrulewidth}{0.4pt}
 \renewcommand{\headrule}{\hbox to\headwidth{\color{OrbitLine}\leaders\hrule height \headrulewidth\hfill}}
@@ -98,7 +98,7 @@
   \fancyhead[R]{\small\color{OrbitViolet}\textbf{Equipe 01}}
   \fancyfoot[L]{\scriptsize\color{OrbitText}Módulo 5 | Integração Full Stack}
   \fancyfoot[C]{\scriptsize\color{OrbitText}Página \thepage\ de \pageref{LastPage}}
-  \fancyfoot[R]{\scriptsize\color{OrbitText}OrbitBoard | Versão 1.4}
+  \fancyfoot[R]{\scriptsize\color{OrbitText}OrbitBoard | Versão 1.5}
   \renewcommand{\headrulewidth}{0.6pt}
   \renewcommand{\footrulewidth}{0.4pt}
 }
@@ -249,9 +249,9 @@
   Módulo & Módulo 5 de Integração Full Stack \\
   Repositório & \url{https://github.com/JulianaBallin/orbit-board-equipe-01} \\
   Branch de desenvolvimento & \texttt{develop} \\
-  Versão & 1.4 \\
+  Versão & 1.5 \\
   Data de referência & 28 de julho de 2026 \\
-  Situação & Auditoria técnica concluída, evidências completas e apresentação preparada \\
+  Situação & Auditoria técnica concluída e evidências completas \\
 \end{tabularx}
 
 \begin{resumobox}[Controle de revisão]
@@ -285,11 +285,11 @@ A equipe adotou a aplicação base fornecida pelo docente e concentrou o desenvo
 
 \section{Contexto acadêmico}
 
-O trabalho final do Módulo 5 utiliza uma aplicação full stack como estudo de caso. A avaliação considera a compreensão da arquitetura, a organização do repositório, a integração entre frontend e backend, os ajustes técnicos, a execução por Docker, os testes, as evidências e a apresentação da equipe.
+O trabalho final do Módulo 5 utiliza uma aplicação full stack como estudo de caso. A avaliação considera a compreensão da arquitetura, a organização do repositório, a integração entre frontend e backend, os ajustes técnicos, a execução por Docker, os testes e as evidências.
 
 \section{Objetivo geral}
 
-Preparar, executar, analisar, documentar e apresentar uma aplicação full stack que demonstre comunicação HTTP e JSON entre um frontend React e uma API ASP.NET Core, com ambiente reproduzível por Docker Compose.
+Preparar, executar, analisar e documentar uma aplicação full stack que demonstre comunicação HTTP e JSON entre um frontend React e uma API ASP.NET Core, com ambiente reproduzível por Docker Compose.
 
 \section{Objetivos específicos}
 
@@ -318,9 +318,8 @@ Backend & API, Swagger, CORS, JSON, validação e erros & \statusok \\
 Frontend & Consumo da API, formulários, filtros e estados & \statusok \\
 Docker & Dois Dockerfiles, Compose, portas e health checks & \statusok \\
 Git & Branches, commits convencionais, CI e MRs & \statusok \\
-Documentação & README, arquitetura, contrato e roteiro & \statusok \\
+Documentação & README, arquitetura e contrato & \statusok \\
 Evidências & 28 capturas registradas e relatório atualizado & \statusok \\
-Apresentação & Roteiro técnico de 7 minutos preparado & \statusok \\
 \bottomrule
 \end{tabularx}
 \end{statusbox}
@@ -407,7 +406,7 @@ Ao tentar criar um projeto com nome já existente ou excluir um projeto que aind
 \toprule
 Camada & Responsabilidade & Tecnologia \\
 \midrule
-Interface & Navegação, formulários, filtros, mensagens e apresentação do estado & React 18, React Router e Vite 8 \\
+Interface & Navegação, formulários, filtros, mensagens e exibição do estado & React 18, React Router e Vite 8 \\
 Cliente HTTP & Montagem de URLs, serialização JSON e interpretação de erros & Fetch API \\
 API & Endpoints, validação, CORS, Swagger e orquestração das regras & ASP.NET Core 8 \\
 Domínio & Projetos, tarefas, integrantes, enums e regras de consistência & C\# e \texttt{WorkspaceService} \\
@@ -926,41 +925,6 @@ Pedro & Modal de histórico, testes do frontend, pipeline de testes, revisão do
 A tabela final de contribuições deve refletir commits e MRs reais. Nenhum integrante deve registrar trabalho em nome de outra pessoa. Cada contribuição precisa ser associada ao usuário correto no GitHub.
 \end{statusbox}
 
-\chapter{Plano de apresentação}
-
-\section{Roteiro de 7 minutos}
-
-\begin{longtable}{p{0.16\textwidth} p{0.24\textwidth} p{0.49\textwidth}}
-\toprule
-Tempo & Tema & Conteúdo \\
-\midrule
-\endhead
-0:00 a 0:30 & Abertura & Nome, objetivo didático e integrantes \\
-0:30 a 1:15 & Arquitetura & Frontend, API, dados em memória e Docker \\
-1:15 a 3:30 & Demonstração & Quadro, arraste, histórico, equipe e tema escuro \\
-3:30 a 4:15 & API & Swagger, JSON, health check e erro 409 \\
-4:15 a 5:00 & Infraestrutura & Compose, portas e variáveis \\
-5:00 a 6:15 & Qualidade & 164 testes, CI e 28 evidências \\
-6:15 a 7:00 & Encerramento & Melhorias, contribuições e limitações \\
-\bottomrule
-\end{longtable}
-
-\section{Sequência de demonstração}
-
-\begin{enumerate}
-  \item Exibir \texttt{docker compose ps} com os serviços saudáveis.
-  \item Abrir o dashboard e relacionar as métricas à resposta da API.
-  \item Arrastar uma tarefa entre colunas e abrir seu histórico.
-  \item Alternar o tema e mostrar rapidamente a gestão da equipe.
-  \item Abrir o Swagger, consultar o health check e explicar uma resposta 409.
-  \item Mostrar a pipeline e os totais das suítes automatizadas.
-  \item Encerrar com as decisões técnicas, contribuições e a limitação dos dados em memória.
-\end{enumerate}
-
-\section{Plano de contingência}
-
-As capturas deste relatório servem como apoio caso o ambiente não possa ser iniciado durante a apresentação. A equipe deve manter as imagens Docker prontas, verificar as portas e abrir previamente o frontend, o Swagger e um terminal com os comandos principais.
-
 \chapter{Limitações, riscos e próximos passos}
 
 \section{Limitações conhecidas}
@@ -973,26 +937,9 @@ As capturas deste relatório servem como apoio caso o ambiente não possa ser in
   \item A aplicação foi projetada para uso didático e execução local.
 \end{itemize}
 
-\section{Riscos para a apresentação}
-
-\begin{tabularx}{\textwidth}{>{\bfseries}p{0.28\textwidth} X}
-\toprule
-Risco & Mitigação \\
-\midrule
-Porta ocupada & Encerrar processos anteriores ou ajustar o arquivo \texttt{.env} \\
-Imagem não compilada & Executar \texttt{make up} antes da apresentação \\
-Backend indisponível & Conferir \texttt{make status}, \texttt{make logs} e o health check \\
-Falha de rede & Manter capturas e PDF disponíveis localmente \\
-Dados inconsistentes & Reiniciar o backend para restaurar os dados iniciais \\
-Tempo excedido & Ensaiar o roteiro e limitar a demonstração aos fluxos principais \\
-\bottomrule
-\end{tabularx}
-
 \section{Próximos passos obrigatórios}
 
 \begin{enumerate}
-  \item Confirmar os responsáveis por cada parte da apresentação.
-  \item Ensaiar e confirmar a duração de 7 minutos.
   \item Integrar a auditoria final em \texttt{develop} por MR.
   \item Promover a versão validada de \texttt{develop} para \texttt{main} por MR.
 \end{enumerate}
@@ -1013,7 +960,7 @@ O OrbitBoard demonstra os elementos centrais de uma aplicação full stack: inte
 
 A documentação registra a arquitetura, as decisões, os contratos, os ajustes, o processo de trabalho e a contribuição real de cada integrante. O Makefile facilita a execução por todos os integrantes. As 28 evidências planejadas estão registradas, o que torna a preparação final objetiva.
 
-O estágio técnico e documental está concluído. O roteiro de apresentação, a branch de entrega e o fluxo de promoção por MR estão preparados e documentados.
+O estágio técnico e documental está concluído. A branch de entrega e o fluxo de promoção por MR estão preparados e documentados.
 
 \begin{resumobox}[Checklist final]
 \begin{tabularx}{\textwidth}{X p{0.22\textwidth}}
@@ -1031,7 +978,6 @@ Relatório técnico & \statusok \\
 Testes automatizados & \statusok \\
 Contribuições dos integrantes & \statusok \\
 Capturas finais & \statusok \\
-Roteiro da apresentação & \statusok \\
 Branch e arquivo de MR para \texttt{develop} & \statusok \\
 Fluxo de promoção para \texttt{main} documentado & \statusok \\
 \bottomrule
