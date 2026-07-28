@@ -132,6 +132,89 @@ public sealed class ApiEndpointsTests : IDisposable
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
+    private async Task<TeamMember> RegisterMemberAsync(string name, string email)
+    {
+        var request = new CreateTeamMemberRequest
+        {
+            Name = name,
+            Role = "Backend Developer",
+            Email = email
+        };
+
+        var response = await _client.PostAsJsonAsync("/api/team-members", request, JsonOptions);
+        return (await response.Content.ReadFromJsonAsync<TeamMember>(JsonOptions))!;
+    }
+
+    [Fact]
+    public async Task UpdateTeamMember_WithValidData_Returns200AndRefreshesInitials()
+    {
+        var member = await RegisterMemberAsync("Marina Alves", "marina.alves@example.com");
+
+        var request = new UpdateTeamMemberRequest
+        {
+            Name = "Marina Alves Peixoto",
+            Role = "Tech Lead",
+            Email = "marina.peixoto@example.com"
+        };
+        var response = await _client.PutAsJsonAsync($"/api/team-members/{member.Id}", request, JsonOptions);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var updated = await response.Content.ReadFromJsonAsync<TeamMember>(JsonOptions);
+        Assert.Equal("MP", updated!.Initials);
+        Assert.Equal("Tech Lead", updated.Role);
+    }
+
+    [Fact]
+    public async Task UpdateTeamMember_WhenMissing_Returns404()
+    {
+        var request = new UpdateTeamMemberRequest
+        {
+            Name = "Qualquer Nome",
+            Role = "Designer",
+            Email = "qualquer@example.com"
+        };
+
+        var response = await _client.PutAsJsonAsync($"/api/team-members/{Guid.NewGuid()}", request, JsonOptions);
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task DeleteTeamMember_WithoutLinks_Returns204()
+    {
+        var member = await RegisterMemberAsync("Marina Alves", "marina.alves@example.com");
+
+        var response = await _client.DeleteAsync($"/api/team-members/{member.Id}");
+
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+
+        var members = await _client.GetFromJsonAsync<List<TeamMember>>("/api/team-members", JsonOptions);
+        Assert.DoesNotContain(members!, item => item.Id == member.Id);
+    }
+
+    [Fact]
+    public async Task DeleteTeamMember_OwningAProject_Returns409()
+    {
+        var projects = await _client.GetFromJsonAsync<List<ProjectResponse>>("/api/projects", JsonOptions);
+        var ownerId = projects!.First().OwnerId;
+
+        var response = await _client.DeleteAsync($"/api/team-members/{ownerId}");
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task DeleteTeamMember_KeepsTheProjectListingHealthy()
+    {
+        var projects = await _client.GetFromJsonAsync<List<ProjectResponse>>("/api/projects", JsonOptions);
+        await _client.DeleteAsync($"/api/team-members/{projects!.First().OwnerId}");
+
+        var response = await _client.GetAsync("/api/projects");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
     [Fact]
     public async Task CreateProject_WithValidData_Returns201AndIsListed()
     {
