@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../api/client';
-import { ErrorState, LoadingState } from '../components/Common';
+import { EmptyState, ErrorState, LoadingState } from '../components/Common';
 
 export default function TeamPage() {
+  const navigate = useNavigate();
   const [members, setMembers] = useState(null);
   const [error, setError] = useState('');
 
@@ -28,7 +30,14 @@ export default function TeamPage() {
           <h2>Equipe</h2>
           <p>Profissionais disponíveis para assumir projetos e tarefas.</p>
         </div>
+        <button type="button" className="button primary" onClick={() => navigate('/team/new')}>
+          Novo colaborador
+        </button>
       </div>
+
+      {members.length === 0 && (
+        <EmptyState title="Nenhum colaborador" description="Cadastre o primeiro integrante da equipe." />
+      )}
 
       <div className="team-grid">
         {members.map((member) => (
