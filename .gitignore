@@ -151,12 +151,3 @@ openapi.json
 *.tar
 *.tar.gz
 *.gz
-
-# Arquivos auxiliares do relatorio LaTeX
-docs/evidencias/*.aux
-docs/evidencias/*.log
-docs/evidencias/*.out
-docs/evidencias/*.toc
-docs/evidencias/*.fls
-docs/evidencias/*.fdb_latexmk
-docs/evidencias/*.synctex.gz

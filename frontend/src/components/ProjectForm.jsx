@@ -86,7 +86,7 @@ export default function ProjectForm({ members, editing, onSubmit, onCancel, busy
       </div>
 
       <div className="form-actions">
-        <button type="button" className="button secondary" onClick={onCancel}>Cancelar</button>
+        {editing && <button type="button" className="button secondary" onClick={onCancel}>Cancelar</button>}
         <button className="button primary" disabled={busy}>{busy ? 'Salvando...' : 'Salvar projeto'}</button>
       </div>
     </form>

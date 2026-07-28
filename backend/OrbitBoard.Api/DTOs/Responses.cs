@@ -30,13 +30,6 @@ public sealed record WorkItemResponse(
     DateTimeOffset CreatedAt,
     DateTimeOffset UpdatedAt);
 
-public sealed record TaskHistoryEntryResponse(
-    Guid Id,
-    Guid WorkItemId,
-    WorkItemStatus? FromStatus,
-    WorkItemStatus ToStatus,
-    DateTimeOffset ChangedAt);
-
 public sealed record DashboardResponse(
     int TotalProjects,
     int ActiveProjects,
