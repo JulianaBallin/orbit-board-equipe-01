@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const roles = [
   'Backend Developer',
@@ -13,8 +13,17 @@ const roles = [
 
 const emptyForm = { name: '', role: roles[0], email: '' };
 
-export default function TeamMemberForm({ onSubmit, onCancel, busy }) {
+export default function TeamMemberForm({ editing, onSubmit, onCancel, busy }) {
   const [form, setForm] = useState(emptyForm);
+
+  useEffect(() => {
+    if (!editing) return;
+    setForm({
+      name: editing.name,
+      role: roles.includes(editing.role) ? editing.role : roles[0],
+      email: editing.email
+    });
+  }, [editing]);
 
   const change = (event) => {
     const { name, value } = event.target;
@@ -34,8 +43,8 @@ export default function TeamMemberForm({ onSubmit, onCancel, busy }) {
     <form className="form-card" onSubmit={submit}>
       <div className="section-heading compact">
         <div>
-          <span className="eyebrow">Novo registro</span>
-          <h2>Cadastrar colaborador</h2>
+          <span className="eyebrow">{editing ? 'Edição' : 'Novo registro'}</span>
+          <h2>{editing ? 'Editar colaborador' : 'Cadastrar colaborador'}</h2>
         </div>
       </div>
 
@@ -70,7 +79,7 @@ export default function TeamMemberForm({ onSubmit, onCancel, busy }) {
           Cancelar
         </button>
         <button type="submit" className="button primary" disabled={busy}>
-          {busy ? 'Salvando...' : 'Cadastrar colaborador'}
+          {busy ? 'Salvando...' : editing ? 'Salvar alterações' : 'Cadastrar colaborador'}
         </button>
       </div>
     </form>
