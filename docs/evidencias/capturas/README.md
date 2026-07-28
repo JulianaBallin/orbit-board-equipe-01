@@ -22,7 +22,9 @@ Adicione nesta pasta as evidências visuais da execução final. O relatório La
 | `E12-logs-containers.png` | Logs de inicialização dos dois containers |
 | `E13-backend-task-history.png` | Histórico de transição de status das tarefas |
 | `E14-historico-tarefa-frontend.png` | Modal de histórico de status da tarefa exibido na interface (quadro/tabela) |
-| `E15-exclusao-permitida.png` | Exclusão liberada em projeto com todas as tarefas concluídas |
+| `E15-exclusao-permitida.png` | Confirmação de exclusão liberada em projeto com todas as tarefas concluídas, com os demais projetos bloqueados |
+| `E16-exclusao-concluida.png` | Listagem após a exclusão, sem o projeto e com o aviso de sucesso |
+| `E17-arrastar-tarefa.png` | Card sendo arrastado entre colunas do quadro, com a coluna de destino destacada |
 
 ## Regras
 

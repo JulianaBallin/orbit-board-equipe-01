@@ -54,7 +54,6 @@ describe('ProjectsPage delete guard', () => {
   it('allows deletion once every task is concluded', async () => {
     vi.spyOn(api.projects, 'list').mockResolvedValue([projectAllDone]);
     const remove = vi.spyOn(api.projects, 'remove').mockResolvedValue(null);
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
 
     renderPage();
 
@@ -62,6 +61,7 @@ describe('ProjectsPage delete guard', () => {
     expect(button).toBeEnabled();
 
     await userEvent.click(button);
+    await userEvent.click(await screen.findByRole('button', { name: 'Excluir projeto' }));
 
     expect(remove).toHaveBeenCalledWith('proj-2');
     expect(await screen.findByText('Projeto excluído.')).toBeInTheDocument();
@@ -70,14 +70,26 @@ describe('ProjectsPage delete guard', () => {
   it('warns that concluded tasks are removed together with the project', async () => {
     vi.spyOn(api.projects, 'list').mockResolvedValue([projectAllDone]);
     vi.spyOn(api.projects, 'remove').mockResolvedValue(null);
-    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
 
     renderPage();
 
     await userEvent.click(await screen.findByRole('button', { name: 'Excluir' }));
 
-    expect(confirm).toHaveBeenCalledWith(
-      expect.stringContaining('As 3 tarefa(s) concluída(s) também serão removidas.'),
-    );
+    expect(
+      await screen.findByText('As 3 tarefa(s) concluída(s) deste projeto também serão removidas.'),
+    ).toBeInTheDocument();
+  });
+
+  it('keeps the project when the confirmation is dismissed', async () => {
+    vi.spyOn(api.projects, 'list').mockResolvedValue([projectAllDone]);
+    const remove = vi.spyOn(api.projects, 'remove').mockResolvedValue(null);
+
+    renderPage();
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Excluir' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Cancelar' }));
+
+    expect(remove).not.toHaveBeenCalled();
+    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
   });
 });
