@@ -27,6 +27,9 @@ Adicione nesta pasta as evidências visuais da execução final. O relatório La
 | `E17-arrastar-tarefa.png` | Card sendo arrastado entre colunas do quadro, com a coluna de destino destacada |
 | `E18-ordem-por-prioridade.png` | Coluna agrupando as tarefas por prioridade, da mais alta para a mais baixa |
 | `E19-ordem-manual-persistida.png` | Tarefas de mesma prioridade em ordem definida manualmente pelo arraste |
+| `E20-cargo-lista-cadastro.png` | Formulário de cadastro de colaborador com a lista de cargos aberta |
+| `E21-colaborador-cadastrado.png` | Tela de Equipe com a equipe do projeto e um integrante cadastrado pela interface |
+| `E22-colaborador-email-repetido.png` | Mensagem de conflito ao cadastrar colaborador com email já usado |
 
 ## Regras
 
