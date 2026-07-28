@@ -22,13 +22,13 @@ Adicione nesta pasta as evidências visuais da execução final. O relatório La
 | `E12-logs-containers.png` | Logs de inicialização dos dois containers |
 | `E13-backend-task-history.png` | Histórico de transição de status das tarefas |
 | `E14-historico-tarefa-frontend.png` | Modal de histórico de status da tarefa exibido na interface (quadro/tabela) |
-| `E15-exclusao-permitida.jpg` | Confirmação de exclusão liberada em projeto com todas as tarefas concluídas, com os demais projetos bloqueados |
-| `E16-exclusao-concluida.jpg` | Listagem após a exclusão, sem o projeto e com o aviso de sucesso |
-| `E17-arrastar-tarefa.jpg` | Card sendo arrastado entre colunas do quadro, com a coluna de destino destacada |
+| `E15-exclusao-permitida.png` | Confirmação de exclusão liberada em projeto com todas as tarefas concluídas, com os demais projetos bloqueados |
+| `E16-exclusao-concluida.png` | Listagem após a exclusão, sem o projeto e com o aviso de sucesso |
+| `E17-arrastar-tarefa.png` | Card sendo arrastado entre colunas do quadro, com a coluna de destino destacada |
 
 ## Regras
 
-- Use PNG ou substitua a extensão no arquivo LaTeX. As capturas `E15`, `E16` e `E17` estão em JPG, então o nome no LaTeX precisa incluir a extensão correta.
+- Use PNG ou substitua a extensão no arquivo LaTeX.
 - Prefira imagens em resolução igual ou superior a 1366 por 768 pixels.
 - Corte áreas sem relação com a evidência.
 - Não mostre senhas, tokens, cookies, emails pessoais ou dados de autenticação.
