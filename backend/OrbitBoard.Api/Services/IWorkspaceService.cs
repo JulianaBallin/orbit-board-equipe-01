@@ -26,5 +26,6 @@ public interface IWorkspaceService
     IReadOnlyList<TaskHistoryEntryResponse> GetWorkItemHistory(Guid id);
 
     IReadOnlyList<TeamMember> GetTeamMembers();
+    TeamMember CreateTeamMember(CreateTeamMemberRequest request);
     DashboardResponse GetDashboard();
 }
