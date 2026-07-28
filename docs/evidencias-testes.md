@@ -42,11 +42,12 @@ Não inclua tokens, senhas, emails pessoais, cookies ou outros segredos nas imag
 | E07 | Criar uma tarefa | Resposta `201` e tarefa no quadro | `E07-criar-tarefa.png` | Definir | Pendente |
 | E08 | Filtrar tarefas | Lista respeita status e prioridade | `E08-filtrar-tarefas.png` | Definir | Pendente |
 | E09 | Alterar status de uma tarefa | Tarefa muda de coluna e API responde `200` | `E09-alterar-status.png` | Definir | Pendente |
-| E10 | Excluir projeto com tarefa | Resposta `409` sem remover o projeto | `E10-bloqueio-exclusao.png` | Definir | Pendente |
+| E10 | Excluir projeto com tarefa não concluída | Resposta `409` sem remover o projeto | `E10-bloqueio-exclusao.png` | Definir | Pendente |
 | E11 | Parar o backend e usar a interface | Frontend mostra erro de conexão | `E11-backend-indisponivel.png` | Definir | Pendente |
 | E12 | Consultar logs do Compose | Logs mostram inicialização sem erro não tratado | `E12-logs-containers.png` | Definir | Pendente |
 | E13 | Consultar `GET /api/tasks/{id}/history` pelo Swagger ou Postman | JSON com o histórico de transições de status em ordem cronológica | `E13-backend-task-history.png` | Definir | Pendente |
 | E14 | Abrir o histórico de status de uma tarefa pela interface (quadro ou tabela) | Modal exibe as transições de status em ordem cronológica, da mais recente para a mais antiga | `E14-historico-tarefa-frontend.png` | Definir | Pendente |
+| E15 | Excluir projeto cujas tarefas estão todas concluídas | Resposta `204`, projeto some da listagem e as tarefas concluídas são removidas junto | `E15-exclusao-permitida.png` | Camila Félix | Concluído |
 
 ## Verificações técnicas iniciais
 
@@ -105,6 +106,29 @@ Reverificação executada em 27 de julho de 2026 na branch `chore/finalize-final
 | CORS para `http://localhost:5173` | Origem autorizada |
 
 Essa reverificação confirma que as rotas, os endpoints e os testes automatizados continuam funcionando após as últimas contribuições da equipe. As capturas visuais e o roteiro manual completo continuam sendo responsabilidade da execução final da equipe descrita acima.
+
+### Reverificação da regra de exclusão de projeto
+
+Executada em 27 de julho de 2026 na branch `feat/project-delete-validation`, após ajustar a regra para liberar a exclusão quando todas as tarefas do projeto estão concluídas.
+
+| Verificação | Resultado |
+|---|---|
+| `dotnet test backend/OrbitBoard.Api.sln` | Aprovado, 33 testes (21 unitários e 12 de integração) |
+| `npm test` (frontend) | Aprovado, 13 testes em 5 arquivos |
+| `DELETE /api/projects/{id}` com tarefa em aberto | `409`, projeto preservado |
+| `DELETE /api/projects/{id}` com todas as tarefas concluídas | `204`, projeto e tarefas concluídas removidos |
+| Listagem de tarefas após a exclusão | `200`, nenhuma tarefa órfã e todos os nomes de projeto resolvidos |
+
+Cobertura automatizada adicionada nesta verificação:
+
+| Teste | Camada |
+|---|---|
+| `DeleteProject_WithUnfinishedTasks_ThrowsConflict` | Serviço |
+| `DeleteProject_WithOnlyDoneTasks_RemovesProjectAndItsTasks` | Serviço |
+| `DeleteProject_WithOnlyDoneTasks_KeepsRemainingTasksReadable` | Serviço |
+| `DeleteProject_WithUnfinishedTasks_Returns409` | API |
+| `DeleteProject_WithOnlyDoneTasks_Returns204` | API |
+| `ProjectsPage delete guard` (3 casos) | Interface |
 
 ## Teste de uma chamada HTTP
 
