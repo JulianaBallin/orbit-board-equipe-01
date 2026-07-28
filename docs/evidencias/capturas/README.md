@@ -17,6 +17,7 @@ Adicione nesta pasta as evidências visuais da execução final. O relatório La
 | `E11-backend-indisponivel.png` | Tratamento de erro do frontend sem acesso à API |
 | `E12-logs-containers.png` | Logs de inicialização dos dois containers |
 | `E13-backend-task-history.png` | Histórico de transição de status das tarefas |
+| `E14-historico-tarefa-frontend.png` | Modal de histórico de status da tarefa exibido na interface (quadro/tabela) |
 
 ## Regras
 
