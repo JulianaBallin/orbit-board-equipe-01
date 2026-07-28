@@ -86,11 +86,16 @@ public sealed class WorkspaceService : IWorkspaceService
         lock (_sync)
         {
             var project = FindProject(id);
-            if (_workItems.Any(item => item.ProjectId == id))
+            var pending = _workItems.Count(item => item.ProjectId == id && item.Status != WorkItemStatus.Done);
+            if (pending > 0)
             {
-                throw new ConflictException("O projeto possui tarefas e não pode ser excluído.");
+                throw new ConflictException(
+                    $"O projeto possui {pending} tarefa(s) não concluída(s) e não pode ser excluído.");
             }
 
+            var finished = _workItems.Where(item => item.ProjectId == id).Select(item => item.Id).ToHashSet();
+            _history.RemoveAll(entry => finished.Contains(entry.WorkItemId));
+            _workItems.RemoveAll(item => item.ProjectId == id);
             _projects.Remove(project);
         }
     }

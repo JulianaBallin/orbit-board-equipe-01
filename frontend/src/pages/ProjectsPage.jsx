@@ -26,7 +26,18 @@ export default function ProjectsPage() {
   useEffect(() => { load(); }, [load]);
 
   const remove = async (project) => {
-    if (!window.confirm(`Excluir o projeto “${project.name}”?`)) return;
+    const pending = pendingTasks(project);
+    if (pending > 0) {
+      setError(`O projeto “${project.name}” possui ${pending} tarefa(s) não concluída(s) e não pode ser excluído.`);
+      return;
+    }
+
+    const warning = project.totalTasks
+      ? `Excluir o projeto “${project.name}”? As ${project.totalTasks} tarefa(s) concluída(s) também serão removidas.`
+      : `Excluir o projeto “${project.name}”?`;
+    if (!window.confirm(warning)) return;
+
+    setError('');
     try {
       await api.projects.remove(project.id);
       setNotice('Projeto excluído.');
@@ -80,7 +91,18 @@ export default function ProjectsPage() {
                   >
                     Editar
                   </button>
-                  <button className="button danger small" onClick={() => remove(project)}>Excluir</button>
+                  <button
+                    className="button danger small"
+                    onClick={() => remove(project)}
+                    disabled={pendingTasks(project) > 0}
+                    title={
+                      pendingTasks(project) > 0
+                        ? 'Conclua todas as tarefas do projeto para poder excluí-lo.'
+                        : 'Excluir projeto'
+                    }
+                  >
+                    Excluir
+                  </button>
                 </div>
               </article>
             );
@@ -88,6 +110,10 @@ export default function ProjectsPage() {
       </div>
     </section>
   );
+}
+
+function pendingTasks(project) {
+  return Math.max(0, (project.totalTasks ?? 0) - (project.completedTasks ?? 0));
 }
 
 function formatDate(value) {
