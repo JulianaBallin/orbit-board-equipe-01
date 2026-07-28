@@ -89,3 +89,11 @@ public sealed class ChangeWorkItemStatusRequest
 {
     public WorkItemStatus Status { get; init; }
 }
+
+public sealed class MoveWorkItemRequest
+{
+    public WorkItemStatus Status { get; init; }
+
+    [Range(0, int.MaxValue)]
+    public int Position { get; init; }
+}
