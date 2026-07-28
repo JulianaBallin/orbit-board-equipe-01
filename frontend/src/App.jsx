@@ -22,6 +22,7 @@ export default function App() {
         <Route path="/tasks/:id/edit" element={<TaskFormPage />} />
         <Route path="/team" element={<TeamPage />} />
         <Route path="/team/new" element={<TeamMemberFormPage />} />
+        <Route path="/team/:id/edit" element={<TeamMemberFormPage />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </Layout>
