@@ -47,7 +47,9 @@ Não inclua tokens, senhas, emails pessoais, cookies ou outros segredos nas imag
 | E12 | Consultar logs do Compose | Logs mostram inicialização sem erro não tratado | `E12-logs-containers.png` | Definir | Pendente |
 | E13 | Consultar `GET /api/tasks/{id}/history` pelo Swagger ou Postman | JSON com o histórico de transições de status em ordem cronológica | `E13-backend-task-history.png` | Definir | Pendente |
 | E14 | Abrir o histórico de status de uma tarefa pela interface (quadro ou tabela) | Modal exibe as transições de status em ordem cronológica, da mais recente para a mais antiga | `E14-historico-tarefa-frontend.png` | Definir | Pendente |
-| E15 | Excluir projeto cujas tarefas estão todas concluídas | Resposta `204`, projeto some da listagem e as tarefas concluídas são removidas junto | `E15-exclusao-permitida.png` | Camila Félix | Concluído |
+| E15 | Excluir projeto cujas tarefas estão todas concluídas | Botão liberado e confirmação avisando que as tarefas concluídas serão removidas, com os demais projetos ainda bloqueados | `E15-exclusao-permitida.jpg` | Camila Félix | Concluído |
+| E16 | Confirmar a exclusão do projeto concluído | Resposta `204`, aviso de sucesso e projeto fora da listagem | `E16-exclusao-concluida.jpg` | Camila Félix | Concluído |
+| E17 | Arrastar uma tarefa entre colunas do quadro | Card acompanha o cursor, coluna de destino destacada e status gravado pela API | `E17-arrastar-tarefa.jpg` | Camila Félix | Concluído |
 
 ## Verificações técnicas iniciais
 
