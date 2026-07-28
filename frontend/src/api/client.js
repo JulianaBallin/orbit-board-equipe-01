@@ -63,6 +63,8 @@ export const api = {
   },
   team: {
     list: () => request('/api/team-members'),
-    create: (data) => request('/api/team-members', { method: 'POST', body: JSON.stringify(data) })
+    create: (data) => request('/api/team-members', { method: 'POST', body: JSON.stringify(data) }),
+    update: (id, data) => request(`/api/team-members/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    remove: (id) => request(`/api/team-members/${id}`, { method: 'DELETE' })
   }
 };
