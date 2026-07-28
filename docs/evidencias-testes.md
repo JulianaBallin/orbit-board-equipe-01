@@ -93,7 +93,7 @@ Reverificação executada em 27 de julho de 2026 na branch `chore/finalize-final
 
 | Verificação | Resultado |
 |---|---|
-| `dotnet test backend/OrbitBoard.Api.sln` | Aprovado, 22 testes (12 unitários e 10 de integração) |
+| `dotnet test backend/OrbitBoard.Api.sln` | Aprovado, 29 testes (19 unitários e 10 de integração) |
 | `npm test` (frontend) | Aprovado, 10 testes em 4 arquivos |
 | `npm run build` (frontend) | Aprovado com Vite 8.1.5 |
 | `dotnet build --configuration Release` | Aprovado, sem erros e sem avisos |
@@ -140,4 +140,3 @@ Para cada falha encontrada, registre:
 | Cenário | Sintoma | Causa | Correção | Evidência |
 |---|---|---|---|---|
 | `npm audit` no frontend | 2 vulnerabilidades moderadas relatadas para `react-router` (GHSA-wrjc-x8rr-h8h6 e GHSA-337j-9hxr-rhxg) | Todas as versões 6.x do `react-router` são afetadas; a correção exige migrar para a versão 7, que não é compatível sem revisar as rotas | Não aplicada nesta entrega; registrada como melhoria opcional em `docs/evidencias/relatorio-desenvolvimento-equipe01.tex` | `npm audit` |
-| Captura `e05-criar-projeto.png` | O relatório LaTeX exibia o espaço reservado em vez da imagem real | Nome do arquivo salvo em minúsculas (`e05-...`) não coincidia com a referência em maiúsculas (`E05-...`) usada pelo relatório em um sistema de arquivos sensível a maiúsculas e minúsculas | Arquivo renomeado para `E05-criar-projeto.png` | `docs/evidencias/capturas/E05-criar-projeto.png` |
