@@ -291,6 +291,44 @@ public sealed class WorkspaceService : IWorkspaceService
         }
     }
 
+    public TeamMember CreateTeamMember(CreateTeamMemberRequest request)
+    {
+        lock (_sync)
+        {
+            var email = request.Email.Trim();
+            if (_members.Any(member => string.Equals(member.Email, email, StringComparison.OrdinalIgnoreCase)))
+                throw new ConflictException("Já existe um integrante com esse email.");
+
+            var member = new TeamMember
+            {
+                Name = request.Name.Trim(),
+                Role = request.Role.Trim(),
+                Email = email,
+                Initials = BuildInitials(request.Name)
+            };
+
+            _members.Add(member);
+            return member;
+        }
+    }
+
+    private static string BuildInitials(string name)
+    {
+        var parts = name
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Where(part => char.IsLetter(part[0]))
+            .ToList();
+
+        if (parts.Count == 0)
+            return string.Empty;
+
+        var first = char.ToUpperInvariant(parts[0][0]);
+        if (parts.Count == 1)
+            return first.ToString();
+
+        return $"{first}{char.ToUpperInvariant(parts[^1][0])}";
+    }
+
     public IReadOnlyList<TeamMember> GetTeamMembers()
     {
         lock (_sync)
