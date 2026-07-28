@@ -33,7 +33,7 @@ As datas usam o formato `AAAA-MM-DD`. Identificadores usam UUID. Os enums são e
 | `GET` | `/api/projects/{id}` | `200` | Consulta um projeto |
 | `POST` | `/api/projects` | `201` | Cria um projeto |
 | `PUT` | `/api/projects/{id}` | `200` | Atualiza um projeto |
-| `DELETE` | `/api/projects/{id}` | `204` | Exclui um projeto sem tarefas |
+| `DELETE` | `/api/projects/{id}` | `204` | Exclui um projeto sem tarefas pendentes |
 | `GET` | `/api/tasks` | `200` | Lista tarefas e aceita filtros |
 | `GET` | `/api/tasks/{id}` | `200` | Consulta uma tarefa |
 | `POST` | `/api/tasks` | `201` | Cria uma tarefa |
@@ -162,6 +162,32 @@ Regras principais:
 - Um novo evento só é registrado quando o status muda de fato (chamadas que repetem o status atual não geram entrada).
 - Retorna `404` quando a tarefa informada não existe.
 
+## Excluir projeto
+
+`DELETE /api/projects/{id}`
+
+A exclusão é bloqueada enquanto o projeto tiver tarefas que não estejam concluídas.
+
+Regras principais:
+
+- Responde `204` quando o projeto não tem tarefas ou quando todas estão em `Done`.
+- Responde `409` quando existe ao menos uma tarefa em `Backlog`, `InProgress` ou `Review`, e o `detail` informa quantas estão pendentes.
+- Responde `404` quando o projeto informado não existe.
+- Ao excluir um projeto cujas tarefas estão todas concluídas, essas tarefas e o histórico de status delas são removidos junto, para não restar registro órfão.
+
+Exemplo de resposta bloqueada:
+
+```json
+{
+  "type": "about:blank",
+  "title": "Conflito de regra",
+  "status": 409,
+  "detail": "O projeto possui 2 tarefa(s) não concluída(s) e não pode ser excluído.",
+  "instance": "/api/projects/IDENTIFICADOR_DO_PROJETO",
+  "traceId": "IDENTIFICADOR_DA_REQUISICAO"
+}
+```
+
 ## Formato de erro
 
 Erros de negócio usam `application/problem+json` e seguem o formato abaixo:
@@ -181,5 +207,5 @@ Erros de negócio usam `application/problem+json` e seguem o formato abaixo:
 |---|---|
 | `400` | JSON inválido, campo fora das regras ou referência inexistente |
 | `404` | Projeto ou tarefa não encontrado |
-| `409` | Nome de projeto duplicado ou tentativa de excluir projeto com tarefas |
+| `409` | Nome de projeto duplicado ou tentativa de excluir projeto com tarefas não concluídas |
 | `500` | Falha interna não tratada |
