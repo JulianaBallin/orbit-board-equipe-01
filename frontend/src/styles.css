@@ -141,8 +141,10 @@ textarea { resize: vertical; }
 .column-header span { background: #fff; min-width: 26px; height: 26px; display: grid; place-items: center; border-radius: 999px; font-weight: 800; font-size: .75rem; }
 .task-card { padding: 15px; margin-bottom: 10px; cursor: grab; user-select: none; -webkit-user-select: none; }
 .task-card:active { cursor: grabbing; }
-.task-card.dragging { outline: 2px dashed #4f46e5; outline-offset: 2px; }
-.drag-ghost { position: fixed; top: -2000px; left: -2000px; margin: 0; pointer-events: none; opacity: 1; background: #fff; box-shadow: 0 18px 40px rgba(28, 45, 82, .3); }
+.drag-layer { position: fixed; z-index: 1200; margin: 0; pointer-events: none; opacity: 1; background: #fff; box-shadow: 0 22px 45px rgba(28, 45, 82, .32); transform: rotate(1.5deg); }
+.drop-placeholder { height: 76px; margin-bottom: 10px; border: 2px dashed #4f46e5; border-radius: 16px; background: #e6ecfd; }
+body.is-dragging-task { cursor: grabbing; user-select: none; }
+body.is-dragging-task .task-card { cursor: grabbing; }
 .task-card select, .task-card button, .task-card input { cursor: auto; user-select: auto; -webkit-user-select: auto; }
 .task-card button { cursor: pointer; }
 .task-card h4 { margin: 12px 0 6px; }
