@@ -42,6 +42,12 @@ public sealed class TasksController(IWorkspaceService service) : ControllerBase
     public ActionResult<WorkItemResponse> ChangeStatus(Guid id, ChangeWorkItemStatusRequest request) =>
         Ok(service.ChangeWorkItemStatus(id, request));
 
+    [HttpPatch("{id:guid}/position")]
+    [ProducesResponseType<WorkItemResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult<WorkItemResponse> Move(Guid id, MoveWorkItemRequest request) =>
+        Ok(service.MoveWorkItem(id, request));
+
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public IActionResult Delete(Guid id)
@@ -49,4 +55,10 @@ public sealed class TasksController(IWorkspaceService service) : ControllerBase
         service.DeleteWorkItem(id);
         return NoContent();
     }
+
+    [HttpGet("{id:guid}/history")]
+    [ProducesResponseType<IReadOnlyList<TaskHistoryEntryResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult<IReadOnlyList<TaskHistoryEntryResponse>> GetHistory(Guid id) =>
+        Ok(service.GetWorkItemHistory(id));
 }

@@ -1,0 +1,47 @@
+<p align="center">
+  <img src="../../assets/orbitboard-logo.png" alt="OrbitBoard" width="220" />
+</p>
+
+# Catálogo de capturas
+
+Esta pasta reúne as evidências visuais das validações. O relatório LaTeX procura automaticamente os arquivos abaixo e mostra um espaço reservado somente quando uma imagem está ausente.
+
+| Arquivo | Conteúdo esperado |
+|---|---|
+| `E01-containers-saudaveis.png` | Saída de `docker compose ps` com backend e frontend saudáveis |
+| `E02-dashboard.png` | Dashboard carregado com métricas e tarefas recentes |
+| `E03-swagger.png` | Swagger com os grupos de endpoints visíveis |
+| `E04-health.png` | Resposta JSON do endpoint `/health` |
+| `E05-criar-projeto.png` | Projeto criado pela interface e exibido na listagem |
+| `E06-projeto-duplicado.png` | Mensagem de conflito ao repetir o nome de um projeto |
+| `E07-criar-tarefa.png` | Tarefa criada e exibida no quadro |
+| `E08-filtrar-tarefas.png` | Filtros aplicados ao quadro de tarefas |
+| `E09-alterar-status.png` | Tarefa após alteração de status |
+| `E10-bloqueio-exclusao.png` | Bloqueio ao excluir projeto que possui tarefas não concluídas |
+| `E11-backend-indisponivel.png` | Tratamento de erro do frontend sem acesso à API |
+| `E12-logs-containers.png` | Logs de inicialização dos dois containers |
+| `E13-backend-task-history.png` | Histórico de transição de status das tarefas |
+| `E14-historico-tarefa-frontend.png` | Modal de histórico de status da tarefa exibido na interface (quadro/tabela) |
+| `E15-exclusao-permitida.png` | Confirmação de exclusão liberada em projeto com todas as tarefas concluídas, com os demais projetos bloqueados |
+| `E16-exclusao-concluida.png` | Listagem após a exclusão, sem o projeto e com o aviso de sucesso |
+| `E17-arrastar-tarefa.png` | Card sendo arrastado entre colunas do quadro, com a coluna de destino destacada |
+| `E18-ordem-por-prioridade.png` | Coluna agrupando as tarefas por prioridade, da mais alta para a mais baixa |
+| `E19-ordem-manual-persistida.png` | Tarefas de mesma prioridade em ordem definida manualmente pelo arraste |
+| `E20-cargo-lista-cadastro.png` | Formulário de cadastro de colaborador com a lista de cargos aberta |
+| `E21-colaborador-cadastrado.png` | Tela de Equipe com a equipe do projeto e um integrante cadastrado pela interface |
+| `E22-colaborador-email-repetido.png` | Mensagem de conflito ao cadastrar colaborador com email já usado |
+| `E23-tema-escuro.png` | Interface com o tema escuro aplicado e o controle de alternância visível |
+| `E24-testes-tema.png` | Saída da suíte do frontend com 91 testes aprovados em 17 arquivos, incluindo rotas, formulários e `themeService` |
+| `E27-acoes-colaborador.png` | Cards da equipe com as ações de editar e excluir disponíveis |
+| `E28-bloqueio-exclusao-colaborador.png` | Bloqueio ao excluir integrante que responde por projeto e tarefa |
+| `E29-colaborador-excluido.png` | Aviso de sucesso e grade atualizada após excluir um colaborador |
+| `E30-modal-exclusao-colaborador.png` | Modal de confirmação da exclusão de colaborador, com o aviso sobre vínculos |
+
+## Regras
+
+- Use PNG ou substitua a extensão no arquivo LaTeX.
+- Prefira imagens em resolução igual ou superior a 1366 por 768 pixels.
+- Corte áreas sem relação com a evidência.
+- Não mostre senhas, tokens, cookies, emails pessoais ou dados de autenticação.
+- Mantenha o nome exatamente como indicado na tabela.
+- Recompile o relatório com `make report` depois de adicionar ou substituir imagens.

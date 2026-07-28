@@ -47,6 +47,7 @@ public sealed class WorkItem
     public Guid? AssigneeId { get; set; }
     public DateOnly? DueDate { get; set; }
     public int EstimatedHours { get; set; }
+    public int Position { get; set; }
     public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
     public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
 }
@@ -58,4 +59,13 @@ public sealed class TeamMember
     public required string Role { get; set; }
     public required string Email { get; set; }
     public string Initials { get; set; } = string.Empty;
+}
+
+public sealed class TaskStatusHistoryEntry
+{
+    public Guid Id { get; init; } = Guid.NewGuid();
+    public Guid WorkItemId { get; set; }
+    public WorkItemStatus? FromStatus { get; set; }
+    public WorkItemStatus ToStatus { get; set; }
+    public DateTimeOffset ChangedAt { get; init; } = DateTimeOffset.UtcNow;
 }

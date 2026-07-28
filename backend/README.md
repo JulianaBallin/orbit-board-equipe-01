@@ -1,4 +1,8 @@
-# OrbitBoard — Backend
+<p align="center">
+  <img src="../docs/assets/orbitboard-logo.png" alt="OrbitBoard" width="220" />
+</p>
+
+# OrbitBoard | Backend
 
 API REST em **.NET 8 / ASP.NET Core** para uma aplicação de acompanhamento de projetos, tarefas e equipe.
 
@@ -8,8 +12,10 @@ API REST em **.NET 8 / ASP.NET Core** para uma aplicação de acompanhamento de 
 - Cadastro, consulta, edição e exclusão de projetos.
 - Cadastro, consulta, edição e exclusão de tarefas.
 - Alteração rápida do status de uma tarefa.
+- Histórico de mudanças de status de uma tarefa, em ordem cronológica.
+- Reposicionamento de tarefas no quadro (arraste), com ordenação persistida por prioridade.
 - Filtros por projeto, status, prioridade, responsável e texto.
-- Listagem dos integrantes da equipe.
+- Cadastro, edição e exclusão de integrantes da equipe, com bloqueio de exclusão quando o integrante responde por um projeto ou uma tarefa.
 - Validação de entrada por Data Annotations.
 - Respostas de erro padronizadas com `ProblemDetails`.
 - Swagger/OpenAPI.
@@ -41,7 +47,27 @@ A API ficará disponível em:
 - Swagger: `http://localhost:5200/swagger`
 - Health check: `http://localhost:5200/health`
 
+## Como executar com Docker
+
+A partir da raiz do repositório:
+
+```bash
+docker compose up --build backend
+```
+
+O container escuta na porta interna `8080`, publicada por padrão como `5200`.
+
+## Configuração
+
+As origens permitidas pelo CORS ficam em `Cors:AllowedOrigins`. No Docker Compose, a primeira origem é configurada pela variável `CORS_ALLOWED_ORIGIN`.
+
 ## Endpoints principais
+
+### Saúde
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| GET | `/health` | Verifica a saúde da API. |
 
 ### Dashboard
 
@@ -57,7 +83,7 @@ A API ficará disponível em:
 | GET | `/api/projects/{id}` | Consulta um projeto. |
 | POST | `/api/projects` | Cria um projeto. |
 | PUT | `/api/projects/{id}` | Atualiza um projeto. |
-| DELETE | `/api/projects/{id}` | Exclui um projeto sem tarefas. |
+| DELETE | `/api/projects/{id}` | Exclui um projeto sem tarefas pendentes (bloqueado enquanto houver tarefa não concluída). |
 
 ### Tarefas
 
@@ -68,7 +94,9 @@ A API ficará disponível em:
 | POST | `/api/tasks` | Cria uma tarefa. |
 | PUT | `/api/tasks/{id}` | Atualiza uma tarefa. |
 | PATCH | `/api/tasks/{id}/status` | Altera somente o status. |
+| PATCH | `/api/tasks/{id}/position` | Move a tarefa de coluna e posição (arraste e ordenação manual). |
 | DELETE | `/api/tasks/{id}` | Exclui uma tarefa. |
+| GET | `/api/tasks/{id}/history` | Lista o histórico de mudanças de status da tarefa. |
 
 Filtros aceitos em `GET /api/tasks`:
 
@@ -80,11 +108,16 @@ assigneeId
 search
 ```
 
+As tarefas são ordenadas por status, depois por prioridade (da mais alta para a mais baixa) e, dentro da mesma prioridade, pela posição manual definida pelo arraste no quadro.
+
 ### Equipe
 
 | Método | Endpoint | Descrição |
 |---|---|---|
 | GET | `/api/team-members` | Lista os integrantes. |
+| POST | `/api/team-members` | Cadastra um integrante. |
+| PUT | `/api/team-members/{id}` | Atualiza um integrante. |
+| DELETE | `/api/team-members/{id}` | Exclui um integrante sem vínculo com projeto ou tarefa. |
 
 ## Exemplo de criação de tarefa
 

@@ -2,14 +2,26 @@ export function LoadingState({ message = 'Carregando informações...' }) {
   return <div className="state-box loading"><span className="spinner" />{message}</div>;
 }
 
-export function ErrorState({ message, onRetry }) {
+export function ErrorState({ title = 'Não foi possível carregar os dados.', message, onRetry }) {
   return (
-    <div className="state-box error">
+    <div className="state-box error" role="alert">
       <div>
-        <strong>Não foi possível carregar os dados.</strong>
+        <strong>{title}</strong>
         <p>{message}</p>
       </div>
       {onRetry && <button className="button secondary" onClick={onRetry}>Tentar novamente</button>}
+    </div>
+  );
+}
+
+export function NotFoundState({ title, message, onBack, backLabel }) {
+  return (
+    <div className="state-box empty" role="status">
+      <div>
+        <strong>{title}</strong>
+        <p>{message}</p>
+      </div>
+      <button type="button" className="button secondary" onClick={onBack}>{backLabel}</button>
     </div>
   );
 }

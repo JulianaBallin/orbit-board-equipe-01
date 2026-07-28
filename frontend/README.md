@@ -1,13 +1,20 @@
-# OrbitBoard — Frontend
+<p align="center">
+  <img src="../docs/assets/orbitboard-logo.png" alt="OrbitBoard" width="220" />
+</p>
 
-Aplicação web em **React 18 + Vite** para consumir a API OrbitBoard e demonstrar integração full stack.
+# OrbitBoard | Frontend
+
+Aplicação web em **React 18 + React Router 7 + Vite** para consumir a API OrbitBoard e demonstrar integração full stack.
 
 ## Funcionalidades
 
 - Dashboard com métricas e distribuição de tarefas.
 - Tela de projetos com cadastro, edição, progresso e exclusão.
 - Quadro de tarefas com filtros, criação, edição, exclusão e mudança de status.
-- Tela de equipe.
+- Arraste de tarefas entre colunas do quadro, com ordenação manual persistida por prioridade.
+- Modal de histórico de status de uma tarefa, acessível pelo quadro ou pela tabela, com opção de expandir para ver o histórico completo.
+- Tela de equipe com cadastro, edição e exclusão de colaboradores, com bloqueio de exclusão quando o colaborador responde por um projeto ou uma tarefa.
+- Tema claro/escuro, com preferência salva no navegador.
 - Estados de carregamento, vazio, sucesso e erro.
 - Tratamento das respostas `400`, `404`, `409` e `500` retornadas pela API.
 - URL da API configurável por variável de ambiente.
@@ -15,7 +22,7 @@ Aplicação web em **React 18 + Vite** para consumir a API OrbitBoard e demonstr
 
 ## Requisitos
 
-- Node.js 20 ou superior.
+- Node.js 20.19 ou superior.
 - npm 10 ou superior.
 - Backend OrbitBoard executando em `http://localhost:5200`.
 
@@ -68,6 +75,28 @@ Para visualizar o build localmente:
 npm run preview
 ```
 
+## Testes automatizados
+
+```bash
+npm test
+```
+
+Os testes usam **Vitest** e **Testing Library** e cobrem o cliente HTTP (`src/api/client.js`), os componentes de tarefas (modal de histórico `TaskHistoryModal`, menu de ações da tabela, arraste no quadro), o cadastro/edição de colaboradores (`TeamMemberFormPage`), o tema claro/escuro (`themeService`) e o layout (`Layout`).
+
+Na reverificação final, a suíte aprovou 91 testes distribuídos em 17 arquivos. A cobertura inclui 12 casos de rotas e redirecionamentos, além dos fluxos de dashboard e dos formulários de projeto, tarefa e integrante.
+
+Nas rotas de edição, um registro inexistente oferece retorno para a listagem, enquanto falhas temporárias de rede ou servidor permitem tentar o carregamento novamente. Erros de validação ao salvar mantêm o formulário preenchido sem recarregar os dados.
+
+## Como executar com Docker
+
+A partir da raiz do repositório:
+
+```bash
+docker compose up --build frontend
+```
+
+O build usa `VITE_API_URL` para definir o endereço público da API. O Nginx publica o frontend na porta `5173` e disponibiliza seu health check em `/health`.
+
 ## Fluxos sugeridos para validação
 
 1. Abrir o dashboard e conferir as métricas.
@@ -76,9 +105,12 @@ npm run preview
 4. Criar uma tarefa associada a um projeto.
 5. Filtrar tarefas por status e prioridade.
 6. Alterar o status de uma tarefa pelo quadro.
-7. Editar e excluir uma tarefa.
-8. Tentar excluir um projeto que ainda possui tarefas e observar o erro de conflito.
-9. Parar o backend e observar o tratamento de falha no frontend.
+7. Arrastar uma tarefa entre colunas e reordenar tarefas de mesma prioridade dentro da coluna.
+8. Editar e excluir uma tarefa.
+9. Cadastrar, editar e excluir um colaborador na tela de Equipe.
+10. Tentar excluir um projeto com tarefas pendentes (erro de conflito) e depois excluir um projeto com todas as tarefas concluídas (permitido).
+11. Alternar entre o tema claro e o escuro.
+12. Parar o backend e observar o tratamento de falha no frontend.
 
 ## Estrutura
 
@@ -87,7 +119,8 @@ src/
 ├── api/          Cliente HTTP
 ├── components/   Layout, formulários e componentes reutilizáveis
 ├── pages/        Dashboard, projetos, tarefas e equipe
-├── utils/        Traduções e estilos de status
+├── services/     Preferência de tema (themeService)
+├── utils/        Traduções, estilos de status e cálculo de arraste (boardDrop)
 ├── App.jsx       Rotas
 ├── main.jsx      Inicialização do React
 └── styles.css    Estilos globais e responsivos

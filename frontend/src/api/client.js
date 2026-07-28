@@ -40,19 +40,31 @@ export const api = {
   dashboard: () => request('/api/dashboard'),
   projects: {
     list: () => request('/api/projects'),
+    get: (id) => request(`/api/projects/${id}`),
     create: (data) => request('/api/projects', { method: 'POST', body: JSON.stringify(data) }),
     update: (id, data) => request(`/api/projects/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
     remove: (id) => request(`/api/projects/${id}`, { method: 'DELETE' })
   },
   tasks: {
     list: (filters = {}) => request(`/api/tasks${toQuery(filters)}`),
+    get: (id) => request(`/api/tasks/${id}`),
     create: (data) => request('/api/tasks', { method: 'POST', body: JSON.stringify(data) }),
     update: (id, data) => request(`/api/tasks/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
     changeStatus: (id, status) => request(`/api/tasks/${id}/status`, {
       method: 'PATCH',
       body: JSON.stringify({ status })
     }),
-    remove: (id) => request(`/api/tasks/${id}`, { method: 'DELETE' })
+    move: (id, status, position) => request(`/api/tasks/${id}/position`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status, position })
+    }),
+    remove: (id) => request(`/api/tasks/${id}`, { method: 'DELETE' }),
+    history: (id) => request(`/api/tasks/${id}/history`)
   },
-  team: () => request('/api/team-members')
+  team: {
+    list: () => request('/api/team-members'),
+    create: (data) => request('/api/team-members', { method: 'POST', body: JSON.stringify(data) }),
+    update: (id, data) => request(`/api/team-members/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    remove: (id) => request(`/api/team-members/${id}`, { method: 'DELETE' })
+  }
 };
