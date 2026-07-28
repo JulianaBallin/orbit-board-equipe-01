@@ -58,6 +58,8 @@ Não inclua tokens, senhas, emails pessoais, cookies ou outros segredos nas imag
 | E27 | Abrir a tela de Equipe com a gestão completa | Cada card exibe as ações de editar e excluir | `E27-acoes-colaborador.png` | Camila Félix | Concluído |
 | E28 | Excluir integrante responsável por projeto e tarefa | Resposta `409` informando quantos vínculos existem, com a lista preservada | `E28-bloqueio-exclusao-colaborador.png` | Camila Félix | Concluído |
 | E29 | Excluir integrante sem vínculo | Resposta `204`, aviso de sucesso e grade sem o integrante | `E29-colaborador-excluido.png` | Camila Félix | Concluído |
+| E23 | Alternar a interface para o tema escuro | Tema aplicado em toda a interface, com componentes legíveis e controle de alternância visível | `E23-tema-escuro.png` | Allef Oliveira | Concluído |
+| E24 | Executar os testes automatizados do frontend após as alterações | 49 testes em 10 arquivos aprovados, sem warnings | `E24-testes-frontend.png` | Allef Oliveira | Em progresso |
 | E30 | Acionar a exclusão de um colaborador | Modal de confirmação com o aviso de que integrantes vinculados não podem ser excluídos | `E30-modal-exclusao-colaborador.png` | Camila Félix | Concluído |
 
 ## Verificações técnicas iniciais
@@ -140,6 +142,21 @@ Cobertura automatizada adicionada nesta verificação:
 | `DeleteProject_WithUnfinishedTasks_Returns409` | API |
 | `DeleteProject_WithOnlyDoneTasks_Returns204` | API |
 | `ProjectsPage delete guard` (3 casos) | Interface |
+
+### Reverificação da alteração de tema
+
+Executada em 28 de julho de 2026 após a implementação dos temas claro e escuro e os ajustes nos testes do frontend.
+
+| Verificação | Resultado |
+|---|---|
+| `npm test` (frontend) | Aprovado, 49 testes em 10 arquivos |
+| Testes do `themeService` | Aprovado, 7 casos |
+| Inicialização do tema | Respeita o tema aplicado, a preferência salva e, na ausência deles, o tema do sistema |
+| Alternância e persistência | Alterna entre claro e escuro, persiste a escolha no `localStorage` e emite `themechange` |
+| Compatibilidade visual | Cores e componentes ajustados para preservar contraste e legibilidade |
+| Warnings da suíte | Execução sem warnings do React Router e de atualizações fora de `act(...)` |
+
+Os testes do `themeService` cobrem a preferência do sistema, o tema persistido, a prioridade do tema já aplicado, a persistência, o evento `themechange`, a alternância e a rejeição de valores inválidos. As capturas E23 e E24 devem registrar, respectivamente, o resultado visual e a saída final da suíte.
 
 ## Teste de uma chamada HTTP
 
