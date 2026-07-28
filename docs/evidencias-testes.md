@@ -50,6 +50,8 @@ Não inclua tokens, senhas, emails pessoais, cookies ou outros segredos nas imag
 | E15 | Excluir projeto cujas tarefas estão todas concluídas | Botão liberado e confirmação avisando que as tarefas concluídas serão removidas, com os demais projetos ainda bloqueados | `E15-exclusao-permitida.png` | Camila Félix | Concluído |
 | E16 | Confirmar a exclusão do projeto concluído | Resposta `204`, aviso de sucesso e projeto fora da listagem | `E16-exclusao-concluida.png` | Camila Félix | Concluído |
 | E17 | Arrastar uma tarefa entre colunas do quadro | Card acompanha o cursor, coluna de destino destacada e status gravado pela API | `E17-arrastar-tarefa.png` | Camila Félix | Concluído |
+| E18 | Conferir a ordem da coluna com prioridades diferentes | Tarefas agrupadas da prioridade mais alta para a mais baixa | `E18-ordem-por-prioridade.png` | Camila Félix | Concluído |
+| E19 | Reordenar tarefas de mesma prioridade pelo arraste e recarregar | Ordem definida na mão continua igual após recarregar a página | `E19-ordem-manual-persistida.png` | Camila Félix | Concluído |
 
 ## Verificações técnicas iniciais
 
