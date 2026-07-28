@@ -90,6 +90,18 @@ public sealed class ChangeWorkItemStatusRequest
     public WorkItemStatus Status { get; init; }
 }
 
+public sealed class CreateTeamMemberRequest
+{
+    [Required, StringLength(80, MinimumLength = 3)]
+    public string Name { get; init; } = string.Empty;
+
+    [Required, StringLength(60, MinimumLength = 3)]
+    public string Role { get; init; } = string.Empty;
+
+    [Required, EmailAddress, StringLength(120)]
+    public string Email { get; init; } = string.Empty;
+}
+
 public sealed class MoveWorkItemRequest
 {
     public WorkItemStatus Status { get; init; }
