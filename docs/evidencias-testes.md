@@ -20,7 +20,7 @@ Não inclua tokens, senhas, emails pessoais, cookies ou outros segredos nas imag
 
 ## Ambiente da execução final
 
-| Campo | Valor a registrar |
+| Campo | Valor verificado |
 |---|---|
 | Data | 28 de julho de 2026 |
 | Sistema operacional | Ubuntu 24.04 |
@@ -56,7 +56,7 @@ Não inclua tokens, senhas, emails pessoais, cookies ou outros segredos nas imag
 | E21 | Cadastrar um colaborador válido e voltar para a Equipe | Resposta `201` e integrante novo na grade, junto da equipe do projeto | `E21-colaborador-cadastrado.png` | Camila Félix | Concluído |
 | E22 | Cadastrar colaborador com email já usado | Resposta `409`, mensagem explicando o conflito e formulário preservado | `E22-colaborador-email-repetido.png` | Camila Félix | Concluído |
 | E23 | Alternar a interface para o tema escuro | Tema aplicado em toda a interface, com componentes legíveis e controle de alternância visível | `E23-tema-escuro.png` | Allef Oliveira | Concluído |
-| E24 | Executar os testes automatizados do frontend após as alterações | 65 testes em 13 arquivos aprovados, sem warnings | `E24-testes-tema.png` | Equipe | Concluído |
+| E24 | Executar os testes automatizados do frontend após as alterações | 88 testes em 17 arquivos aprovados, sem warnings | `E24-testes-tema.png` | Equipe | Concluído |
 | E27 | Abrir a tela de Equipe com a gestão completa | Cada card exibe as ações de editar e excluir | `E27-acoes-colaborador.png` | Camila Félix | Concluído |
 | E28 | Excluir integrante responsável por projeto e tarefa | Resposta `409` informando quantos vínculos existem, com a lista preservada | `E28-bloqueio-exclusao-colaborador.png` | Camila Félix | Concluído |
 | E29 | Excluir integrante sem vínculo | Resposta `204`, aviso de sucesso e grade sem o integrante | `E29-colaborador-excluido.png` | Camila Félix | Concluído |
@@ -118,7 +118,7 @@ Reverificação executada em 27 de julho de 2026 na branch `chore/finalize-final
 | `POST /api/projects` com nome duplicado | `409` tratado corretamente |
 | CORS para `http://localhost:5173` | Origem autorizada |
 
-Essa reverificação confirma que as rotas, os endpoints e os testes automatizados continuam funcionando após as últimas contribuições da equipe. As capturas visuais e o roteiro manual completo continuam sendo responsabilidade da execução final da equipe descrita acima.
+Essa reverificação histórica confirmou o funcionamento existente naquele estágio. A reverificação final de 28 de julho, registrada abaixo, substitui os números de testes e confirma que todas as capturas previstas foram incorporadas ao relatório.
 
 ### Reverificação da regra de exclusão de projeto
 
@@ -164,12 +164,14 @@ Executada em 28 de julho de 2026 na branch `chore/final-audit`, criada a partir 
 
 | Verificação | Resultado |
 |---|---|
-| `dotnet test backend/OrbitBoard.Api.sln --configuration Release` | Aprovado, 67 testes: 42 unitários e 25 de integração |
-| `npm test` | Aprovado, 65 testes em 13 arquivos |
+| `dotnet test backend/OrbitBoard.Api.sln --configuration Release` | Aprovado, 73 testes: 42 unitários e 31 de integração |
+| `npm test` | Aprovado, 88 testes em 17 arquivos |
 | `npm run build` | Aprovado com React Router 7.18.1 e Vite 8.1.5 |
 | Compatibilidade com Node 20 | Aprovada após fixar `@testing-library/jest-dom` em 6.9.1 |
 | `docker compose config` | Aprovado |
 | `docker compose up --build --detach` | Aprovado, backend e frontend saudáveis |
+| Fluxo HTTP no Compose | Aprovadas as 19 operações da API, as 10 rotas de destino e os 2 redirecionamentos do SPA |
+| Renderização em navegador headless | Aprovadas 15 entradas do SPA, incluindo edição existente e erro para IDs inexistentes |
 | Frontend em `/dashboard` e backend em `/health` | Respostas `200` |
 | CORS para `http://localhost:5173` | Origem autorizada |
 | Cadastro e edição de colaborador | Respostas `201` e `200` |
@@ -178,9 +180,38 @@ Executada em 28 de julho de 2026 na branch `chore/final-audit`, criada a partir 
 | Histórico da tarefa | Uma entrada na criação e duas após mudança para `Done` |
 | Exclusão de projeto concluído | Resposta `204`, tarefa removida em cascata e consulta posterior com `404` |
 | Exclusão de colaborador sem vínculos | Resposta `204` |
+| Reinício do backend | Aprovado, registro temporário removido e carga inicial restaurada com 3 projetos, 5 tarefas e histórico de criação |
 | `npm audit --audit-level=moderate` | Duas ocorrências de severidade alta associadas ao mesmo aviso de RSC do React Router |
 
 O aviso atual do `npm audit` afeta o modo React Server Components. O OrbitBoard usa uma SPA com Vite, `BrowserRouter` e API ASP.NET Core separada, sem RSC. A versão 7.18.1 foi mantida porque corrige os avisos anteriores aplicáveis à navegação. A equipe deve monitorar a publicação de uma versão que também corrija o aviso de RSC.
+
+### Cobertura final de rotas e persistência
+
+O teste `Swagger_ExposesExactlyTheNineteenDocumentedOperations` impede divergência entre o contrato e as 19 operações HTTP expostas. A tabela relaciona cada operação a pelo menos um caso de integração aprovado:
+
+| Operação | Cobertura automatizada | Status |
+|---|---|---|
+| `GET /health` | `Health_ReturnsHealthyPayload` | Aprovado |
+| `GET /api/dashboard` | `GetDashboard_ReturnsConsistentTotals` | Aprovado |
+| `GET /api/projects` | `GetProjects_ReturnsSeededProjectsAsJson` | Aprovado |
+| `GET /api/projects/{id}` | `GetProject_WhenExists_Returns200WithTheRequestedProject` e caso `404` | Aprovado |
+| `POST /api/projects` | `CreateProject_WithValidData_Returns201AndIsListed` e conflito `409` | Aprovado |
+| `PUT /api/projects/{id}` | `UpdateProject_WithValidData_Returns200AndPersists` | Aprovado |
+| `DELETE /api/projects/{id}` | Casos com tarefas abertas e somente concluídas | Aprovado |
+| `GET /api/tasks` | Listagem, posição e filtro por status | Aprovado |
+| `GET /api/tasks/{id}` | Consulta após criação e ausência após exclusão | Aprovado |
+| `POST /api/tasks` | `CreateAndGetTask_WithValidData_Returns201AndPersistsInitialHistory` | Aprovado |
+| `PUT /api/tasks/{id}` | `UpdateTask_WithValidData_Returns200AndPersistsStatusHistory` | Aprovado |
+| `PATCH /api/tasks/{id}/status` | Mudança de status, persistência e histórico | Aprovado |
+| `PATCH /api/tasks/{id}/position` | Movimento, reordenação, posição inválida e tarefa ausente | Aprovado |
+| `DELETE /api/tasks/{id}` | `DeleteTask_WhenExists_Returns204AndRemainsAbsent` | Aprovado |
+| `GET /api/tasks/{id}/history` | Criação, transição e tarefa ausente | Aprovado |
+| `GET /api/team-members` | `GetTeamMembers_ReturnsSeededMembers` | Aprovado |
+| `POST /api/team-members` | Cadastro, email repetido e validações de entrada | Aprovado |
+| `PUT /api/team-members/{id}` | Edição, leitura posterior, conflito e ausência | Aprovado |
+| `DELETE /api/team-members/{id}` | Exclusão livre, bloqueio por vínculo e ausência | Aprovado |
+
+As 10 rotas de destino do frontend e os redirecionamentos de `/` e de rota desconhecida são exercitados pelos 12 casos de `App.test.jsx`. A persistência em memória foi confirmada por requisições consecutivas de escrita e leitura para projeto, tarefa, integrante, posição e histórico. A preferência de tema permanece após recarga por `localStorage`. O teste ao vivo também confirmou que reiniciar o processo do backend remove o registro temporário e restaura os 3 projetos, as 5 tarefas e o histórico inicial, comportamento esperado para o escopo sem banco de dados.
 
 ## Teste de uma chamada HTTP
 
@@ -195,7 +226,7 @@ curl --fail --silent http://localhost:5200/api/projects
 Cole abaixo somente um resumo do resultado, sem dados sensíveis:
 
 ```text
-Verificação inicial aprovada. Repetir e anexar a evidência produzida pela equipe.
+Verificação final aprovada em 28 de julho de 2026: health, dashboard e projetos responderam com HTTP 200 e JSON válido.
 ```
 
 ## Registro de falhas
@@ -215,7 +246,8 @@ Para cada falha encontrada, registre:
 
 | Cenário | Sintoma | Causa | Correção | Evidência |
 |---|---|---|---|---|
-| `npm audit` no frontend | React Router 6 relatava dois avisos moderados | A versão usada estava dentro dos intervalos afetados | Migração para React Router 7.18.1, com 65 testes e build aprovados | `npm test`, `npm run build` e `npm audit` |
+| `npm audit` no frontend | React Router 6 relatava dois avisos moderados | A versão usada estava dentro dos intervalos afetados | Migração para React Router 7.18.1, com 88 testes e build aprovados | `npm test`, `npm run build` e `npm audit` |
 | Auditoria após a migração | Duas ocorrências de severidade alta para o mesmo aviso de RSC | O aviso atual alcança a versão 7.18.1, mas o OrbitBoard não usa React Server Components | Risco analisado e registrado; `make audit` aceita somente esse aviso conhecido e falha para qualquer outro | GHSA-qwww-vcr4-c8h2 |
 | `npm ci` com Node 20 | Aviso `EBADENGINE` na biblioteca `@testing-library/jest-dom` 7 | A versão 7 exige Node 22, enquanto o projeto e a CI usam Node 20 | Dependência ajustada para 6.9.1, compatível com Node 20 | `npm ci` |
 | `make validate` | A validação completa não executava testes automatizados | O alvo dependia somente de builds, auditoria e Compose | Criados `backend-test`, `frontend-test` e `test`; `validate` agora inclui as duas suítes | `Makefile` |
+| Rota de edição com ID inexistente | Formulários de projeto, tarefa e integrante podiam aparecer vazios após falha de carga | O erro de carregamento compartilhava o mesmo estado do erro de gravação | Falha de carga separada do formulário, com mensagem e tentativa novamente; casos automatizados adicionados | `ProjectFormPage.test.jsx`, `TaskFormPage.test.jsx` e `TeamMemberFormPage.test.jsx` |

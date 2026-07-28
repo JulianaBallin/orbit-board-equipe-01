@@ -13,10 +13,12 @@ export default function ProjectFormPage() {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [loadFailed, setLoadFailed] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
     setError('');
+    setLoadFailed(false);
 
     try {
       const [memberData, projectData] = await Promise.all([
@@ -27,6 +29,7 @@ export default function ProjectFormPage() {
       setProject(projectData);
     } catch (err) {
       setError(err.message);
+      setLoadFailed(true);
     } finally {
       setLoading(false);
     }
@@ -55,6 +58,7 @@ export default function ProjectFormPage() {
   };
 
   if (loading) return <LoadingState />;
+  if (loadFailed) return <ErrorState message={error} onRetry={load} />;
 
   return (
     <section className="page-stack">

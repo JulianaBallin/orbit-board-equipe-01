@@ -31,7 +31,7 @@ Esta pasta reúne as evidências visuais das validações. O relatório LaTeX pr
 | `E21-colaborador-cadastrado.png` | Tela de Equipe com a equipe do projeto e um integrante cadastrado pela interface |
 | `E22-colaborador-email-repetido.png` | Mensagem de conflito ao cadastrar colaborador com email já usado |
 | `E23-tema-escuro.png` | Interface com o tema escuro aplicado e o controle de alternância visível |
-| `E24-testes-tema.png` | Saída da suíte do frontend com 65 testes aprovados em 13 arquivos, incluindo o `themeService` |
+| `E24-testes-tema.png` | Saída da suíte do frontend com 88 testes aprovados em 17 arquivos, incluindo rotas, formulários e `themeService` |
 | `E27-acoes-colaborador.png` | Cards da equipe com as ações de editar e excluir disponíveis |
 | `E28-bloqueio-exclusao-colaborador.png` | Bloqueio ao excluir integrante que responde por projeto e tarefa |
 | `E29-colaborador-excluido.png` | Aviso de sucesso e grade atualizada após excluir um colaborador |
