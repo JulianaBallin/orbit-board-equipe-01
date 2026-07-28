@@ -51,7 +51,8 @@ Os dados são mantidos em memória para concentrar a atividade na integração f
 | **Gerenciamento de tarefas**      | Permite cadastrar, consultar, editar e excluir tarefas                                                    |
 | **Cadastro e edição de tarefas**  | Disponibiliza formulários em páginas próprias para criar ou atualizar tarefas                             |
 | **Alteração de status**           | Permite atualizar o status das tarefas pelo quadro ou diretamente pela tabela                             |
-| **Menu de ações**                 | Reúne as opções de editar e excluir em um menu disponível em cada linha da tabela                         |
+| **Histórico de status**           | Exibe em um modal o histórico de mudanças de status de uma tarefa, acessível pelo quadro ou pela tabela   |
+| **Menu de ações**                 | Reúne as opções de editar, ver histórico e excluir em um menu disponível em cada linha da tabela          |
 | **Filtros**                       | Permite filtrar tarefas por projeto, status, prioridade, responsável e texto                              |
 | **Equipe**                        | Lista integrantes, funções e informações de contato fictícias da aplicação                                |
 | **Validação**                     | Verifica campos obrigatórios, datas, referências e nomes duplicados                                       |
@@ -220,6 +221,7 @@ npm run dev
 | `PUT`    | `/api/tasks/{id}`        | Atualiza uma tarefa                 |
 | `PATCH`  | `/api/tasks/{id}/status` | Altera somente o status             |
 | `DELETE` | `/api/tasks/{id}`        | Exclui uma tarefa                   |
+| `GET`    | `/api/tasks/{id}/history` | Lista o histórico de status de uma tarefa |
 | `GET`    | `/api/team-members`      | Lista integrantes disponíveis       |
 
 Os filtros e os exemplos de JSON estão documentados em [docs/contrato-api.md](docs/contrato-api.md).

@@ -119,6 +119,16 @@ textarea { resize: vertical; }
 .task-actions-menu button:hover, .task-actions-menu button:focus-visible { outline: none; background: #f1f4f9; }
 .task-actions-menu button.danger { color: #c43d4d; }
 .task-actions-menu button.danger:hover, .task-actions-menu button.danger:focus-visible { background: #fff0f2; }
+
+.modal-backdrop { position: fixed; inset: 0; background: rgba(17, 27, 50, .45); display: grid; place-items: center; padding: 20px; z-index: 1100; }
+.modal { background: #fff; border-radius: 16px; box-shadow: 0 20px 45px rgba(28, 45, 82, .22); width: 100%; max-width: 480px; max-height: 85vh; display: flex; flex-direction: column; }
+.modal-header { display: flex; justify-content: space-between; align-items: start; gap: 16px; padding: 20px 22px 0; }
+.modal-header h3 { margin: 4px 0 0; font-size: 1.15rem; }
+.modal-close { border: 0; background: transparent; font-size: 1.3rem; color: #67728a; line-height: 1; padding: 4px; }
+.modal-body { padding: 16px 22px 22px; overflow-y: auto; }
+.history-transition { display: flex; align-items: center; gap: 8px; }
+.history-transition .history-arrow { color: #a7b1c4; }
+.history-created { color: #67728a; font-size: .78rem; font-weight: 700; }
 .task-board { display: grid; grid-template-columns: repeat(4, minmax(240px, 1fr)); gap: 14px; overflow-x: auto; padding-bottom: 8px; }
 .task-column { background: #edf1f7; border-radius: 15px; padding: 12px; min-width: 245px; }
 .column-header { display: flex; justify-content: space-between; align-items: center; padding: 4px 4px 12px; }

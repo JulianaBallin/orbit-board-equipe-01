@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../api/client';
 import { Badge, EmptyState, ErrorState, LoadingState, Notice } from '../components/Common';
 import TaskTable from '../components/TaskTable';
+import TaskHistoryModal from '../components/TaskHistoryModal';
 import { priorityLabel, priorityTone, statusLabel } from '../utils/labels';
 
 const initialFilters = { projectId: '', status: '', priority: '', assigneeId: '', search: '' };
@@ -17,6 +18,7 @@ export default function TasksPage() {
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [viewMode, setViewMode] = useState('board');
+  const [historyTask, setHistoryTask] = useState(null);
 
   const loadReferenceData = useCallback(async () => {
     setProjects(await api.projects.list());
@@ -127,6 +129,7 @@ export default function TasksPage() {
           onEdit={(task) => navigate(`/tasks/${task.id}/edit`)}
           onDelete={remove}
           onStatusChange={changeStatus}
+          onViewHistory={setHistoryTask}
         />
       ) : (
         <div className="task-board">
@@ -165,6 +168,7 @@ export default function TasksPage() {
                       >
                         Editar
                       </button>
+                      <button className="button secondary small" onClick={() => setHistoryTask(task)}>Histórico</button>
                       <button className="button danger small" onClick={() => remove(task)}>Excluir</button>
                     </div>
                   </article>
@@ -173,6 +177,10 @@ export default function TasksPage() {
             );
           })}
         </div>
+      )}
+
+      {historyTask && (
+        <TaskHistoryModal task={historyTask} onClose={() => setHistoryTask(null)} />
       )}
     </section>
   );

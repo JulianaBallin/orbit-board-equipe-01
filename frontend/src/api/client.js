@@ -54,7 +54,8 @@ export const api = {
       method: 'PATCH',
       body: JSON.stringify({ status })
     }),
-    remove: (id) => request(`/api/tasks/${id}`, { method: 'DELETE' })
+    remove: (id) => request(`/api/tasks/${id}`, { method: 'DELETE' }),
+    history: (id) => request(`/api/tasks/${id}/history`)
   },
   team: () => request('/api/team-members')
 };

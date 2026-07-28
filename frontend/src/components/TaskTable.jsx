@@ -12,6 +12,7 @@ export default function TaskTable({
   onStatusChange,
   onEdit,
   onDelete,
+  onViewHistory,
 }) {
   const [openMenuId, setOpenMenuId] = useState(null);
   const [menuPosition, setMenuPosition] = useState(null);
@@ -221,6 +222,13 @@ export default function TaskTable({
             onClick={() => handleAction(onEdit, openTask)}
           >
             Editar
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => handleAction(onViewHistory, openTask)}
+          >
+            Histórico
           </button>
           <button
             type="button"

@@ -41,6 +41,7 @@ Não inclua tokens, senhas, emails pessoais, cookies ou outros segredos nas imag
 | E10 | Excluir projeto com tarefa | Resposta `409` sem remover o projeto | `E10-bloqueio-exclusao.png` | Definir | Pendente |
 | E11 | Parar o backend e usar a interface | Frontend mostra erro de conexão | `E11-backend-indisponivel.png` | Definir | Pendente |
 | E12 | Consultar logs do Compose | Logs mostram inicialização sem erro não tratado | `E12-logs-containers.png` | Definir | Pendente |
+| E14 | Abrir o histórico de status de uma tarefa pela interface (quadro ou tabela) | Modal exibe as transições de status em ordem cronológica, da mais recente para a mais antiga | `E14-historico-tarefa-frontend.png` | Definir | Pendente |
 
 ## Verificações técnicas iniciais
 
