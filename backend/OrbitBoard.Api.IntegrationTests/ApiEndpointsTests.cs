@@ -114,6 +114,75 @@ public sealed class ApiEndpointsTests : IDisposable
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
+    private async Task<WorkItemResponse> CreateTaskAsync(Guid projectId, string title, WorkItemPriority priority)
+    {
+        var request = new CreateWorkItemRequest
+        {
+            ProjectId = projectId,
+            Title = title,
+            Description = "Tarefa criada pelo teste de integração da ordenação manual.",
+            Status = WorkItemStatus.Review,
+            Priority = priority,
+            EstimatedHours = 3
+        };
+
+        var response = await _client.PostAsJsonAsync("/api/tasks", request, JsonOptions);
+        return (await response.Content.ReadFromJsonAsync<WorkItemResponse>(JsonOptions))!;
+    }
+
+    [Fact]
+    public async Task MoveTask_ToAnotherPosition_Returns200AndReordersTheGroup()
+    {
+        var projects = await _client.GetFromJsonAsync<List<ProjectResponse>>("/api/projects", JsonOptions);
+        var projectId = projects!.First().Id;
+
+        await CreateTaskAsync(projectId, "Ordenação primeira", WorkItemPriority.Low);
+        var last = await CreateTaskAsync(projectId, "Ordenação segunda", WorkItemPriority.Low);
+
+        var move = new MoveWorkItemRequest { Status = WorkItemStatus.Review, Position = 0 };
+        var response = await _client.PatchAsJsonAsync($"/api/tasks/{last.Id}/position", move, JsonOptions);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var moved = await response.Content.ReadFromJsonAsync<WorkItemResponse>(JsonOptions);
+        Assert.Equal(0, moved!.Position);
+
+        var review = await _client.GetFromJsonAsync<List<WorkItemResponse>>(
+            "/api/tasks?status=Review&priority=Low", JsonOptions);
+        Assert.Equal("Ordenação segunda", review!.First().Title);
+    }
+
+    [Fact]
+    public async Task MoveTask_WhenMissing_Returns404()
+    {
+        var move = new MoveWorkItemRequest { Status = WorkItemStatus.Backlog, Position = 0 };
+
+        var response = await _client.PatchAsJsonAsync($"/api/tasks/{Guid.NewGuid()}/position", move, JsonOptions);
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task MoveTask_WithNegativePosition_Returns400()
+    {
+        var projects = await _client.GetFromJsonAsync<List<ProjectResponse>>("/api/projects", JsonOptions);
+        var task = await CreateTaskAsync(projects!.First().Id, "Posição inválida", WorkItemPriority.Low);
+
+        var move = new MoveWorkItemRequest { Status = WorkItemStatus.Review, Position = -1 };
+        var response = await _client.PatchAsJsonAsync($"/api/tasks/{task.Id}/position", move, JsonOptions);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetTasks_ReturnsThePositionOfEachTask()
+    {
+        var tasks = await _client.GetFromJsonAsync<List<WorkItemResponse>>("/api/tasks", JsonOptions);
+
+        Assert.NotEmpty(tasks!);
+        Assert.All(tasks!, task => Assert.True(task.Position >= 0));
+    }
+
     [Fact]
     public async Task DeleteProject_WithUnfinishedTasks_Returns409()
     {
