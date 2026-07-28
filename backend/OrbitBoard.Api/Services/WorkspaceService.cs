@@ -235,6 +235,40 @@ public sealed class WorkspaceService : IWorkspaceService
         }
     }
 
+    public WorkItemResponse MoveWorkItem(Guid id, MoveWorkItemRequest request)
+    {
+        lock (_sync)
+        {
+            var item = FindWorkItem(id);
+            EnsureDefined(request.Status, "O status da tarefa informado é inválido.");
+
+            if (request.Position < 0)
+                throw new ValidationException("A posição da tarefa não pode ser negativa.");
+
+            var previousStatus = item.Status;
+            var group = _workItems
+                .Where(other => other.Id != id
+                    && other.Status == request.Status
+                    && other.Priority == item.Priority)
+                .OrderBy(other => other.Position)
+                .ToList();
+
+            item.Status = request.Status;
+            item.UpdatedAt = DateTimeOffset.UtcNow;
+            group.Insert(Math.Min(request.Position, group.Count), item);
+
+            for (var index = 0; index < group.Count; index += 1)
+                group[index].Position = index;
+
+            ReindexBoard();
+
+            if (previousStatus != request.Status)
+                RecordStatusHistory(item.Id, previousStatus, item.Status);
+
+            return ToWorkItemResponse(item);
+        }
+    }
+
     public void DeleteWorkItem(Guid id)
     {
         lock (_sync)
