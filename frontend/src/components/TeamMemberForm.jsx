@@ -20,10 +20,12 @@ export default function TeamMemberForm({ editing, onSubmit, onCancel, busy }) {
     if (!editing) return;
     setForm({
       name: editing.name,
-      role: roles.includes(editing.role) ? editing.role : roles[0],
+      role: editing.role,
       email: editing.email
     });
   }, [editing]);
+
+  const roleOptions = roles.includes(form.role) ? roles : [form.role, ...roles];
 
   const change = (event) => {
     const { name, value } = event.target;
@@ -56,7 +58,7 @@ export default function TeamMemberForm({ editing, onSubmit, onCancel, busy }) {
       <label>
         Cargo
         <select name="role" value={form.role} onChange={change} required>
-          {roles.map((option) => <option key={option} value={option}>{option}</option>)}
+          {roleOptions.map((option) => <option key={option} value={option}>{option}</option>)}
         </select>
       </label>
 
