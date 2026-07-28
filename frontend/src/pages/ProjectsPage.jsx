@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../api/client';
 import { Badge, EmptyState, ErrorState, LoadingState, Notice } from '../components/Common';
+import ConfirmDialog from '../components/ConfirmDialog';
 import { projectStatusLabel, projectStatusTone } from '../utils/labels';
 
 export default function ProjectsPage() {
@@ -10,6 +11,7 @@ export default function ProjectsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
+  const [confirmTarget, setConfirmTarget] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -25,18 +27,19 @@ export default function ProjectsPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  const remove = async (project) => {
+  const askRemove = (project) => {
     const pending = pendingTasks(project);
     if (pending > 0) {
       setError(`O projeto “${project.name}” possui ${pending} tarefa(s) não concluída(s) e não pode ser excluído.`);
       return;
     }
 
-    const warning = project.totalTasks
-      ? `Excluir o projeto “${project.name}”? As ${project.totalTasks} tarefa(s) concluída(s) também serão removidas.`
-      : `Excluir o projeto “${project.name}”?`;
-    if (!window.confirm(warning)) return;
+    setConfirmTarget(project);
+  };
 
+  const confirmRemove = async () => {
+    const project = confirmTarget;
+    setConfirmTarget(null);
     setError('');
     try {
       await api.projects.remove(project.id);
@@ -93,7 +96,7 @@ export default function ProjectsPage() {
                   </button>
                   <button
                     className="button danger small"
-                    onClick={() => remove(project)}
+                    onClick={() => askRemove(project)}
                     disabled={pendingTasks(project) > 0}
                     title={
                       pendingTasks(project) > 0
@@ -108,6 +111,21 @@ export default function ProjectsPage() {
             );
           })}
       </div>
+
+      {confirmTarget && (
+        <ConfirmDialog
+          title="Excluir projeto"
+          message={`Tem certeza que deseja excluir o projeto “${confirmTarget.name}”?`}
+          detail={
+            confirmTarget.totalTasks
+              ? `As ${confirmTarget.totalTasks} tarefa(s) concluída(s) deste projeto também serão removidas.`
+              : null
+          }
+          confirmLabel="Excluir projeto"
+          onConfirm={confirmRemove}
+          onCancel={() => setConfirmTarget(null)}
+        />
+      )}
     </section>
   );
 }

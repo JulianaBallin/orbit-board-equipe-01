@@ -126,6 +126,10 @@ textarea { resize: vertical; }
 .modal-header h3 { margin: 4px 0 0; font-size: 1.15rem; }
 .modal-close { border: 0; background: transparent; font-size: 1.3rem; color: #67728a; line-height: 1; padding: 4px; }
 .modal-body { padding: 16px 22px 22px; overflow-y: auto; }
+.confirm-modal { max-width: 430px; }
+.confirm-message { margin: 0; color: #34405a; line-height: 1.55; }
+.confirm-detail { margin: 10px 0 0; padding: 11px 13px; border-radius: 10px; background: #fff6e8; color: #8a6320; font-size: .82rem; line-height: 1.5; }
+.confirm-modal .form-actions { margin-top: 20px; }
 .history-transition { display: flex; align-items: center; gap: 8px; }
 .history-transition .history-arrow { color: #a7b1c4; }
 .history-created { color: #67728a; font-size: .78rem; font-weight: 700; }

@@ -4,6 +4,7 @@ import { api } from '../api/client';
 import { Badge, EmptyState, ErrorState, LoadingState, Notice } from '../components/Common';
 import TaskTable from '../components/TaskTable';
 import TaskHistoryModal from '../components/TaskHistoryModal';
+import ConfirmDialog from '../components/ConfirmDialog';
 import { priorityLabel, priorityTone, statusLabel } from '../utils/labels';
 
 const initialFilters = { projectId: '', status: '', priority: '', assigneeId: '', search: '' };
@@ -21,6 +22,7 @@ export default function TasksPage() {
   const [historyTask, setHistoryTask] = useState(null);
   const [draggingId, setDraggingId] = useState(null);
   const [dropTarget, setDropTarget] = useState('');
+  const [confirmTarget, setConfirmTarget] = useState(null);
 
   const loadReferenceData = useCallback(async () => {
     setProjects(await api.projects.list());
@@ -99,8 +101,9 @@ export default function TasksPage() {
     await changeStatus(id, status);
   };
 
-  const remove = async (task) => {
-    if (!window.confirm(`Excluir a tarefa “${task.title}”?`)) return;
+  const confirmRemove = async () => {
+    const task = confirmTarget;
+    setConfirmTarget(null);
     try {
       await api.tasks.remove(task.id);
       setNotice('Tarefa excluída.');
@@ -170,7 +173,7 @@ export default function TasksPage() {
           tasks={tasks}
           statuses={statuses}
           onEdit={(task) => navigate(`/tasks/${task.id}/edit`)}
-          onDelete={remove}
+          onDelete={setConfirmTarget}
           onStatusChange={changeStatus}
           onViewHistory={setHistoryTask}
         />
@@ -226,7 +229,7 @@ export default function TasksPage() {
                         Editar
                       </button>
                       <button className="button secondary small" onClick={() => setHistoryTask(task)}>Histórico</button>
-                      <button className="button danger small" onClick={() => remove(task)}>Excluir</button>
+                      <button className="button danger small" onClick={() => setConfirmTarget(task)}>Excluir</button>
                     </div>
                   </article>
                 ))}
@@ -238,6 +241,17 @@ export default function TasksPage() {
 
       {historyTask && (
         <TaskHistoryModal task={historyTask} onClose={() => setHistoryTask(null)} />
+      )}
+
+      {confirmTarget && (
+        <ConfirmDialog
+          title="Excluir tarefa"
+          message={`Tem certeza que deseja excluir a tarefa “${confirmTarget.title}”?`}
+          detail="Esta ação não pode ser desfeita e o histórico de status da tarefa também será removido."
+          confirmLabel="Excluir tarefa"
+          onConfirm={confirmRemove}
+          onCancel={() => setConfirmTarget(null)}
+        />
       )}
     </section>
   );
