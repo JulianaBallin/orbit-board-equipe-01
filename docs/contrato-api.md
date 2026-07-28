@@ -79,6 +79,7 @@ Regras principais:
 
 - `name` deve ter entre 3 e 80 caracteres e ser único.
 - `description` deve ter entre 10 e 500 caracteres.
+- `status` deve ser um dos valores aceitos para status de projeto.
 - `ownerId` deve existir na lista de integrantes.
 - `dueDate` não pode ser anterior a `startDate`.
 
@@ -107,8 +108,13 @@ Regras principais:
 - `projectId` deve existir.
 - `title` deve ter entre 3 e 120 caracteres.
 - `description` deve ter entre 5 e 800 caracteres.
+- `status` deve ser um dos valores aceitos para status de tarefa.
+- `priority` deve ser um dos valores aceitos para prioridade.
 - `assigneeId` é opcional, mas deve existir quando informado.
+- `dueDate` é opcional, mas quando informado não pode ser anterior à `startDate` nem posterior à `dueDate` do projeto.
 - `estimatedHours` deve estar entre 1 e 200.
+
+As mesmas regras de `status`, `priority` e `dueDate` valem para `PUT /api/tasks/{id}`. `PATCH /api/tasks/{id}/status` valida apenas se o `status` informado é um valor aceito.
 
 ## Alterar somente o status
 
