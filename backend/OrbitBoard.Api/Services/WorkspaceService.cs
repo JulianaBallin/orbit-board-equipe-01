@@ -97,6 +97,7 @@ public sealed class WorkspaceService : IWorkspaceService
             _history.RemoveAll(entry => finished.Contains(entry.WorkItemId));
             _workItems.RemoveAll(item => item.ProjectId == id);
             _projects.Remove(project);
+            ReindexBoard();
         }
     }
 
@@ -130,7 +131,7 @@ public sealed class WorkspaceService : IWorkspaceService
             return query
                 .OrderBy(item => item.Status)
                 .ThenByDescending(item => item.Priority)
-                .ThenBy(item => item.DueDate)
+                .ThenBy(item => item.Position)
                 .Select(ToWorkItemResponse)
                 .ToList();
         }
@@ -164,7 +165,8 @@ public sealed class WorkspaceService : IWorkspaceService
                 Priority = request.Priority,
                 AssigneeId = request.AssigneeId,
                 DueDate = request.DueDate,
-                EstimatedHours = request.EstimatedHours
+                EstimatedHours = request.EstimatedHours,
+                Position = NextPosition(request.Status, request.Priority)
             };
 
             _workItems.Add(item);
@@ -186,6 +188,7 @@ public sealed class WorkspaceService : IWorkspaceService
             ValidateWorkItemDueDate(request.DueDate, project);
 
             var previousStatus = item.Status;
+            var previousPriority = item.Priority;
 
             item.ProjectId = request.ProjectId;
             item.Title = request.Title.Trim();
@@ -196,6 +199,12 @@ public sealed class WorkspaceService : IWorkspaceService
             item.DueDate = request.DueDate;
             item.EstimatedHours = request.EstimatedHours;
             item.UpdatedAt = DateTimeOffset.UtcNow;
+
+            if (previousStatus != item.Status || previousPriority != item.Priority)
+            {
+                item.Position = NextPosition(item.Status, item.Priority);
+                ReindexBoard();
+            }
 
             if (previousStatus != item.Status)
                 RecordStatusHistory(item.Id, previousStatus, item.Status);
@@ -216,6 +225,44 @@ public sealed class WorkspaceService : IWorkspaceService
             item.UpdatedAt = DateTimeOffset.UtcNow;
 
             if (previousStatus != item.Status)
+            {
+                item.Position = NextPosition(item.Status, item.Priority);
+                ReindexBoard();
+                RecordStatusHistory(item.Id, previousStatus, item.Status);
+            }
+
+            return ToWorkItemResponse(item);
+        }
+    }
+
+    public WorkItemResponse MoveWorkItem(Guid id, MoveWorkItemRequest request)
+    {
+        lock (_sync)
+        {
+            var item = FindWorkItem(id);
+            EnsureDefined(request.Status, "O status da tarefa informado é inválido.");
+
+            if (request.Position < 0)
+                throw new ValidationException("A posição da tarefa não pode ser negativa.");
+
+            var previousStatus = item.Status;
+            var group = _workItems
+                .Where(other => other.Id != id
+                    && other.Status == request.Status
+                    && other.Priority == item.Priority)
+                .OrderBy(other => other.Position)
+                .ToList();
+
+            item.Status = request.Status;
+            item.UpdatedAt = DateTimeOffset.UtcNow;
+            group.Insert(Math.Min(request.Position, group.Count), item);
+
+            for (var index = 0; index < group.Count; index += 1)
+                group[index].Position = index;
+
+            ReindexBoard();
+
+            if (previousStatus != request.Status)
                 RecordStatusHistory(item.Id, previousStatus, item.Status);
 
             return ToWorkItemResponse(item);
@@ -227,6 +274,7 @@ public sealed class WorkspaceService : IWorkspaceService
         lock (_sync)
         {
             _workItems.Remove(FindWorkItem(id));
+            ReindexBoard();
         }
     }
 
@@ -297,6 +345,19 @@ public sealed class WorkspaceService : IWorkspaceService
     private WorkItem FindWorkItem(Guid id) =>
         _workItems.FirstOrDefault(item => item.Id == id)
         ?? throw new NotFoundException("Tarefa não encontrada.");
+
+    private int NextPosition(WorkItemStatus status, WorkItemPriority priority) =>
+        _workItems.Count(item => item.Status == status && item.Priority == priority);
+
+    private void ReindexBoard()
+    {
+        foreach (var group in _workItems.GroupBy(item => (item.Status, item.Priority)))
+        {
+            var ordered = group.OrderBy(item => item.Position).ToList();
+            for (var index = 0; index < ordered.Count; index += 1)
+                ordered[index].Position = index;
+        }
+    }
 
     private void EnsureMemberExists(Guid id)
     {
@@ -376,6 +437,7 @@ public sealed class WorkspaceService : IWorkspaceService
             assignee?.Name,
             item.DueDate,
             item.EstimatedHours,
+            item.Position,
             item.CreatedAt,
             item.UpdatedAt);
     }
@@ -503,5 +565,12 @@ public sealed class WorkspaceService : IWorkspaceService
                 EstimatedHours = 6
             }
         ]);
+
+        foreach (var group in _workItems.GroupBy(item => (item.Status, item.Priority)))
+        {
+            var ordered = group.OrderBy(item => item.DueDate).ToList();
+            for (var index = 0; index < ordered.Count; index += 1)
+                ordered[index].Position = index;
+        }
     }
 }

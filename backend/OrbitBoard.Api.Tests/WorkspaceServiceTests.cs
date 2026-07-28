@@ -147,6 +147,142 @@ public sealed class WorkspaceServiceTests
         Assert.Throws<NotFoundException>(() => _service.DeleteProject(Guid.NewGuid()));
     }
 
+    private WorkItemResponse SeedTask(Guid projectId, string title, WorkItemPriority priority, WorkItemStatus status) =>
+        _service.CreateWorkItem(new CreateWorkItemRequest
+        {
+            ProjectId = projectId,
+            Title = title,
+            Description = "Task created to exercise the manual ordering rules.",
+            Status = status,
+            Priority = priority,
+            EstimatedHours = 2
+        });
+
+    private List<string> TitlesIn(WorkItemStatus status) =>
+        _service.GetWorkItems(null, status, null, null, null).Select(item => item.Title).ToList();
+
+    [Fact]
+    public void CreateWorkItem_AppendsToTheEndOfItsPriorityGroup()
+    {
+        var project = _service.GetProjects().First();
+
+        var first = SeedTask(project.Id, "Ordering first", WorkItemPriority.Low, WorkItemStatus.Review);
+        var second = SeedTask(project.Id, "Ordering second", WorkItemPriority.Low, WorkItemStatus.Review);
+
+        Assert.Equal(0, first.Position);
+        Assert.Equal(1, second.Position);
+    }
+
+    [Fact]
+    public void MoveWorkItem_ReordersInsideTheSamePriorityGroup()
+    {
+        var project = _service.GetProjects().First();
+        SeedTask(project.Id, "Ordering first", WorkItemPriority.Low, WorkItemStatus.Review);
+        SeedTask(project.Id, "Ordering second", WorkItemPriority.Low, WorkItemStatus.Review);
+        var third = SeedTask(project.Id, "Ordering third", WorkItemPriority.Low, WorkItemStatus.Review);
+
+        _service.MoveWorkItem(third.Id, new MoveWorkItemRequest
+        {
+            Status = WorkItemStatus.Review,
+            Position = 0
+        });
+
+        var lowTitles = _service.GetWorkItems(null, WorkItemStatus.Review, WorkItemPriority.Low, null, null)
+            .Select(item => item.Title)
+            .ToList();
+
+        Assert.Equal(["Ordering third", "Ordering first", "Ordering second"], lowTitles);
+    }
+
+    [Fact]
+    public void MoveWorkItem_KeepsPriorityGroupsAboveTheManualOrder()
+    {
+        var project = _service.GetProjects().First();
+        var low = SeedTask(project.Id, "Low priority task", WorkItemPriority.Low, WorkItemStatus.Review);
+        SeedTask(project.Id, "Critical priority task", WorkItemPriority.Critical, WorkItemStatus.Review);
+
+        _service.MoveWorkItem(low.Id, new MoveWorkItemRequest
+        {
+            Status = WorkItemStatus.Review,
+            Position = 0
+        });
+
+        var titles = TitlesIn(WorkItemStatus.Review);
+
+        Assert.True(titles.IndexOf("Critical priority task") < titles.IndexOf("Low priority task"));
+    }
+
+    [Fact]
+    public void MoveWorkItem_ToAnotherColumnChangesStatusAndRecordsHistory()
+    {
+        var project = _service.GetProjects().First();
+        var task = SeedTask(project.Id, "Travelling task", WorkItemPriority.Low, WorkItemStatus.Backlog);
+
+        var moved = _service.MoveWorkItem(task.Id, new MoveWorkItemRequest
+        {
+            Status = WorkItemStatus.Done,
+            Position = 0
+        });
+
+        Assert.Equal(WorkItemStatus.Done, moved.Status);
+        Assert.Equal(0, moved.Position);
+        Assert.Contains(_service.GetWorkItemHistory(task.Id), entry => entry.ToStatus == WorkItemStatus.Done);
+    }
+
+    [Fact]
+    public void MoveWorkItem_BeyondTheEndLandsAsTheLastOfItsGroup()
+    {
+        var project = _service.GetProjects().First();
+        var first = SeedTask(project.Id, "Ordering first", WorkItemPriority.Low, WorkItemStatus.Review);
+        SeedTask(project.Id, "Ordering second", WorkItemPriority.Low, WorkItemStatus.Review);
+
+        var moved = _service.MoveWorkItem(first.Id, new MoveWorkItemRequest
+        {
+            Status = WorkItemStatus.Review,
+            Position = 99
+        });
+
+        Assert.Equal(1, moved.Position);
+    }
+
+    [Fact]
+    public void MoveWorkItem_WithNegativePosition_ThrowsValidation()
+    {
+        var project = _service.GetProjects().First();
+        var task = SeedTask(project.Id, "Invalid position task", WorkItemPriority.Low, WorkItemStatus.Backlog);
+
+        Assert.Throws<ValidationException>(() => _service.MoveWorkItem(task.Id, new MoveWorkItemRequest
+        {
+            Status = WorkItemStatus.Backlog,
+            Position = -1
+        }));
+    }
+
+    [Fact]
+    public void MoveWorkItem_WhenMissing_ThrowsNotFound()
+    {
+        Assert.Throws<NotFoundException>(() => _service.MoveWorkItem(Guid.NewGuid(), new MoveWorkItemRequest
+        {
+            Status = WorkItemStatus.Backlog,
+            Position = 0
+        }));
+    }
+
+    [Fact]
+    public void DeleteWorkItem_ClosesTheGapLeftInTheGroup()
+    {
+        var project = _service.GetProjects().First();
+        var first = SeedTask(project.Id, "Ordering first", WorkItemPriority.Low, WorkItemStatus.Review);
+        SeedTask(project.Id, "Ordering second", WorkItemPriority.Low, WorkItemStatus.Review);
+
+        _service.DeleteWorkItem(first.Id);
+
+        var remaining = _service.GetWorkItems(null, WorkItemStatus.Review, WorkItemPriority.Low, null, null);
+
+        Assert.All(remaining.Select((item, index) => (item, index)), pair =>
+            Assert.Equal(pair.index, pair.item.Position));
+    }
+
     [Fact]
     public void GetWorkItems_FilteredByDoneStatus_ReturnsOnlyDone()
     {

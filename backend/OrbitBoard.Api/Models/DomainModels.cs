@@ -47,6 +47,7 @@ public sealed class WorkItem
     public Guid? AssigneeId { get; set; }
     public DateOnly? DueDate { get; set; }
     public int EstimatedHours { get; set; }
+    public int Position { get; set; }
     public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
     public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
 }
