@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../api/client';
 import TeamMemberForm from '../components/TeamMemberForm';
-import { LoadingState } from '../components/Common';
+import { ErrorState, LoadingState } from '../components/Common';
 
 export default function TeamMemberFormPage() {
   const navigate = useNavigate();
@@ -12,16 +12,24 @@ export default function TeamMemberFormPage() {
   const [loading, setLoading] = useState(isEditing);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [loadFailed, setLoadFailed] = useState(false);
 
   const load = useCallback(async () => {
     if (!isEditing) return;
 
     setLoading(true);
+    setError('');
+    setLoadFailed(false);
     try {
       const members = await api.team.list();
-      setMember(members.find((item) => item.id === id) || null);
+      const selected = members.find((item) => item.id === id);
+      if (!selected) {
+        throw new Error('Integrante não encontrado.');
+      }
+      setMember(selected);
     } catch (err) {
       setError(err.message);
+      setLoadFailed(true);
     } finally {
       setLoading(false);
     }
@@ -48,6 +56,7 @@ export default function TeamMemberFormPage() {
   };
 
   if (loading) return <LoadingState />;
+  if (loadFailed) return <ErrorState message={error} onRetry={load} />;
 
   return (
     <section className="page-stack">

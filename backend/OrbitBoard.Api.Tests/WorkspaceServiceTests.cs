@@ -527,7 +527,10 @@ public sealed class WorkspaceServiceTests
         var history = _service.GetWorkItemHistory(task.Id);
 
         Assert.Equal(WorkItemStatus.Review, updated.Status);
-        var last = Assert.Single(history);
+        Assert.Equal(2, history.Count);
+        Assert.Null(history[0].FromStatus);
+        Assert.Equal(task.Status, history[0].ToStatus);
+        var last = history[1];
         Assert.Equal(task.Status, last.FromStatus);
         Assert.Equal(WorkItemStatus.Review, last.ToStatus);
     }
@@ -539,7 +542,9 @@ public sealed class WorkspaceServiceTests
 
         _service.ChangeWorkItemStatus(task.Id, new ChangeWorkItemStatusRequest { Status = task.Status });
 
-        Assert.Empty(_service.GetWorkItemHistory(task.Id));
+        var entry = Assert.Single(_service.GetWorkItemHistory(task.Id));
+        Assert.Null(entry.FromStatus);
+        Assert.Equal(task.Status, entry.ToStatus);
     }
 
     [Fact]

@@ -46,6 +46,49 @@ public sealed class ApiEndpointsTests : IDisposable
     }
 
     [Fact]
+    public async Task Swagger_ExposesExactlyTheNineteenDocumentedOperations()
+    {
+        using var document = await _client.GetFromJsonAsync<JsonDocument>("/swagger/v1/swagger.json");
+        var httpMethods = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "delete", "get", "patch", "post", "put"
+        };
+        var actual = document!.RootElement
+            .GetProperty("paths")
+            .EnumerateObject()
+            .SelectMany(path => path.Value
+                .EnumerateObject()
+                .Where(operation => httpMethods.Contains(operation.Name))
+                .Select(operation => $"{operation.Name.ToUpperInvariant()} {path.Name}"))
+            .Order()
+            .ToArray();
+        string[] expected =
+        [
+            "DELETE /api/projects/{id}",
+            "DELETE /api/tasks/{id}",
+            "DELETE /api/team-members/{id}",
+            "GET /api/dashboard",
+            "GET /api/projects",
+            "GET /api/projects/{id}",
+            "GET /api/tasks",
+            "GET /api/tasks/{id}",
+            "GET /api/tasks/{id}/history",
+            "GET /api/team-members",
+            "GET /health",
+            "PATCH /api/tasks/{id}/position",
+            "PATCH /api/tasks/{id}/status",
+            "POST /api/projects",
+            "POST /api/tasks",
+            "POST /api/team-members",
+            "PUT /api/projects/{id}",
+            "PUT /api/tasks/{id}",
+            "PUT /api/team-members/{id}"
+        ];
+
+        Assert.Equal(expected.Order(), actual);
+    }
+
+    [Fact]
     public async Task GetProjects_ReturnsSeededProjectsAsJson()
     {
         var response = await _client.GetAsync("/api/projects");
@@ -161,8 +204,13 @@ public sealed class ApiEndpointsTests : IDisposable
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
         var updated = await response.Content.ReadFromJsonAsync<TeamMember>(JsonOptions);
+        var members = await _client.GetFromJsonAsync<List<TeamMember>>("/api/team-members", JsonOptions);
         Assert.Equal("MP", updated!.Initials);
         Assert.Equal("Tech Lead", updated.Role);
+        Assert.Contains(members!, item =>
+            item.Id == member.Id &&
+            item.Initials == "MP" &&
+            item.Role == "Tech Lead");
     }
 
     [Fact]
@@ -263,6 +311,45 @@ public sealed class ApiEndpointsTests : IDisposable
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
+    [Fact]
+    public async Task GetProject_WhenExists_Returns200WithTheRequestedProject()
+    {
+        var projects = await _client.GetFromJsonAsync<List<ProjectResponse>>("/api/projects", JsonOptions);
+        var expected = projects!.First();
+
+        var response = await _client.GetAsync($"/api/projects/{expected.Id}");
+        var project = await response.Content.ReadFromJsonAsync<ProjectResponse>(JsonOptions);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(expected.Id, project!.Id);
+        Assert.Equal(expected.Name, project.Name);
+    }
+
+    [Fact]
+    public async Task UpdateProject_WithValidData_Returns200AndPersists()
+    {
+        var projects = await _client.GetFromJsonAsync<List<ProjectResponse>>("/api/projects", JsonOptions);
+        var target = projects!.First();
+        var request = new UpdateProjectRequest
+        {
+            Name = "Projeto atualizado pela integração",
+            Description = "Descrição atualizada e persistida entre requisições HTTP.",
+            Status = ProjectStatus.Active,
+            StartDate = target.StartDate,
+            DueDate = target.DueDate,
+            OwnerId = target.OwnerId
+        };
+
+        var response = await _client.PutAsJsonAsync($"/api/projects/{target.Id}", request, JsonOptions);
+        var persisted = await _client.GetFromJsonAsync<ProjectResponse>(
+            $"/api/projects/{target.Id}", JsonOptions);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(request.Name, persisted!.Name);
+        Assert.Equal(request.Description, persisted.Description);
+        Assert.Equal(request.Status, persisted.Status);
+    }
+
     private async Task<WorkItemResponse> CreateTaskAsync(Guid projectId, string title, WorkItemPriority priority)
     {
         var request = new CreateWorkItemRequest
@@ -277,6 +364,86 @@ public sealed class ApiEndpointsTests : IDisposable
 
         var response = await _client.PostAsJsonAsync("/api/tasks", request, JsonOptions);
         return (await response.Content.ReadFromJsonAsync<WorkItemResponse>(JsonOptions))!;
+    }
+
+    [Fact]
+    public async Task CreateAndGetTask_WithValidData_Returns201AndPersistsInitialHistory()
+    {
+        var projects = await _client.GetFromJsonAsync<List<ProjectResponse>>("/api/projects", JsonOptions);
+        var request = new CreateWorkItemRequest
+        {
+            ProjectId = projects!.First().Id,
+            Title = "Persistência entre requisições",
+            Description = "Tarefa criada e consultada por uma segunda requisição HTTP.",
+            Status = WorkItemStatus.Backlog,
+            Priority = WorkItemPriority.High,
+            EstimatedHours = 5
+        };
+
+        var response = await _client.PostAsJsonAsync("/api/tasks", request, JsonOptions);
+        var created = await response.Content.ReadFromJsonAsync<WorkItemResponse>(JsonOptions);
+        var persisted = await _client.GetFromJsonAsync<WorkItemResponse>(
+            $"/api/tasks/{created!.Id}", JsonOptions);
+        var history = await _client.GetFromJsonAsync<List<TaskHistoryEntryResponse>>(
+            $"/api/tasks/{created.Id}/history", JsonOptions);
+
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        Assert.EndsWith($"/api/tasks/{created.Id}", response.Headers.Location!.AbsolutePath);
+        Assert.Equal(request.Title, persisted!.Title);
+        var initial = Assert.Single(history!);
+        Assert.Null(initial.FromStatus);
+        Assert.Equal(request.Status, initial.ToStatus);
+    }
+
+    [Fact]
+    public async Task UpdateTask_WithValidData_Returns200AndPersistsStatusHistory()
+    {
+        var projects = await _client.GetFromJsonAsync<List<ProjectResponse>>("/api/projects", JsonOptions);
+        var task = await CreateTaskAsync(
+            projects!.First().Id,
+            "Tarefa antes da edição",
+            WorkItemPriority.Low);
+        var request = new UpdateWorkItemRequest
+        {
+            ProjectId = task.ProjectId,
+            Title = "Tarefa após a edição",
+            Description = "Conteúdo atualizado e persistido pela rota PUT.",
+            Status = WorkItemStatus.Done,
+            Priority = WorkItemPriority.High,
+            EstimatedHours = 8
+        };
+
+        var response = await _client.PutAsJsonAsync($"/api/tasks/{task.Id}", request, JsonOptions);
+        var persisted = await _client.GetFromJsonAsync<WorkItemResponse>(
+            $"/api/tasks/{task.Id}", JsonOptions);
+        var history = await _client.GetFromJsonAsync<List<TaskHistoryEntryResponse>>(
+            $"/api/tasks/{task.Id}/history", JsonOptions);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(request.Title, persisted!.Title);
+        Assert.Equal(request.Status, persisted.Status);
+        Assert.Equal(request.Priority, persisted.Priority);
+        Assert.Equal(2, history!.Count);
+        Assert.Equal(WorkItemStatus.Review, history[1].FromStatus);
+        Assert.Equal(WorkItemStatus.Done, history[1].ToStatus);
+    }
+
+    [Fact]
+    public async Task DeleteTask_WhenExists_Returns204AndRemainsAbsent()
+    {
+        var projects = await _client.GetFromJsonAsync<List<ProjectResponse>>("/api/projects", JsonOptions);
+        var task = await CreateTaskAsync(
+            projects!.First().Id,
+            "Tarefa removida pela integração",
+            WorkItemPriority.Medium);
+
+        var response = await _client.DeleteAsync($"/api/tasks/{task.Id}");
+        var getResponse = await _client.GetAsync($"/api/tasks/{task.Id}");
+        var historyResponse = await _client.GetAsync($"/api/tasks/{task.Id}/history");
+
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, historyResponse.StatusCode);
     }
 
     [Fact]

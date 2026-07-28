@@ -63,6 +63,12 @@ As origens permitidas pelo CORS ficam em `Cors:AllowedOrigins`. No Docker Compos
 
 ## Endpoints principais
 
+### Saúde
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| GET | `/health` | Verifica a saúde da API. |
+
 ### Dashboard
 
 | Método | Endpoint | Descrição |

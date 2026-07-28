@@ -8,7 +8,7 @@ import { api } from '../api/client';
 
 function renderPage() {
   return render(
-    <MemoryRouter 
+    <MemoryRouter
       initialEntries={['/team/new']}
       future={{
         v7_startTransition: true,
@@ -17,6 +17,16 @@ function renderPage() {
       <Routes>
         <Route path="/team" element={<TeamPage />} />
         <Route path="/team/new" element={<TeamMemberFormPage />} />
+      </Routes>
+    </MemoryRouter>,
+  );
+}
+
+function renderEditPage(id) {
+  return render(
+    <MemoryRouter initialEntries={[`/team/${id}/edit`]}>
+      <Routes>
+        <Route path="/team/:id/edit" element={<TeamMemberFormPage />} />
       </Routes>
     </MemoryRouter>,
   );
@@ -90,5 +100,15 @@ describe('TeamMemberFormPage', () => {
 
     expect(await screen.findByRole('heading', { name: 'Equipe' })).toBeInTheDocument();
     expect(create).not.toHaveBeenCalled();
+  });
+
+  it('shows a retry state instead of a blank form when the member does not exist', async () => {
+    vi.spyOn(api.team, 'list').mockResolvedValue([]);
+
+    renderEditPage('missing');
+
+    expect(await screen.findByText('Integrante não encontrado.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Tentar novamente' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Salvar alterações' })).not.toBeInTheDocument();
   });
 });

@@ -4,7 +4,7 @@
 
 # OrbitBoard | Frontend
 
-Aplicação web em **React 18 + Vite** para consumir a API OrbitBoard e demonstrar integração full stack.
+Aplicação web em **React 18 + React Router 7 + Vite** para consumir a API OrbitBoard e demonstrar integração full stack.
 
 ## Funcionalidades
 
@@ -82,6 +82,8 @@ npm test
 ```
 
 Os testes usam **Vitest** e **Testing Library** e cobrem o cliente HTTP (`src/api/client.js`), os componentes de tarefas (modal de histórico `TaskHistoryModal`, menu de ações da tabela, arraste no quadro), o cadastro/edição de colaboradores (`TeamMemberFormPage`), o tema claro/escuro (`themeService`) e o layout (`Layout`).
+
+Na reverificação final, a suíte aprovou 88 testes distribuídos em 17 arquivos. A cobertura inclui 12 casos de rotas e redirecionamentos, além dos fluxos de dashboard e dos formulários de projeto, tarefa e integrante.
 
 ## Como executar com Docker
 

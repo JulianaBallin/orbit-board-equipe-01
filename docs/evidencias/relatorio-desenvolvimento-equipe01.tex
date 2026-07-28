@@ -85,7 +85,7 @@
 \fancyhead[R]{\small\color{OrbitViolet}\textbf{Equipe 01}}
 \fancyfoot[L]{\scriptsize\color{OrbitText}Módulo 5 | Integração Full Stack}
 \fancyfoot[C]{\scriptsize\color{OrbitText}Página \thepage\ de \pageref{LastPage}}
-\fancyfoot[R]{\scriptsize\color{OrbitText}OrbitBoard | Versão 1.0}
+\fancyfoot[R]{\scriptsize\color{OrbitText}OrbitBoard | Versão 1.3}
 \renewcommand{\headrulewidth}{0.6pt}
 \renewcommand{\footrulewidth}{0.4pt}
 \renewcommand{\headrule}{\hbox to\headwidth{\color{OrbitLine}\leaders\hrule height \headrulewidth\hfill}}
@@ -98,7 +98,7 @@
   \fancyhead[R]{\small\color{OrbitViolet}\textbf{Equipe 01}}
   \fancyfoot[L]{\scriptsize\color{OrbitText}Módulo 5 | Integração Full Stack}
   \fancyfoot[C]{\scriptsize\color{OrbitText}Página \thepage\ de \pageref{LastPage}}
-  \fancyfoot[R]{\scriptsize\color{OrbitText}OrbitBoard | Versão 1.0}
+  \fancyfoot[R]{\scriptsize\color{OrbitText}OrbitBoard | Versão 1.3}
   \renewcommand{\headrulewidth}{0.6pt}
   \renewcommand{\footrulewidth}{0.4pt}
 }
@@ -156,7 +156,6 @@
 \lstset{style=orbit}
 
 \newcommand{\statusok}{\textcolor{OrbitGreen}{\textbf{Aprovado}}}
-\newcommand{\statuspending}{\textcolor{OrbitYellow}{\textbf{Pendente}}}
 
 \newcommand{\evidencia}[3]{
   \begin{figure}[H]
@@ -167,7 +166,7 @@
       \fcolorbox{OrbitLine}{OrbitLight}{
         \parbox[c][5.4cm][c]{0.88\textwidth}{
           \centering
-          {\Large\bfseries\color{OrbitNavy}Evidência aguardando captura}\par
+          {\Large\bfseries\color{OrbitNavy}Evidência não encontrada nesta compilação}\par
           \vspace{0.8em}
           {\color{OrbitViolet}\texttt{\detokenize{#1}}}\par
           \vspace{0.8em}
@@ -227,7 +226,7 @@
         Camila Félix dos Reis & \href{https://github.com/cawzkf}{@cawzkf} \\
         Fernanda de Oliveira da Costa & \href{https://github.com/nanda-costa}{@nanda-costa} \\
         Juliana Ballin Lima & \href{https://github.com/JulianaBallin}{@JulianaBallin} \\
-        Pedro Henrique Oliveria Dias & \href{https://github.com/pedroddias-oss}{@pedroddias-oss} \\
+        Pedro Henrique Oliveira Dias & \href{https://github.com/pedroddias-oss}{@pedroddias-oss} \\
       \end{tabular}
     \end{tcolorbox}
 
@@ -250,13 +249,13 @@
   Módulo & Módulo 5 de Integração Full Stack \\
   Repositório & \url{https://github.com/JulianaBallin/orbit-board-equipe-01} \\
   Branch de desenvolvimento & \texttt{develop} \\
-  Versão & 1.1 \\
-  Data de referência & 27 de julho de 2026 \\
-  Situação & Fundação técnica concluída, evidências completas e contribuições registradas \\
+  Versão & 1.3 \\
+  Data de referência & 28 de julho de 2026 \\
+  Situação & Auditoria técnica concluída, evidências completas e apresentação preparada \\
 \end{tabularx}
 
 \begin{resumobox}[Controle de revisão]
-Este documento foi preparado para registrar a arquitetura, a integração, a infraestrutura, os ajustes técnicos, os testes e as evidências do OrbitBoard. As áreas marcadas como pendentes devem ser atualizadas pelos integrantes responsáveis antes da apresentação final.
+Este documento registra a arquitetura, a integração, a infraestrutura, os ajustes técnicos, os testes e as evidências do OrbitBoard. A revisão final conferiu o conteúdo contra a branch \texttt{develop}, o histórico Git e a execução real da aplicação.
 \end{resumobox}
 
 \chapter*{Resumo executivo}
@@ -268,12 +267,12 @@ A equipe adotou a aplicação base fornecida pelo docente e concentrou o desenvo
 
 \begin{resumobox}[Resultado técnico atual]
   \begin{itemize}
-    \item Backend compilado sem erros e sem avisos, com 29 testes automatizados aprovados.
-    \item Frontend compilado com Vite 8.1.5 e 10 testes automatizados aprovados.
+    \item Backend compilado sem erros e sem avisos, com 73 testes automatizados aprovados.
+    \item Frontend compilado com Vite 8.1.5 e 88 testes automatizados aprovados em 17 arquivos.
     \item Docker Compose validado com backend e frontend saudáveis.
     \item Swagger, frontend e endpoints de saúde acessíveis nas portas documentadas.
     \item Pipeline do GitHub Actions aprovada para backend, frontend e containers.
-    \item Roteiro com quatorze evidências, todas registradas pela equipe.
+    \item Conjunto com 28 evidências, todas registradas pela equipe.
   \end{itemize}
 \end{resumobox}
 
@@ -320,8 +319,8 @@ Frontend & Consumo da API, formulários, filtros e estados & \statusok \\
 Docker & Dois Dockerfiles, Compose, portas e health checks & \statusok \\
 Git & Branches, commits convencionais, CI e MRs & \statusok \\
 Documentação & README, arquitetura, contrato e roteiro & \statusok \\
-Evidências & Quatorze de quatorze capturas registradas e relatório atualizado & \statusok \\
-Apresentação & Roteiro de 10 minutos preparado & \statuspending \\
+Evidências & 28 capturas registradas e relatório atualizado & \statusok \\
+Apresentação & Roteiro técnico de 7 minutos preparado & \statusok \\
 \bottomrule
 \end{tabularx}
 \end{statusbox}
@@ -448,7 +447,7 @@ Tecnologia & Versão & Aplicação \\
 .NET e ASP.NET Core & 8 & API REST, controllers, validação, middleware e health check \\
 Swashbuckle & 6.6.2 & Geração do Swagger e OpenAPI \\
 React & 18.3 & Interface e componentes \\
-React Router & 6.28 & Navegação entre páginas \\
+React Router & 7.18.1 & Navegação entre páginas \\
 Vite & 8.1.5 & Servidor de desenvolvimento e build do frontend \\
 Node.js & 20.19 ou superior & Ambiente de build do frontend \\
 Nginx & 1.27 & Publicação dos arquivos estáticos no container \\
@@ -761,7 +760,7 @@ npm & 10.8.2 \\
 \bottomrule
 \end{tabularx}
 
-\section{Resultados técnicos iniciais}
+\section{Resultados técnicos consolidados}
 
 \begin{longtable}{p{0.43\textwidth} p{0.24\textwidth} p{0.23\textwidth}}
 \toprule
@@ -769,8 +768,15 @@ Verificação & Resultado & Situação \\
 \midrule
 \endhead
 Build Release do backend & Sem erros e sem avisos & \statusok \\
+Testes do backend & 73 aprovados: 42 unitários e 31 de integração & \statusok \\
 Build do frontend & Vite 8.1.5 concluído & \statusok \\
-Auditoria npm & Nenhuma vulnerabilidade & \statusok \\
+Testes do frontend & 88 aprovados em 17 arquivos & \statusok \\
+Rotas da API & 19 operações cobertas por testes de integração & \statusok \\
+Rotas do frontend & 10 destinos e 2 redirecionamentos cobertos & \statusok \\
+Renderização do SPA & 15 entradas conferidas em navegador headless & \statusok \\
+Persistência no processo & Escrita e leitura posterior confirmadas & \statusok \\
+Reinício do backend & Carga inicial restaurada conforme o escopo em memória & \statusok \\
+Auditoria npm & Aviso de RSC analisado, sem caminho de execução nesta SPA & \statusok \\
 Validação do Compose & Configuração aceita & \statusok \\
 Containers & Dois serviços saudáveis & \statusok \\
 Frontend & Resposta HTTP 200 & \statusok \\
@@ -804,6 +810,20 @@ E11 & Interromper o backend & Mensagem de indisponibilidade \\
 E12 & Consultar logs & Inicialização sem erro não tratado \\
 E13 & Consultar o histórico de status pelo Swagger ou Postman & JSON com as transições em ordem cronológica \\
 E14 & Abrir o histórico de status pela interface & Modal com as transições da mais recente para a mais antiga \\
+E15 & Excluir projeto com todas as tarefas concluídas & Ação liberada com confirmação \\
+E16 & Confirmar a exclusão do projeto concluído & Resposta 204 e listagem atualizada \\
+E17 & Arrastar tarefa entre colunas & Card e indicador acompanham o ponteiro \\
+E18 & Conferir prioridades diferentes & Grupos ordenados por prioridade \\
+E19 & Reordenar tarefas da mesma prioridade & Ordem manual persiste após recarregar \\
+E20 & Abrir a lista de cargos & Cargos pré-definidos disponíveis \\
+E21 & Cadastrar colaborador & Resposta 201 e integrante na equipe \\
+E22 & Repetir email de colaborador & Resposta 409 e formulário preservado \\
+E23 & Alternar para o tema escuro & Tema aplicado e preferência persistida \\
+E24 & Executar a suíte do frontend & 88 testes aprovados em 17 arquivos \\
+E27 & Abrir as ações de colaborador & Edição e exclusão disponíveis \\
+E28 & Excluir colaborador com vínculos & Resposta 409 e lista preservada \\
+E29 & Excluir colaborador sem vínculos & Resposta 204 e lista atualizada \\
+E30 & Acionar a exclusão de colaborador & Modal de confirmação exibido \\
 \bottomrule
 \end{longtable}
 
@@ -816,20 +836,25 @@ A revisão final identificou e tratou as seguintes falhas técnicas:
 Falha & Causa & Correção \\
 \midrule
 \endhead
-Vulnerabilidades no \texttt{npm audit} & Duas vulnerabilidades moderadas no \texttt{react-router} (GHSA-wrjc-x8rr-h8h6 e GHSA-337j-9hxr-rhxg), presentes em todas as versões 6.x da biblioteca & Não corrigida nesta entrega, pois exige migrar para a versão 7 e revisar as rotas do frontend; registrada como melhoria opcional \\
+Avisos moderados no React Router 6 & A versão anterior estava nos intervalos afetados por avisos de navegação e hidratação & Migração para React Router 7.18.1, validada por 88 testes e pelo build de produção \\
+Aviso atual no \texttt{npm audit} & Duas ocorrências de severidade alta apontam o mesmo problema no modo React Server Components & Aplicabilidade analisada: o OrbitBoard é uma SPA com Vite e não usa RSC; \texttt{make audit} aceita somente esse aviso conhecido e falha para qualquer outro \\
+Dependência incompatível com Node 20 & \texttt{@testing-library/jest-dom} 7 exige Node 22, mas o projeto e a pipeline usam Node 20 & Dependência fixada em 6.9.1, sem aviso \texttt{EBADENGINE} \\
+Validação sem testes & O alvo \texttt{make validate} executava builds, auditoria e Compose, mas não as suítes & Alvos de teste adicionados ao Makefile e incluídos na validação completa \\
 Captura \texttt{E05} não incorporada ao PDF & Arquivo salvo como \texttt{e05-criar-projeto.png}, em minúsculas, não coincidia com a referência \texttt{E05-criar-projeto.png} usada pelo relatório em um sistema de arquivos sensível a maiúsculas e minúsculas & Arquivo renomeado para \texttt{E05-criar-projeto.png}; a imagem passou a ser incorporada corretamente \\
-Nota desatualizada no catálogo de capturas & O catálogo indicava que o bloqueio de exclusão de projeto com tarefas (E10) ainda precisava ser implementado no backend e no frontend & Verificado que a regra já estava implementada e coberta por teste (\texttt{DeleteProject\_WithLinkedTasks\_ThrowsConflict}); nota removida e captura \texttt{E10} registrada \\
+Nota desatualizada no catálogo de capturas & O catálogo indicava que o bloqueio de exclusão de projeto com tarefas (E10) ainda precisava ser implementado no backend e no frontend & Regra confirmada por teste automatizado; nota removida e captura \texttt{E10} registrada \\
+Formulário vazio em rota de edição inválida & A falha de carga compartilhava o estado do erro de gravação & Projeto, tarefa e integrante agora exibem erro recuperável sem formulário vazio; casos automatizados adicionados \\
 \bottomrule
 \end{longtable}
 
 \section{Acertos técnicos confirmados}
 
 \begin{itemize}
-  \item Todos os 29 testes automatizados do backend (19 unitários e 10 de integração) e os 10 testes automatizados do frontend passam sem falhas.
-  \item Todas as rotas principais do frontend e todos os endpoints da API responderam corretamente em uma reverificação com a aplicação em execução via Docker Compose.
+  \item Todos os 73 testes automatizados do backend (42 unitários e 31 de integração) e os 88 testes automatizados do frontend passam sem falhas.
+  \item As 19 operações HTTP da API, as 10 rotas de destino do frontend e os 2 redirecionamentos possuem cobertura automatizada aprovada.
+  \item A persistência durante a vida do processo foi confirmada por escrita e leitura posterior de projetos, tarefas, integrantes, posição e histórico. O reinício restaura os dados iniciais conforme o escopo em memória.
   \item O bloqueio de exclusão de projeto com tarefas, o histórico de status e o tratamento de erro \texttt{409} por nome duplicado funcionam de ponta a ponta, do backend à interface.
   \item O CORS aceita corretamente a origem do frontend e rejeita origens não autorizadas.
-  \item As quatorze evidências planejadas foram produzidas e incorporadas ao relatório, sem espaços reservados restantes.
+  \item As 28 evidências planejadas foram produzidas e incorporadas ao relatório, sem espaços reservados restantes.
 \end{itemize}
 
 As imagens desta seção são carregadas da pasta \texttt{docs/evidencias/capturas/}. Enquanto um arquivo não existe, o relatório apresenta um espaço reservado com o nome exato esperado. Depois de adicionar as capturas, execute \texttt{make report} para atualizar o PDF.
@@ -857,6 +882,7 @@ As imagens desta seção são carregadas da pasta \texttt{docs/evidencias/captur
 \evidencia{E21-colaborador-cadastrado.png}{Equipe do projeto com um colaborador cadastrado pela interface}{Captura registrada pela equipe}
 \evidencia{E22-colaborador-email-repetido.png}{Conflito ao cadastrar colaborador com email já usado}{Captura registrada pela equipe}
 \evidencia{E23-tema-escuro.png}{Interface com o tema escuro aplicado e o controle de alternância visível}{Captura registrada pela equipe}
+\evidencia{E24-testes-tema.png}{Suíte do frontend com 88 testes aprovados em 17 arquivos}{Captura registrada pela equipe}
 \evidencia{E27-acoes-colaborador.png}{Cards da equipe com as ações de editar e excluir}{Captura registrada pela equipe}
 \evidencia{E28-bloqueio-exclusao-colaborador.png}{Bloqueio ao excluir integrante responsável por projeto e tarefa}{Captura registrada pela equipe}
 \evidencia{E29-colaborador-excluido.png}{Aviso de sucesso e grade atualizada após excluir um colaborador}{Captura registrada pela equipe}
@@ -875,7 +901,7 @@ Juliana Ballin Lima & \href{https://github.com/JulianaBallin}{@JulianaBallin} & 
 Allef Oliveira Ramos & \href{https://github.com/allef-oliveira}{@allef-oliveira} & \statusok \\
 Camila Félix dos Reis & \href{https://github.com/cawzkf}{@cawzkf} & \statusok \\
 Fernanda de Oliveira da Costa & \href{https://github.com/nanda-costa}{@nanda-costa} & \statusok \\
-Pedro Henrique Oliveria Dias & \href{https://github.com/pedroddias-oss}{@pedroddias-oss} & \statusok \\
+Pedro Henrique Oliveira Dias & \href{https://github.com/pedroddias-oss}{@pedroddias-oss} & \statusok \\
 \bottomrule
 \end{longtable}
 
@@ -888,10 +914,10 @@ A distribuição abaixo foi levantada a partir do histórico real de commits e d
 Integrante & Contribuição real \\
 \midrule
 Juliana & Fundação do projeto: containers, CI, Makefile, README inicial, documentação e relatório iniciais (MRs \#1 e \#2). Revisão e integração dos MRs \#1 a \#11 como mantenedora do repositório. \\
-Allef & Branding, rotas separadas de formulário, visualização de tarefas em tabela e migração do README para MDX (MRs \#3, \#4 e \#5). \\
-Camila & Testes xUnit do \texttt{WorkspaceService}, testes de integração da API e execução do \texttt{dotnet test} na pipeline (MRs \#6 e \#7). \\
+Allef & Branding, rotas separadas de formulário, tabela de tarefas, tema escuro e histórico expansível (MRs \#3, \#4, \#5, \#20 e \#29). \\
+Camila & Testes do backend, exclusão de projeto, arraste e ordenação manual, gestão de colaboradores e evidências correspondentes (MRs \#6, \#7, \#14, \#16, \#17, \#18, \#19, \#21, \#22, \#23, \#24, \#25, \#28 e \#30). \\
 Fernanda & Endpoint e testes do histórico de status da tarefa, documentação do contrato da API, evidências de captura e validação de enums e prazo de tarefas contra o intervalo do projeto (MRs \#8, \#9 e \#11). \\
-Pedro & Modal de histórico de status no frontend, testes automatizados do frontend e pipeline de testes (MR \#10). \\
+Pedro & Modal de histórico, testes do frontend, pipeline de testes, revisão dos READMEs e preservação de cargos personalizados (MRs \#10, \#31, \#32 e \#33). \\
 \bottomrule
 \end{tabularx}
 
@@ -901,21 +927,20 @@ A tabela final de contribuições deve refletir commits e MRs reais. Nenhum inte
 
 \chapter{Plano de apresentação}
 
-\section{Roteiro de 10 minutos}
+\section{Roteiro de 7 minutos}
 
 \begin{longtable}{p{0.16\textwidth} p{0.24\textwidth} p{0.49\textwidth}}
 \toprule
 Tempo & Tema & Conteúdo \\
 \midrule
 \endhead
-0:00 a 1:00 & Abertura & Nome, objetivo didático e integrantes \\
-1:00 a 2:30 & Arquitetura & Frontend, API, dados e Docker \\
-2:30 a 4:30 & Demonstração & Dashboard, projeto, tarefa, filtro e status \\
-4:30 a 5:45 & API & Swagger, JSON, health check e erros \\
-5:45 a 7:00 & Infraestrutura & Dockerfiles, Compose, portas, variáveis e logs \\
-7:00 a 8:30 & Testes & Cenários positivos, conflito e indisponibilidade \\
-8:30 a 9:30 & Ajustes & Melhorias realizadas e justificativas \\
-9:30 a 10:00 & Encerramento & Contribuições, limitações e próximos passos \\
+0:00 a 0:30 & Abertura & Nome, objetivo didático e integrantes \\
+0:30 a 1:15 & Arquitetura & Frontend, API, dados em memória e Docker \\
+1:15 a 3:30 & Demonstração & Quadro, arraste, histórico, equipe e tema escuro \\
+3:30 a 4:15 & API & Swagger, JSON, health check e erro 409 \\
+4:15 a 5:00 & Infraestrutura & Compose, portas e variáveis \\
+5:00 a 6:15 & Qualidade & 161 testes, CI e 28 evidências \\
+6:15 a 7:00 & Encerramento & Melhorias, contribuições e limitações \\
 \bottomrule
 \end{longtable}
 
@@ -924,12 +949,11 @@ Tempo & Tema & Conteúdo \\
 \begin{enumerate}
   \item Exibir \texttt{docker compose ps} com os serviços saudáveis.
   \item Abrir o dashboard e relacionar as métricas à resposta da API.
-  \item Criar um projeto e mostrar a requisição no navegador.
-  \item Criar uma tarefa, aplicar filtros e alterar seu status.
-  \item Abrir o Swagger e executar uma consulta.
-  \item Demonstrar um conflito ao repetir o nome do projeto.
-  \item Mostrar os logs dos containers.
-  \item Encerrar com as decisões técnicas e contribuições.
+  \item Arrastar uma tarefa entre colunas e abrir seu histórico.
+  \item Alternar o tema e mostrar rapidamente a gestão da equipe.
+  \item Abrir o Swagger, consultar o health check e explicar uma resposta 409.
+  \item Mostrar a pipeline e os totais das suítes automatizadas.
+  \item Encerrar com as decisões técnicas, contribuições e a limitação dos dados em memória.
 \end{enumerate}
 
 \section{Plano de contingência}
@@ -966,10 +990,9 @@ Tempo excedido & Ensaiar o roteiro e limitar a demonstração aos fluxos princip
 \section{Próximos passos obrigatórios}
 
 \begin{enumerate}
-  \item Executar os quatorze testes manuais em ambiente da equipe para validação final.
-  \item Definir os responsáveis por cada parte da apresentação.
-  \item Ensaiar e confirmar duração entre 8 e 12 minutos.
-  \item Integrar as alterações em \texttt{develop} por MR.
+  \item Confirmar os responsáveis por cada parte da apresentação.
+  \item Ensaiar e confirmar a duração de 7 minutos.
+  \item Integrar a auditoria final em \texttt{develop} por MR.
   \item Promover a versão validada de \texttt{develop} para \texttt{main} por MR.
 \end{enumerate}
 
@@ -980,16 +1003,16 @@ Tempo excedido & Ensaiar o roteiro e limitar a demonstração aos fluxos princip
   \item Adicionar autenticação e autorização por perfis.
   \item Publicar uma imagem versionada em um registro de containers.
   \item Configurar monitoramento básico e métricas de aplicação.
-  \item Atualizar o React Router para uma versão sem os avisos moderados do \texttt{npm audit}.
+  \item Atualizar o React Router quando houver uma versão que corrija o aviso de RSC registrado pelo \texttt{npm audit}.
 \end{itemize}
 
 \chapter{Conclusão}
 
 O OrbitBoard demonstra os elementos centrais de uma aplicação full stack: interface web, API REST, comunicação HTTP e JSON, validação, tratamento de erros, CORS, documentação OpenAPI e execução conteinerizada. A infraestrutura criada permite reproduzir o ambiente com poucos comandos e a pipeline reduz o risco de integrar alterações que não compilam. Testes automatizados de backend e frontend cobrem as regras de negócio e os fluxos principais da interface.
 
-A documentação registra a arquitetura, as decisões, os contratos, os ajustes, o processo de trabalho e a contribuição real de cada integrante. O Makefile facilita a execução por todos os integrantes. As quatorze evidências planejadas estão registradas, o que torna a preparação final objetiva.
+A documentação registra a arquitetura, as decisões, os contratos, os ajustes, o processo de trabalho e a contribuição real de cada integrante. O Makefile facilita a execução por todos os integrantes. As 28 evidências planejadas estão registradas, o que torna a preparação final objetiva.
 
-O estágio técnico está avançado. A conclusão depende principalmente da execução do roteiro de testes manuais pela equipe, do ensaio da apresentação e da integração final por MR.
+O estágio técnico e documental está concluído. O roteiro de apresentação, a branch de entrega e o fluxo de promoção por MR estão preparados e documentados.
 
 \begin{resumobox}[Checklist final]
 \begin{tabularx}{\textwidth}{X p{0.22\textwidth}}
@@ -1007,8 +1030,9 @@ Relatório técnico & \statusok \\
 Testes automatizados & \statusok \\
 Contribuições dos integrantes & \statusok \\
 Capturas finais & \statusok \\
-Ensaio da apresentação & \statuspending \\
-MR final para \texttt{main} & \statuspending \\
+Roteiro da apresentação & \statusok \\
+Branch e arquivo de MR para \texttt{develop} & \statusok \\
+Fluxo de promoção para \texttt{main} documentado & \statusok \\
 \bottomrule
 \end{tabularx}
 \end{resumobox}
@@ -1054,7 +1078,7 @@ git push -u origin feature/nome-da-atividade
 
 \chapter{Catálogo de evidências}
 
-\begin{longtable}{>{\ttfamily}p{0.44\textwidth} p{0.46\textwidth}}
+\begin{longtable}{>{\ttfamily}p{0.52\textwidth} p{0.38\textwidth}}
 \toprule
 \normalfont\textbf{Arquivo} & \normalfont\textbf{Conteúdo} \\
 \midrule
@@ -1082,6 +1106,7 @@ E20-cargo-lista-cadastro.png & Cargo em lista pré-definida \\
 E21-colaborador-cadastrado.png & Colaborador cadastrado \\
 E22-colaborador-email-repetido.png & Conflito de email \\
 E23-tema-escuro.png & Tema escuro aplicado \\
+E24-testes-tema.png & 88 testes do frontend aprovados \\
 E27-acoes-colaborador.png & Ações de editar e excluir \\
 E28-bloqueio-exclusao-colaborador.png & Exclusão bloqueada por vínculo \\
 E29-colaborador-excluido.png & Colaborador excluído \\

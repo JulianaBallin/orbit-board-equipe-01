@@ -10,38 +10,37 @@
 |---|---|---|
 | `main` | Versão estável apresentada e entregue | Não |
 | `develop` | Integração e validação das contribuições | Não |
-| `feature/project-foundation` | Preparação inicial do trabalho final | Sim, enquanto o MR estiver aberto |
+| `feature/*` | Nova funcionalidade criada a partir de `develop` | Sim |
+| `fix/*` | Correção criada a partir de `develop` | Sim |
+| `docs/*` | Atualização documental criada a partir de `develop` | Sim |
+| `chore/*` | Manutenção e auditoria criadas a partir de `develop` | Sim |
 
-Durante a preparação inicial, o repositório terá somente essas três branches. Depois que `feature/project-foundation` for integrada, novas branches de trabalho devem nascer de `develop` e ser removidas após a integração.
+As branches de trabalho devem ser removidas depois da integração. Toda nova atividade parte da versão atualizada de `develop`.
 
-## Primeiro MR
-
-```text
-feature/project-foundation
-          |
-          v
-       develop
-```
-
-O primeiro MR reúne a infraestrutura Docker, a documentação, o logo, o README, a atualização do frontend, a pipeline e os resultados técnicos iniciais.
-
-## Segundo MR
+## Fluxo de integração
 
 ```text
-develop
-   |
-   v
- main
+branch de trabalho
+        |
+        v
+     develop
+        |
+        v
+      main
 ```
 
-O segundo MR deve ser aberto somente depois que o primeiro estiver integrado, a pipeline estiver aprovada e a equipe tiver revisado a versão em `develop`.
+O primeiro MR de cada atividade tem como destino `develop`. A promoção para `main` acontece somente depois da revisão, da pipeline aprovada e da validação conjunta da versão integrada.
+
+## Situação verificada em 28 de julho de 2026
+
+O histórico mostra que o PR 12 foi integrado em `main` e revertido no commit seguinte. O mesmo conteúdo entrou corretamente em `develop` pelo PR 13, e as funcionalidades posteriores também foram integradas nessa branch. Por isso, `develop` é a fonte atual da entrega, enquanto `main` precisa receber uma nova promoção depois da auditoria final.
 
 ## Criar uma nova contribuição
 
 ```bash
 git switch develop
 git pull origin develop
-git switch -c feature/nome-da-atividade
+git switch -c tipo/nome-da-atividade
 ```
 
 Depois de alterar e testar:
@@ -49,7 +48,7 @@ Depois de alterar e testar:
 ```bash
 git add .
 git commit -m "feat(scope): describe the change"
-git push -u origin feature/nome-da-atividade
+git push -u origin tipo/nome-da-atividade
 ```
 
 Abra o MR com origem na branch de trabalho e destino em `develop`.

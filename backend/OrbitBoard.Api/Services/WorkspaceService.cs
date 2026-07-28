@@ -274,6 +274,7 @@ public sealed class WorkspaceService : IWorkspaceService
         lock (_sync)
         {
             _workItems.Remove(FindWorkItem(id));
+            _history.RemoveAll(entry => entry.WorkItemId == id);
             ReindexBoard();
         }
     }
@@ -654,6 +655,9 @@ public sealed class WorkspaceService : IWorkspaceService
                 EstimatedHours = 6
             }
         ]);
+
+        foreach (var item in _workItems)
+            RecordStatusHistory(item.Id, null, item.Status);
 
         foreach (var group in _workItems.GroupBy(item => (item.Status, item.Priority)))
         {

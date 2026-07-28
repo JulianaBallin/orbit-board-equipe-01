@@ -14,10 +14,12 @@ export default function TaskFormPage() {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [loadFailed, setLoadFailed] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
     setError('');
+    setLoadFailed(false);
 
     try {
       const [projectData, memberData, taskData] = await Promise.all([
@@ -30,6 +32,7 @@ export default function TaskFormPage() {
       setTask(taskData);
     } catch (err) {
       setError(err.message);
+      setLoadFailed(true);
     } finally {
       setLoading(false);
     }
@@ -58,6 +61,7 @@ export default function TaskFormPage() {
   };
 
   if (loading) return <LoadingState />;
+  if (loadFailed) return <ErrorState message={error} onRetry={load} />;
 
   return (
     <section className="page-stack">
