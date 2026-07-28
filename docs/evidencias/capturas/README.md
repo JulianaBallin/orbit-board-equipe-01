@@ -30,10 +30,10 @@ Adicione nesta pasta as evidências visuais da execução final. O relatório La
 | `E20-cargo-lista-cadastro.png` | Formulário de cadastro de colaborador com a lista de cargos aberta |
 | `E21-colaborador-cadastrado.png` | Tela de Equipe com a equipe do projeto e um integrante cadastrado pela interface |
 | `E22-colaborador-email-repetido.png` | Mensagem de conflito ao cadastrar colaborador com email já usado |
-| `E23-acoes-colaborador.png` | Cards da equipe com as ações de editar e excluir disponíveis |
-| `E24-bloqueio-exclusao-colaborador.png` | Bloqueio ao excluir integrante que responde por projeto e tarefa |
-| `E25-colaborador-excluido.png` | Aviso de sucesso e grade atualizada após excluir um colaborador |
-| `E26-modal-exclusao-colaborador.png` | Modal de confirmação da exclusão de colaborador, com o aviso sobre vínculos |
+| `E27-acoes-colaborador.png` | Cards da equipe com as ações de editar e excluir disponíveis |
+| `E28-bloqueio-exclusao-colaborador.png` | Bloqueio ao excluir integrante que responde por projeto e tarefa |
+| `E29-colaborador-excluido.png` | Aviso de sucesso e grade atualizada após excluir um colaborador |
+| `E30-modal-exclusao-colaborador.png` | Modal de confirmação da exclusão de colaborador, com o aviso sobre vínculos |
 
 ## Regras
 

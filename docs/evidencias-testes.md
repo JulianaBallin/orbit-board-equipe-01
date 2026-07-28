@@ -55,10 +55,10 @@ Não inclua tokens, senhas, emails pessoais, cookies ou outros segredos nas imag
 | E20 | Abrir o formulário de novo colaborador e expandir o campo Cargo | Lista de cargos pré-definidos, já com um valor selecionado | `E20-cargo-lista-cadastro.png` | Camila Félix | Concluído |
 | E21 | Cadastrar um colaborador válido e voltar para a Equipe | Resposta `201` e integrante novo na grade, junto da equipe do projeto | `E21-colaborador-cadastrado.png` | Camila Félix | Concluído |
 | E22 | Cadastrar colaborador com email já usado | Resposta `409`, mensagem explicando o conflito e formulário preservado | `E22-colaborador-email-repetido.png` | Camila Félix | Concluído |
-| E23 | Abrir a tela de Equipe com a gestão completa | Cada card exibe as ações de editar e excluir | `E23-acoes-colaborador.png` | Camila Félix | Concluído |
-| E24 | Excluir integrante responsável por projeto e tarefa | Resposta `409` informando quantos vínculos existem, com a lista preservada | `E24-bloqueio-exclusao-colaborador.png` | Camila Félix | Concluído |
-| E25 | Excluir integrante sem vínculo | Resposta `204`, aviso de sucesso e grade sem o integrante | `E25-colaborador-excluido.png` | Camila Félix | Concluído |
-| E26 | Acionar a exclusão de um colaborador | Modal de confirmação com o aviso de que integrantes vinculados não podem ser excluídos | `E26-modal-exclusao-colaborador.png` | Camila Félix | Concluído |
+| E27 | Abrir a tela de Equipe com a gestão completa | Cada card exibe as ações de editar e excluir | `E27-acoes-colaborador.png` | Camila Félix | Concluído |
+| E28 | Excluir integrante responsável por projeto e tarefa | Resposta `409` informando quantos vínculos existem, com a lista preservada | `E28-bloqueio-exclusao-colaborador.png` | Camila Félix | Concluído |
+| E29 | Excluir integrante sem vínculo | Resposta `204`, aviso de sucesso e grade sem o integrante | `E29-colaborador-excluido.png` | Camila Félix | Concluído |
+| E30 | Acionar a exclusão de um colaborador | Modal de confirmação com o aviso de que integrantes vinculados não podem ser excluídos | `E30-modal-exclusao-colaborador.png` | Camila Félix | Concluído |
 
 ## Verificações técnicas iniciais
 
