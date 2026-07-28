@@ -18,6 +18,8 @@ Este registro relaciona o estado inicial, as alterações da equipe e as evidên
 | Validação automatizada | `make validate` compilava o projeto, mas não executava testes | Alvos de teste do backend e frontend incluídos no Makefile e na validação completa | `make test` e `make validate` |
 | Tema da interface | Apenas tema claro, sem preferência persistida | Temas claro e escuro, alternância pela interface e persistência no `localStorage` por meio do `themeService` | Alternar o tema, recarregar a página e conferir a E23 |
 | Testes do tema | Serviço sem cobertura automatizada específica | Sete testes do `themeService` e ajustes no `MemoryRouter` e no fluxo de drag and drop para eliminar warnings | `npm test` e evidência E24 |
+| Cobertura do frontend | Execução sem relatório de cobertura e sem limites mínimos | Cobertura V8 com relatórios em texto, HTML e JSON, limites globais mínimos de 80% e execução de `npm run test:coverage` na CI | `npm run test:coverage` e evidência E25 |
+| Ampliação dos testes do frontend | Cobertura concentrada em cenários pontuais | Testes ampliados para o cliente da API e para o `TasksPage`, incluindo respostas JSON/texto/204, erros, filtros, navegação, alteração de status, exclusão e estados de carregamento | `npm run test:coverage` e evidência E26 |
 | Documentação | READMEs separados da base | Arquitetura, contrato, testes, evidências e contribuições organizados em `docs/` | Revisar os links no README principal |
 
 ## Pendências antes da apresentação
