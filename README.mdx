@@ -19,7 +19,7 @@
   <img alt=".NET" src="https://img.shields.io/badge/.NET-8.0-512BD4?style=for-the-badge&logo=dotnet&logoColor=white" />
   <img alt="ASP.NET Core" src="https://img.shields.io/badge/ASP.NET_Core-API-512BD4?style=for-the-badge&logo=dotnet&logoColor=white" />
   <img alt="React" src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black" />
-  <img alt="React Router" src="https://img.shields.io/badge/React_Router-6-CA4245?style=for-the-badge&logo=reactrouter&logoColor=white" />
+  <img alt="React Router" src="https://img.shields.io/badge/React_Router-7-CA4245?style=for-the-badge&logo=reactrouter&logoColor=white" />
   <img alt="Vite" src="https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white" />
   <img alt="Docker" src="https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
   <img alt="Nginx" src="https://img.shields.io/badge/Nginx-1.27-009639?style=for-the-badge&logo=nginx&logoColor=white" />
@@ -109,12 +109,13 @@ Também é possível chamar cada operação diretamente:
 | --------------- | ---------------------------------------------------------------- |
 | `make setup`    | Verifica as ferramentas, cria o `.env` e instala as dependências |
 | `make build`    | Compila o backend e o frontend                                   |
+| `make test`     | Executa os testes automatizados do backend e do frontend         |
 | `make up`       | Compila e inicia a aplicação com Docker Compose                  |
 | `make down`     | Encerra os containers                                            |
 | `make status`   | Exibe o estado dos containers                                    |
 | `make logs`     | Acompanha os logs da aplicação                                   |
 | `make health`   | Consulta os health checks do backend e do frontend               |
-| `make validate` | Executa builds, auditoria e validação do Compose                 |
+| `make validate` | Executa testes, builds, auditoria e validação do Compose         |
 | `make report`   | Compila o relatório de desenvolvimento em PDF                    |
 
 Use `make help` para consultar a lista completa.
@@ -288,7 +289,7 @@ orbit-board-equipe-01/
 
 <h2 align="center">Testes e evidências</h2>
 
-O roteiro inclui execução dos containers, dashboard, Swagger, health checks, criação e filtro de dados, alteração de status, conflitos, indisponibilidade da API e logs.
+O roteiro inclui execução dos containers, dashboard, Swagger, health checks, criação e filtro de dados, alteração de status, conflitos, histórico, arraste, gestão da equipe, tema escuro, indisponibilidade da API e logs.
 
 | Documento                                                                              | Conteúdo                                                                |
 | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
@@ -297,10 +298,10 @@ O roteiro inclui execução dos containers, dashboard, Swagger, health checks, c
 | [Relatório de desenvolvimento](docs/evidencias/relatorio-desenvolvimento-equipe01.pdf) | Arquitetura, implementação, testes, evidências e apresentação da equipe |
 | [Fonte do relatório](docs/evidencias/relatorio-desenvolvimento-equipe01.tex)           | Documento LaTeX editável e preparado para receber as capturas           |
 | [Registro de ajustes](docs/registro-ajustes.md)                                        | Estado inicial, alterações e formas de validação                        |
-| [Plano de contribuições](docs/contribuicoes.md)                                        | Frentes sugeridas e espaço para commits e MRs reais                     |
+| [Plano de contribuições](docs/contribuicoes.md)                                        | Contribuições reais e MRs de cada integrante                            |
 | [Fluxo Git](docs/fluxo-git.md)                                                         | Regras das branches, commits e MRs                                      |
 
-As capturas finais devem ser adicionadas em `docs/evidencias/capturas/` com os nomes definidos no catálogo. Depois, execute `make report` para atualizar automaticamente o PDF.
+As 28 capturas registradas ficam em `docs/evidencias/capturas/` com os nomes definidos no catálogo. Execute `make report` sempre que uma evidência ou o texto do relatório mudar.
 
 ---
 
@@ -332,7 +333,7 @@ Não faça commits diretamente em `main` ou `develop`. O fluxo completo está em
 - A aplicação não possui autenticação ou autorização.
 - O frontend recebe a URL da API no momento do build.
 - A solução foi projetada para fins didáticos e execução em uma única instância.
-- As evidências finais dependem da execução conjunta da equipe.
+- O aviso atual de RSC do React Router permanece monitorado, mas esse modo não é usado pela SPA.
 
 ---
 
@@ -341,10 +342,10 @@ Não faça commits diretamente em `main` ou `develop`. O fluxo completo está em
 | Integrante                    | GitHub                                               | Contribuição real                                                                                     |
 | ------------------------------ | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | Juliana Ballin Lima           | [@JulianaBallin](https://github.com/JulianaBallin)   | Fundação do projeto: containers, CI, Makefile, README inicial, documentação e relatório iniciais; revisão e integração dos MRs #1 a #11 |
-| Allef Oliveira Ramos          | [@allef-oliveira](https://github.com/allef-oliveira) | Branding, rotas separadas de formulário, visualização de tarefas em tabela e migração do README para MDX |
+| Allef Oliveira Ramos          | [@allef-oliveira](https://github.com/allef-oliveira) | Branding, rotas separadas de formulário, tabela de tarefas, tema escuro, histórico expansível e migração do README para MDX |
 | Camila Félix dos Reis         | [@cawzkf](https://github.com/cawzkf)                 | Testes xUnit e de integração da API, regra de exclusão de projeto, arraste e ordenação manual do quadro, modal de confirmação e gestão de colaboradores      |
 | Fernanda de Oliveira da Costa | [@nanda-costa](https://github.com/nanda-costa)       | Endpoint e testes do histórico de status, validação de enums e prazo de tarefas, e documentação do contrato da API |
-| Pedro Henrique Oliveria Dias  | [@pedroddias-oss](https://github.com/pedroddias-oss) | Modal de histórico de status no frontend, testes automatizados do frontend e pipeline de testes         |
+| Pedro Henrique Oliveira Dias  | [@pedroddias-oss](https://github.com/pedroddias-oss) | Modal de histórico de status, testes automatizados do frontend, pipeline de testes, revisão dos READMEs e preservação de cargos personalizados |
 
 O detalhamento completo, com os MRs de origem de cada contribuição, está em [docs/contribuicoes.md](docs/contribuicoes.md).
 

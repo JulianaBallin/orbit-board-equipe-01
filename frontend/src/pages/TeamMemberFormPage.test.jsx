@@ -8,7 +8,7 @@ import { api } from '../api/client';
 
 function renderPage() {
   return render(
-    <MemoryRouter 
+    <MemoryRouter
       initialEntries={['/team/new']}
       future={{
         v7_startTransition: true,

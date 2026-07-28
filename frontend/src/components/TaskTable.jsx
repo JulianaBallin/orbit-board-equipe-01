@@ -152,7 +152,7 @@ export default function TaskTable({
                   </Badge>
                 </td>
                 <td>{task.dueDate ? formatDate(task.dueDate) : 'Sem prazo'}</td>
-                <td>{task.estimatedHours ? `${task.estimatedHours}h` : '—'}</td>
+                <td>{task.estimatedHours ? `${task.estimatedHours}h` : 'N/D'}</td>
                 <td>
                   <select
                     className="task-table-status"

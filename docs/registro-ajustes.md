@@ -14,14 +14,14 @@ Este registro relaciona o estado inicial, as alterações da equipe e as evidên
 | CORS | Origem do frontend fixa no código | Lista de origens carregada da configuração | Alterar `CORS_ALLOWED_ORIGIN` e testar |
 | Configuração local | Variável apenas no frontend | `.env.example` centraliza portas, URL pública da API e origem permitida | `docker compose config` |
 | Dependências do frontend | Vite 5 com alertas no `npm audit` | Vite 8 e plugin React compatível com Node 20.19 | `npm audit` e `npm run build` |
+| Navegação do frontend | React Router 6 com avisos moderados de segurança | React Router 7.18.1 validado nos fluxos e testes da SPA | `npm test`, `npm run build` e `npm audit` |
+| Validação automatizada | `make validate` compilava o projeto, mas não executava testes | Alvos de teste do backend e frontend incluídos no Makefile e na validação completa | `make test` e `make validate` |
 | Tema da interface | Apenas tema claro, sem preferência persistida | Temas claro e escuro, alternância pela interface e persistência no `localStorage` por meio do `themeService` | Alternar o tema, recarregar a página e conferir a E23 |
 | Testes do tema | Serviço sem cobertura automatizada específica | Sete testes do `themeService` e ajustes no `MemoryRouter` e no fluxo de drag and drop para eliminar warnings | `npm test` e evidência E24 |
-| Documentação | READMEs separados da base | Arquitetura, contrato, testes, apresentação e contribuições organizados em `docs/` | Revisar os links no README principal |
+| Documentação | READMEs separados da base | Arquitetura, contrato, testes, evidências e contribuições organizados em `docs/` | Revisar os links no README principal |
 
-## Ajustes ainda reservados para a equipe
+## Pendências antes da apresentação
 
-- Executar todos os cenários manuais e anexar capturas reais.
 - Registrar problemas encontrados em computadores diferentes.
-- Aplicar ao menos uma melhoria técnica ou de usabilidade definida pelos integrantes.
-- Confirmar a divisão da apresentação e ensaiar entre 8 e 12 minutos.
-- Atualizar a contribuição real de cada pessoa com links para commits ou MRs.
+- Confirmar a divisão da apresentação e ensaiar o roteiro de 7 minutos.
+- Integrar a branch final em `develop` e promover a versão validada para `main`.

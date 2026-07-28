@@ -15,9 +15,9 @@ GREEN := \033[1;32m
 YELLOW := \033[1;33m
 RESET := \033[0m
 
-.PHONY: menu help check-tools setup setup-env backend-restore backend-build \
-	backend-run frontend-install frontend-build frontend-run build up down restart \
-	status logs health compose-check audit validate report report-clean
+.PHONY: menu help check-tools setup setup-env backend-restore backend-build backend-test \
+	backend-run frontend-install frontend-build frontend-test frontend-run build test \
+	up down restart status logs health compose-check audit validate report report-clean
 
 menu:
 	@clear
@@ -61,6 +61,7 @@ help:
 	@printf "  make menu              Abre o menu interativo\n"
 	@printf "  make setup             Prepara arquivos e dependencias\n"
 	@printf "  make build             Compila backend e frontend\n"
+	@printf "  make test              Executa os testes do backend e do frontend\n"
 	@printf "  make up                Compila e inicia os containers\n"
 	@printf "  make down              Encerra os containers\n"
 	@printf "  make restart           Reinicia os containers\n"
@@ -96,6 +97,10 @@ backend-build: backend-restore
 	@printf "$(BLUE)Compilando o backend...$(RESET)\n"
 	@dotnet build $(BACKEND_SOLUTION) --configuration Release --no-restore
 
+backend-test: backend-build
+	@printf "$(BLUE)Executando os testes do backend...$(RESET)\n"
+	@dotnet test $(BACKEND_SOLUTION) --configuration Release --no-build
+
 backend-run:
 	@printf "$(BLUE)Iniciando o backend em http://localhost:5200...$(RESET)\n"
 	@dotnet run --project backend/OrbitBoard.Api
@@ -108,12 +113,19 @@ frontend-build: frontend-install
 	@printf "$(BLUE)Compilando o frontend...$(RESET)\n"
 	@npm run build --prefix $(FRONTEND_DIR)
 
+frontend-test: frontend-install
+	@printf "$(BLUE)Executando os testes do frontend...$(RESET)\n"
+	@npm test --prefix $(FRONTEND_DIR)
+
 frontend-run:
 	@printf "$(BLUE)Iniciando o frontend em http://localhost:5173...$(RESET)\n"
 	@npm run dev --prefix $(FRONTEND_DIR)
 
 build: backend-build frontend-build
 	@printf "$(GREEN)Backend e frontend compilados.$(RESET)\n"
+
+test: backend-test frontend-test
+	@printf "$(GREEN)Testes do backend e frontend aprovados.$(RESET)\n"
 
 up: setup-env
 	@printf "$(BLUE)Compilando e iniciando os containers...$(RESET)\n"
@@ -148,9 +160,11 @@ compose-check:
 
 audit:
 	@printf "$(BLUE)Auditando dependencias do frontend...$(RESET)\n"
-	@npm audit --prefix $(FRONTEND_DIR) --audit-level=moderate
+	@npm audit --prefix $(FRONTEND_DIR) --audit-level=moderate || { \
+		npm audit --prefix $(FRONTEND_DIR) --json | node -e 'const fs = require("fs"); const report = JSON.parse(fs.readFileSync(0, "utf8")); const advisories = Object.values(report.vulnerabilities ?? {}).flatMap((entry) => entry.via).filter((entry) => typeof entry === "object").map((entry) => entry.url); const known = "https://github.com/advisories/GHSA-qwww-vcr4-c8h2"; if (advisories.length === 0 || advisories.some((url) => url !== known)) process.exit(1); console.log("Aviso RSC conhecido e sem caminho de execucao nesta SPA.");'; \
+	}
 
-validate: check-tools backend-build frontend-build audit compose-check
+validate: check-tools backend-test frontend-test frontend-build audit compose-check
 	@printf "$(GREEN)Validacao completa aprovada.$(RESET)\n"
 
 report:

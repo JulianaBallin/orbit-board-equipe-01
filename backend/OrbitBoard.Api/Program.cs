@@ -60,4 +60,3 @@ app.MapGet("/health", () => Results.Ok(new
 app.Run();
 
 public partial class Program;
-
