@@ -293,6 +293,85 @@ public sealed class WorkspaceServiceTests
     }
 
     [Fact]
+    public void CreateTeamMember_WithValidData_PersistsAndDerivesInitials()
+    {
+        var member = _service.CreateTeamMember(new CreateTeamMemberRequest
+        {
+            Name = "Camila Félix",
+            Role = "Backend Developer",
+            Email = "camila.felix@example.com"
+        });
+
+        Assert.Equal("Camila Félix", member.Name);
+        Assert.Equal("CF", member.Initials);
+        Assert.Contains(_service.GetTeamMembers(), item => item.Id == member.Id);
+    }
+
+    [Fact]
+    public void CreateTeamMember_WithSingleWordName_UsesOneInitial()
+    {
+        var member = _service.CreateTeamMember(new CreateTeamMemberRequest
+        {
+            Name = "Madonna",
+            Role = "Designer",
+            Email = "madonna@example.com"
+        });
+
+        Assert.Equal("M", member.Initials);
+    }
+
+    [Fact]
+    public void CreateTeamMember_WithComposedName_UsesFirstAndLastInitials()
+    {
+        var member = _service.CreateTeamMember(new CreateTeamMemberRequest
+        {
+            Name = "  ana clara souza lima  ",
+            Role = "QA Analyst",
+            Email = "ana.lima@example.com"
+        });
+
+        Assert.Equal("AL", member.Initials);
+        Assert.Equal("ana clara souza lima", member.Name);
+    }
+
+    [Fact]
+    public void CreateTeamMember_WithDuplicateEmail_ThrowsConflict()
+    {
+        var existing = _service.GetTeamMembers().First();
+
+        var request = new CreateTeamMemberRequest
+        {
+            Name = "Outro Integrante",
+            Role = "Backend Developer",
+            Email = existing.Email.ToUpperInvariant()
+        };
+
+        Assert.Throws<ConflictException>(() => _service.CreateTeamMember(request));
+    }
+
+    [Fact]
+    public void CreateTeamMember_CanBeAssignedAsProjectOwner()
+    {
+        var member = _service.CreateTeamMember(new CreateTeamMemberRequest
+        {
+            Name = "Novo Responsável",
+            Role = "Tech Lead",
+            Email = "novo.responsavel@example.com"
+        });
+
+        var project = _service.CreateProject(new CreateProjectRequest
+        {
+            Name = "Projeto do integrante novo",
+            Description = "Projeto criado para validar o vínculo com o integrante.",
+            Status = ProjectStatus.Planning,
+            StartDate = DateOnly.FromDateTime(DateTime.UtcNow),
+            OwnerId = member.Id
+        });
+
+        Assert.Equal(member.Name, project.OwnerName);
+    }
+
+    [Fact]
     public void GetDashboard_ReflectsProjectAndTaskCounts()
     {
         var dashboard = _service.GetDashboard();
