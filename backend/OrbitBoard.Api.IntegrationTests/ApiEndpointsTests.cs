@@ -115,6 +115,51 @@ public sealed class ApiEndpointsTests : IDisposable
     }
 
     [Fact]
+    public async Task DeleteProject_WithUnfinishedTasks_Returns409()
+    {
+        var projects = await _client.GetFromJsonAsync<List<ProjectResponse>>("/api/projects", JsonOptions);
+        var target = projects!.First(project => project.TotalTasks > project.CompletedTasks);
+
+        var response = await _client.DeleteAsync($"/api/projects/{target.Id}");
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task DeleteProject_WithOnlyDoneTasks_Returns204()
+    {
+        var createProject = new CreateProjectRequest
+        {
+            Name = "Concluded Project For Deletion",
+            Description = "Project used to validate deletion when every task is done.",
+            Status = ProjectStatus.Planning,
+            StartDate = DateOnly.FromDateTime(DateTime.UtcNow),
+            OwnerId = await GetAnyMemberIdAsync()
+        };
+        var projectResponse = await _client.PostAsJsonAsync("/api/projects", createProject, JsonOptions);
+        var project = await projectResponse.Content.ReadFromJsonAsync<ProjectResponse>(JsonOptions);
+
+        var createTask = new CreateWorkItemRequest
+        {
+            ProjectId = project!.Id,
+            Title = "Concluded task",
+            Description = "Task moved to done before deleting its project.",
+            EstimatedHours = 4
+        };
+        var taskResponse = await _client.PostAsJsonAsync("/api/tasks", createTask, JsonOptions);
+        var task = await taskResponse.Content.ReadFromJsonAsync<WorkItemResponse>(JsonOptions);
+
+        var statusRequest = new ChangeWorkItemStatusRequest { Status = WorkItemStatus.Done };
+        var statusResponse = await _client.PatchAsJsonAsync($"/api/tasks/{task!.Id}/status", statusRequest, JsonOptions);
+        Assert.Equal(HttpStatusCode.OK, statusResponse.StatusCode);
+
+        var deleteResponse = await _client.DeleteAsync($"/api/projects/{project.Id}");
+
+        Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await _client.GetAsync($"/api/tasks/{task.Id}")).StatusCode);
+    }
+
+    [Fact]
     public async Task GetTasks_FilteredByDoneStatus_ReturnsOnlyDone()
     {
         var tasks = await _client.GetFromJsonAsync<List<WorkItemResponse>>(

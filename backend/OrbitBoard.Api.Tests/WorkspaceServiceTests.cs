@@ -76,11 +76,69 @@ public sealed class WorkspaceServiceTests
     }
 
     [Fact]
-    public void DeleteProject_WithLinkedTasks_ThrowsConflict()
+    public void DeleteProject_WithUnfinishedTasks_ThrowsConflict()
     {
-        var projectWithTasks = _service.GetProjects().First(project => project.TotalTasks > 0);
+        var projectWithPending = _service.GetProjects()
+            .First(project => project.TotalTasks > project.CompletedTasks);
 
-        Assert.Throws<ConflictException>(() => _service.DeleteProject(projectWithTasks.Id));
+        Assert.Throws<ConflictException>(() => _service.DeleteProject(projectWithPending.Id));
+        Assert.Contains(_service.GetProjects(), project => project.Id == projectWithPending.Id);
+    }
+
+    [Fact]
+    public void DeleteProject_WithOnlyDoneTasks_RemovesProjectAndItsTasks()
+    {
+        var project = _service.CreateProject(new CreateProjectRequest
+        {
+            Name = "Finished Project",
+            Description = "Project whose tasks are all concluded.",
+            Status = ProjectStatus.Planning,
+            StartDate = DateOnly.FromDateTime(DateTime.UtcNow),
+            OwnerId = AnyMemberId()
+        });
+
+        var task = _service.CreateWorkItem(new CreateWorkItemRequest
+        {
+            ProjectId = project.Id,
+            Title = "Concluded task",
+            Description = "Task moved to Done before deleting the project.",
+            Status = WorkItemStatus.Backlog,
+            EstimatedHours = 2
+        });
+        _service.ChangeWorkItemStatus(task.Id, new ChangeWorkItemStatusRequest { Status = WorkItemStatus.Done });
+
+        _service.DeleteProject(project.Id);
+
+        Assert.DoesNotContain(_service.GetProjects(), item => item.Id == project.Id);
+        Assert.Throws<NotFoundException>(() => _service.GetWorkItem(task.Id));
+    }
+
+    [Fact]
+    public void DeleteProject_WithOnlyDoneTasks_KeepsRemainingTasksReadable()
+    {
+        var project = _service.CreateProject(new CreateProjectRequest
+        {
+            Name = "Archivable Project",
+            Description = "Deleting it must not break the global task listing.",
+            Status = ProjectStatus.Planning,
+            StartDate = DateOnly.FromDateTime(DateTime.UtcNow),
+            OwnerId = AnyMemberId()
+        });
+
+        var task = _service.CreateWorkItem(new CreateWorkItemRequest
+        {
+            ProjectId = project.Id,
+            Title = "Task to be archived",
+            Description = "Concluded task removed together with its project.",
+            EstimatedHours = 3
+        });
+        _service.ChangeWorkItemStatus(task.Id, new ChangeWorkItemStatusRequest { Status = WorkItemStatus.Done });
+
+        _service.DeleteProject(project.Id);
+
+        var remaining = _service.GetWorkItems(null, null, null, null, null);
+        Assert.DoesNotContain(remaining, item => item.ProjectId == project.Id);
+        Assert.All(remaining, item => Assert.False(string.IsNullOrWhiteSpace(item.ProjectName)));
     }
 
     [Fact]
