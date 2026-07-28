@@ -250,9 +250,9 @@
   Módulo & Módulo 5 de Integração Full Stack \\
   Repositório & \url{https://github.com/JulianaBallin/orbit-board-equipe-01} \\
   Branch de desenvolvimento & \texttt{develop} \\
-  Versão & 1.0 \\
-  Data de referência & 20 de julho de 2026 \\
-  Situação & Fundação técnica concluída e evidências finais em preparação \\
+  Versão & 1.1 \\
+  Data de referência & 27 de julho de 2026 \\
+  Situação & Fundação técnica concluída, evidências completas e contribuições registradas \\
 \end{tabularx}
 
 \begin{resumobox}[Controle de revisão]
@@ -268,12 +268,12 @@ A equipe adotou a aplicação base fornecida pelo docente e concentrou o desenvo
 
 \begin{resumobox}[Resultado técnico atual]
   \begin{itemize}
-    \item Backend compilado sem erros e sem avisos.
-    \item Frontend compilado com Vite 8.1.5 e auditoria sem vulnerabilidades conhecidas.
+    \item Backend compilado sem erros e sem avisos, com 22 testes automatizados aprovados.
+    \item Frontend compilado com Vite 8.1.5 e 10 testes automatizados aprovados.
     \item Docker Compose validado com backend e frontend saudáveis.
     \item Swagger, frontend e endpoints de saúde acessíveis nas portas documentadas.
     \item Pipeline do GitHub Actions aprovada para backend, frontend e containers.
-    \item Roteiro com doze evidências preparado para execução final da equipe.
+    \item Roteiro com quatorze evidências, todas registradas pela equipe.
   \end{itemize}
 \end{resumobox}
 
@@ -320,7 +320,7 @@ Frontend & Consumo da API, formulários, filtros e estados & \statusok \\
 Docker & Dois Dockerfiles, Compose, portas e health checks & \statusok \\
 Git & Branches, commits convencionais, CI e MRs & \statusok \\
 Documentação & README, arquitetura, contrato e roteiro & \statusok \\
-Evidências & Doze capturas planejadas e relatório preparado & \statuspending \\
+Evidências & Quatorze de quatorze capturas registradas e relatório atualizado & \statusok \\
 Apresentação & Roteiro de 10 minutos preparado & \statuspending \\
 \bottomrule
 \end{tabularx}
@@ -342,6 +342,10 @@ Funcionalidade & Comportamento \\
 Dashboard & Exibe projetos, tarefas, itens concluídos, atrasos, atividades recentes e distribuição por status. \\
 Projetos & Permite cadastrar, consultar, editar e excluir projetos que não possuam tarefas vinculadas. \\
 Tarefas & Permite cadastrar, consultar, editar, excluir e alterar rapidamente o status de uma tarefa. \\
+Tabela de tarefas & Apresenta as tarefas em formato tabular, com projeto, responsável, prioridade, prazo, estimativa e status. \\
+Alternância de visualização & Permite alternar entre as visualizações em quadro e em tabela sem realizar uma nova consulta. \\
+Histórico de status & Exibe em um modal o histórico de mudanças de status de uma tarefa, acessível pelo quadro ou pela tabela. \\
+Menu de ações & Reúne editar, ver histórico e excluir em um menu disponível em cada linha da tabela de tarefas. \\
 Filtros & Restringe tarefas por projeto, status, prioridade, responsável e texto. \\
 Equipe & Lista os integrantes fictícios cadastrados nos dados iniciais da aplicação. \\
 Validação & Verifica campos obrigatórios, limites de texto, datas, referências e nomes duplicados. \\
@@ -487,13 +491,12 @@ orbit-board-equipe-01/
 |   |-- contribuicoes.md
 |   |-- evidencias-testes.md
 |   |-- fluxo-git.md
-|   |-- registro-ajustes.md
-|   `-- roteiro-apresentacao.md
+|   `-- registro-ajustes.md
 |-- .env.example
 |-- .github/workflows/ci.yml
 |-- docker-compose.yml
 |-- Makefile
-`-- README.md
+`-- README.mdx
 \end{lstlisting}
 
 \section{Decisões técnicas}
@@ -541,6 +544,7 @@ POST & /api/tasks & Criar uma tarefa \\
 PUT & /api/tasks/\{id\} & Atualizar uma tarefa \\
 PATCH & /api/tasks/\{id\}/status & Alterar somente o status \\
 DELETE & /api/tasks/\{id\} & Excluir uma tarefa \\
+GET & /api/tasks/\{id\}/history & Listar o histórico de mudanças de status da tarefa \\
 GET & /api/team-members & Listar integrantes da aplicação \\
 \bottomrule
 \end{longtable}
@@ -798,6 +802,8 @@ E09 & Alterar o status & Tarefa movida e resposta 200 \\
 E10 & Excluir projeto com tarefa & Resposta 409 sem exclusão \\
 E11 & Interromper o backend & Mensagem de indisponibilidade \\
 E12 & Consultar logs & Inicialização sem erro não tratado \\
+E13 & Consultar o histórico de status pelo Swagger ou Postman & JSON com as transições em ordem cronológica \\
+E14 & Abrir o histórico de status pela interface & Modal com as transições da mais recente para a mais antiga \\
 \bottomrule
 \end{longtable}
 
@@ -805,18 +811,20 @@ E12 & Consultar logs & Inicialização sem erro não tratado \\
 
 As imagens desta seção são carregadas da pasta \texttt{docs/evidencias/capturas/}. Enquanto um arquivo não existe, o relatório apresenta um espaço reservado com o nome exato esperado. Depois de adicionar as capturas, execute \texttt{make report} para atualizar o PDF.
 
-\evidencia{E01-containers-saudaveis.png}{Containers do backend e frontend com health checks aprovados}{Pendente de captura final}
-\evidencia{E02-dashboard.png}{Dashboard carregado com métricas e tarefas recentes}{Pendente de captura final}
-\evidencia{E03-swagger.png}{Swagger com os endpoints da API}{Pendente de captura final}
-\evidencia{E04-health.png}{Resposta JSON do health check do backend}{Pendente de captura final}
-\evidencia{E05-criar-projeto.png}{Criação de um projeto válido pela interface}{Pendente de captura final}
-\evidencia{E06-projeto-duplicado.png}{Tratamento de conflito para nome duplicado}{Pendente de captura final}
-\evidencia{E07-criar-tarefa.png}{Criação de uma tarefa vinculada a um projeto}{Pendente de captura final}
-\evidencia{E08-filtrar-tarefas.png}{Aplicação de filtros no quadro de tarefas}{Pendente de captura final}
-\evidencia{E09-alterar-status.png}{Alteração do status de uma tarefa}{Pendente de captura final}
-\evidencia{E10-bloqueio-exclusao.png}{Bloqueio da exclusão de projeto com tarefas}{Pendente de captura final}
-\evidencia{E11-backend-indisponivel.png}{Tratamento do frontend quando a API fica indisponível}{Pendente de captura final}
-\evidencia{E12-logs-containers.png}{Logs de inicialização dos containers}{Pendente de captura final}
+\evidencia{E01-containers-saudaveis.png}{Containers do backend e frontend com health checks aprovados}{Captura registrada pela equipe}
+\evidencia{E02-dashboard.png}{Dashboard carregado com métricas e tarefas recentes}{Captura registrada pela equipe}
+\evidencia{E03-swagger.png}{Swagger com os endpoints da API}{Captura registrada pela equipe}
+\evidencia{E04-health.png}{Resposta JSON do health check do backend}{Captura registrada pela equipe}
+\evidencia{E05-criar-projeto.png}{Criação de um projeto válido pela interface}{Captura registrada pela equipe}
+\evidencia{E06-projeto-duplicado.png}{Tratamento de conflito para nome duplicado}{Captura registrada pela equipe}
+\evidencia{E07-criar-tarefa.png}{Criação de uma tarefa vinculada a um projeto}{Captura registrada pela equipe}
+\evidencia{E08-filtrar-tarefas.png}{Aplicação de filtros no quadro de tarefas}{Captura registrada pela equipe}
+\evidencia{E09-alterar-status.png}{Alteração do status de uma tarefa}{Captura registrada pela equipe}
+\evidencia{E10-bloqueio-exclusao.png}{Bloqueio da exclusão de projeto com tarefas}{Captura registrada pela equipe}
+\evidencia{E11-backend-indisponivel.png}{Tratamento do frontend quando a API fica indisponível}{Captura registrada pela equipe}
+\evidencia{E12-logs-containers.png}{Logs de inicialização dos containers}{Captura registrada pela equipe}
+\evidencia{E13-backend-task-history.png}{Histórico de transição de status das tarefas consultado pela API}{Captura registrada pela equipe}
+\evidencia{E14-historico-tarefa-frontend.png}{Modal de histórico de status da tarefa exibido na interface}{Captura registrada pela equipe}
 
 \chapter{Equipe e contribuições}
 
@@ -827,25 +835,27 @@ As imagens desta seção são carregadas da pasta \texttt{docs/evidencias/captur
 Integrante & GitHub & Situação do registro \\
 \midrule
 \endhead
-Allef Oliveira Ramos & \href{https://github.com/allef-oliveira}{@allef-oliveira} & \statuspending \\
-Camila Félix dos Reis & \href{https://github.com/cawzkf}{@cawzkf} & \statuspending \\
-Fernanda de Oliveira da Costa & \href{https://github.com/nanda-costa}{@nanda-costa} & \statuspending \\
-Juliana Ballin Lima & \href{https://github.com/JulianaBallin}{@JulianaBallin} & Em atualização \\
-Pedro Henrique Oliveria Dias & \href{https://github.com/pedroddias-oss}{@pedroddias-oss} & \statuspending \\
+Juliana Ballin Lima & \href{https://github.com/JulianaBallin}{@JulianaBallin} & \statusok \\
+Allef Oliveira Ramos & \href{https://github.com/allef-oliveira}{@allef-oliveira} & \statusok \\
+Camila Félix dos Reis & \href{https://github.com/cawzkf}{@cawzkf} & \statusok \\
+Fernanda de Oliveira da Costa & \href{https://github.com/nanda-costa}{@nanda-costa} & \statusok \\
+Pedro Henrique Oliveria Dias & \href{https://github.com/pedroddias-oss}{@pedroddias-oss} & \statusok \\
 \bottomrule
 \end{longtable}
 
-\section{Frentes sugeridas}
+\section{Frentes realizadas}
+
+A distribuição abaixo foi levantada a partir do histórico real de commits e dos merge requests integrados em \texttt{develop}.
 
 \begin{tabularx}{\textwidth}{>{\bfseries}p{0.29\textwidth} X}
 \toprule
-Integrante & Frente inicial \\
+Integrante & Contribuição real \\
 \midrule
-Allef & Testes da API e cenários de erro \\
-Camila & Validação do frontend e melhoria de usabilidade \\
-Fernanda & Docker Compose, logs e evidências de infraestrutura \\
-Juliana & Organização do repositório, automação e documentação \\
-Pedro & Arquitetura e roteiro da apresentação \\
+Juliana & Fundação do projeto: containers, CI, Makefile, README inicial, documentação e relatório iniciais (MRs \#1 e \#2). Revisão e integração dos MRs \#1 a \#10 como mantenedora do repositório. \\
+Allef & Branding, rotas separadas de formulário, visualização de tarefas em tabela e migração do README para MDX (MRs \#3, \#4 e \#5). \\
+Camila & Testes xUnit do \texttt{WorkspaceService}, testes de integração da API e execução do \texttt{dotnet test} na pipeline (MRs \#6 e \#7). \\
+Fernanda & Endpoint e testes do histórico de status da tarefa, documentação do contrato da API e evidências de captura (MRs \#8 e \#9). \\
+Pedro & Modal de histórico de status no frontend, testes automatizados do frontend e pipeline de testes (MR \#10). \\
 \bottomrule
 \end{tabularx}
 
@@ -920,10 +930,7 @@ Tempo excedido & Ensaiar o roteiro e limitar a demonstração aos fluxos princip
 \section{Próximos passos obrigatórios}
 
 \begin{enumerate}
-  \item Executar os doze testes manuais em ambiente da equipe.
-  \item Adicionar as capturas com os nomes definidos.
-  \item Recompilar este relatório com \texttt{make report}.
-  \item Registrar as contribuições reais dos cinco integrantes.
+  \item Executar os quatorze testes manuais em ambiente da equipe para validação final.
   \item Definir os responsáveis por cada parte da apresentação.
   \item Ensaiar e confirmar duração entre 8 e 12 minutos.
   \item Integrar as alterações em \texttt{develop} por MR.
@@ -933,21 +940,20 @@ Tempo excedido & Ensaiar o roteiro e limitar a demonstração aos fluxos princip
 \section{Melhorias opcionais}
 
 \begin{itemize}
-  \item Adicionar testes automatizados para regras da API.
-  \item Criar testes de componentes e fluxos do frontend.
   \item Persistir os dados em um banco executado por container.
   \item Adicionar autenticação e autorização por perfis.
   \item Publicar uma imagem versionada em um registro de containers.
   \item Configurar monitoramento básico e métricas de aplicação.
+  \item Atualizar o React Router para uma versão sem os avisos moderados do \texttt{npm audit}.
 \end{itemize}
 
 \chapter{Conclusão}
 
-O OrbitBoard demonstra os elementos centrais de uma aplicação full stack: interface web, API REST, comunicação HTTP e JSON, validação, tratamento de erros, CORS, documentação OpenAPI e execução conteinerizada. A infraestrutura criada permite reproduzir o ambiente com poucos comandos e a pipeline reduz o risco de integrar alterações que não compilam.
+O OrbitBoard demonstra os elementos centrais de uma aplicação full stack: interface web, API REST, comunicação HTTP e JSON, validação, tratamento de erros, CORS, documentação OpenAPI e execução conteinerizada. A infraestrutura criada permite reproduzir o ambiente com poucos comandos e a pipeline reduz o risco de integrar alterações que não compilam. Testes automatizados de backend e frontend cobrem as regras de negócio e os fluxos principais da interface.
 
-A documentação registra a arquitetura, as decisões, os contratos, os ajustes e o processo de trabalho. O Makefile facilita a execução por todos os integrantes. A estrutura de evidências e este relatório tornam a preparação final objetiva, pois cada imagem pendente possui nome, cenário e resultado esperado.
+A documentação registra a arquitetura, as decisões, os contratos, os ajustes, o processo de trabalho e a contribuição real de cada integrante. O Makefile facilita a execução por todos os integrantes. As quatorze evidências planejadas estão registradas, o que torna a preparação final objetiva.
 
-O estágio técnico está avançado. A conclusão depende principalmente da participação real dos integrantes, da produção das capturas, da atualização das contribuições e do ensaio da apresentação.
+O estágio técnico está avançado. A conclusão depende principalmente da execução do roteiro de testes manuais pela equipe, do ensaio da apresentação e da integração final por MR.
 
 \begin{resumobox}[Checklist final]
 \begin{tabularx}{\textwidth}{X p{0.22\textwidth}}
@@ -962,8 +968,9 @@ Dockerfiles e Compose & \statusok \\
 Pipeline de integração contínua & \statusok \\
 Makefile com menu & \statusok \\
 Relatório técnico & \statusok \\
-Capturas finais & \statuspending \\
-Contribuições dos integrantes & \statuspending \\
+Testes automatizados & \statusok \\
+Contribuições dos integrantes & \statusok \\
+Capturas finais & \statusok \\
 Ensaio da apresentação & \statuspending \\
 MR final para \texttt{main} & \statuspending \\
 \bottomrule
@@ -1028,6 +1035,8 @@ E09-alterar-status.png & Mudança de status \\
 E10-bloqueio-exclusao.png & Exclusão bloqueada \\
 E11-backend-indisponivel.png & Erro de conexão tratado \\
 E12-logs-containers.png & Logs dos serviços \\
+E13-backend-task-history.png & Histórico de status pela API \\
+E14-historico-tarefa-frontend.png & Histórico de status pela interface \\
 \bottomrule
 \end{longtable}
 
