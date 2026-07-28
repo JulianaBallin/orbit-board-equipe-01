@@ -40,6 +40,7 @@ public sealed class WorkspaceService : IWorkspaceService
     {
         lock (_sync)
         {
+            EnsureDefined(request.Status, "O status do projeto informado é inválido.");
             ValidateProjectDates(request.StartDate, request.DueDate);
             EnsureMemberExists(request.OwnerId);
             EnsureUniqueProjectName(request.Name);
@@ -64,6 +65,7 @@ public sealed class WorkspaceService : IWorkspaceService
         lock (_sync)
         {
             var project = FindProject(id);
+            EnsureDefined(request.Status, "O status do projeto informado é inválido.");
             ValidateProjectDates(request.StartDate, request.DueDate);
             EnsureMemberExists(request.OwnerId);
             EnsureUniqueProjectName(request.Name, id);
@@ -141,9 +143,12 @@ public sealed class WorkspaceService : IWorkspaceService
     {
         lock (_sync)
         {
-            FindProject(request.ProjectId);
+            var project = FindProject(request.ProjectId);
             if (request.AssigneeId.HasValue)
                 EnsureMemberExists(request.AssigneeId.Value);
+            EnsureDefined(request.Status, "O status da tarefa informado é inválido.");
+            EnsureDefined(request.Priority, "A prioridade informada é inválida.");
+            ValidateWorkItemDueDate(request.DueDate, project);
 
             var item = new WorkItem
             {
@@ -168,9 +173,12 @@ public sealed class WorkspaceService : IWorkspaceService
         lock (_sync)
         {
             var item = FindWorkItem(id);
-            FindProject(request.ProjectId);
+            var project = FindProject(request.ProjectId);
             if (request.AssigneeId.HasValue)
                 EnsureMemberExists(request.AssigneeId.Value);
+            EnsureDefined(request.Status, "O status da tarefa informado é inválido.");
+            EnsureDefined(request.Priority, "A prioridade informada é inválida.");
+            ValidateWorkItemDueDate(request.DueDate, project);
 
             var previousStatus = item.Status;
 
@@ -196,6 +204,7 @@ public sealed class WorkspaceService : IWorkspaceService
         lock (_sync)
         {
             var item = FindWorkItem(id);
+            EnsureDefined(request.Status, "O status da tarefa informado é inválido.");
             var previousStatus = item.Status;
 
             item.Status = request.Status;
@@ -304,6 +313,24 @@ public sealed class WorkspaceService : IWorkspaceService
     {
         if (dueDate.HasValue && dueDate.Value < startDate)
             throw new ValidationException("A data final não pode ser anterior à data inicial.");
+    }
+
+    private static void ValidateWorkItemDueDate(DateOnly? dueDate, Project project)
+    {
+        if (!dueDate.HasValue)
+            return;
+
+        if (dueDate.Value < project.StartDate)
+            throw new ValidationException("O prazo da tarefa não pode ser anterior à data inicial do projeto.");
+
+        if (project.DueDate.HasValue && dueDate.Value > project.DueDate.Value)
+            throw new ValidationException("O prazo da tarefa não pode ser posterior ao prazo do projeto.");
+    }
+
+    private static void EnsureDefined<TEnum>(TEnum value, string message) where TEnum : struct, Enum
+    {
+        if (!Enum.IsDefined(value))
+            throw new ValidationException(message);
     }
 
     private ProjectResponse ToProjectResponse(Project project)
