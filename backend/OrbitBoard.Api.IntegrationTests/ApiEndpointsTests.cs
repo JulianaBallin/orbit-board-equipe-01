@@ -63,7 +63,7 @@ public sealed class ApiEndpointsTests : IDisposable
         var members = await _client.GetFromJsonAsync<List<TeamMember>>("/api/team-members", JsonOptions);
 
         Assert.NotNull(members);
-        Assert.Equal(4, members!.Count);
+        Assert.Equal(5, members!.Count);
     }
 
     [Fact]
