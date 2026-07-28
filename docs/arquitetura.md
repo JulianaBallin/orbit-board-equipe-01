@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/orbitboard-logo.png" alt="OrbitBoard" width="220" />
+</p>
+
 # Arquitetura do OrbitBoard
 
 ## Visão geral

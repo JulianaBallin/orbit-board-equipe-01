@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../assets/orbitboard-logo.png" alt="OrbitBoard" width="220" />
+</p>
+
 # Evidências da apresentação
 
 As capturas produzidas pela equipe durante a validação final devem ser salvas em `docs/evidencias/capturas/`.

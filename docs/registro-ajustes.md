@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/orbitboard-logo.png" alt="OrbitBoard" width="220" />
+</p>
+
 # Registro de ajustes técnicos
 
 Este registro relaciona o estado inicial, as alterações da equipe e as evidências que deverão ser apresentadas.
