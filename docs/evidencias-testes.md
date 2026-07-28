@@ -52,6 +52,9 @@ Não inclua tokens, senhas, emails pessoais, cookies ou outros segredos nas imag
 | E17 | Arrastar uma tarefa entre colunas do quadro | Card acompanha o cursor, coluna de destino destacada e status gravado pela API | `E17-arrastar-tarefa.png` | Camila Félix | Concluído |
 | E18 | Conferir a ordem da coluna com prioridades diferentes | Tarefas agrupadas da prioridade mais alta para a mais baixa | `E18-ordem-por-prioridade.png` | Camila Félix | Concluído |
 | E19 | Reordenar tarefas de mesma prioridade pelo arraste e recarregar | Ordem definida na mão continua igual após recarregar a página | `E19-ordem-manual-persistida.png` | Camila Félix | Concluído |
+| E20 | Abrir o formulário de novo colaborador e expandir o campo Cargo | Lista de cargos pré-definidos, já com um valor selecionado | `E20-cargo-lista-cadastro.png` | Camila Félix | Concluído |
+| E21 | Cadastrar um colaborador válido e voltar para a Equipe | Resposta `201` e integrante novo na grade, junto da equipe do projeto | `E21-colaborador-cadastrado.png` | Camila Félix | Concluído |
+| E22 | Cadastrar colaborador com email já usado | Resposta `409`, mensagem explicando o conflito e formulário preservado | `E22-colaborador-email-repetido.png` | Camila Félix | Concluído |
 
 ## Verificações técnicas iniciais
 

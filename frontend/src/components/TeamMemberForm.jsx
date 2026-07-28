@@ -1,6 +1,17 @@
 import { useState } from 'react';
 
-const emptyForm = { name: '', role: '', email: '' };
+const roles = [
+  'Backend Developer',
+  'Frontend Developer',
+  'Full Stack Developer',
+  'Product Designer',
+  'Quality Analyst',
+  'Tech Lead',
+  'Product Owner',
+  'Scrum Master'
+];
+
+const emptyForm = { name: '', role: roles[0], email: '' };
 
 export default function TeamMemberForm({ onSubmit, onCancel, busy }) {
   const [form, setForm] = useState(emptyForm);
@@ -35,7 +46,9 @@ export default function TeamMemberForm({ onSubmit, onCancel, busy }) {
 
       <label>
         Cargo
-        <input name="role" value={form.role} onChange={change} minLength="3" maxLength="60" required />
+        <select name="role" value={form.role} onChange={change} required>
+          {roles.map((option) => <option key={option} value={option}>{option}</option>)}
+        </select>
       </label>
 
       <label>
