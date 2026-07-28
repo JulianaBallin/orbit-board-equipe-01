@@ -8,7 +8,12 @@ import { api } from '../api/client';
 
 function renderPage() {
   return render(
-    <MemoryRouter initialEntries={['/team/new']}>
+    <MemoryRouter 
+      initialEntries={['/team/new']}
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}>
       <Routes>
         <Route path="/team" element={<TeamPage />} />
         <Route path="/team/new" element={<TeamMemberFormPage />} />
