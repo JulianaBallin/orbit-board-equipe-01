@@ -33,6 +33,8 @@ Adicione nesta pasta as evidências visuais da execução final. O relatório La
 | `E27-acoes-colaborador.png` | Cards da equipe com as ações de editar e excluir disponíveis |
 | `E28-bloqueio-exclusao-colaborador.png` | Bloqueio ao excluir integrante que responde por projeto e tarefa |
 | `E29-colaborador-excluido.png` | Aviso de sucesso e grade atualizada após excluir um colaborador |
+| `E23-tema-escuro.png` | Interface com o tema escuro aplicado e o controle de alternância visível |
+| `E24-testes-tema.png` | Saída da suíte do frontend com 45 testes aprovados, incluindo os testes do `themeService`, sem warnings |
 
 ## Regras
 
