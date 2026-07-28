@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../api/client';
 import { Badge, EmptyState, ErrorState, LoadingState, Notice } from '../components/Common';
@@ -23,6 +23,7 @@ export default function TasksPage() {
   const [draggingId, setDraggingId] = useState(null);
   const [dropTarget, setDropTarget] = useState('');
   const [confirmTarget, setConfirmTarget] = useState(null);
+  const dragGhost = useRef(null);
 
   const loadReferenceData = useCallback(async () => {
     setProjects(await api.projects.list());
@@ -67,13 +68,30 @@ export default function TasksPage() {
       return;
     }
 
+    showFullCardWhileDragging(event);
     setDraggingId(task.id);
     event.dataTransfer.effectAllowed = 'move';
     event.dataTransfer.setData('text/plain', task.id);
-    event.dataTransfer.setDragImage(event.currentTarget, 24, 24);
+  };
+
+  const showFullCardWhileDragging = (event) => {
+    if (typeof event.dataTransfer.setDragImage !== 'function') return;
+
+    const card = event.currentTarget;
+    const box = card.getBoundingClientRect();
+    const clone = card.cloneNode(true);
+
+    clone.classList.add('drag-ghost');
+    clone.style.width = `${box.width}px`;
+    document.body.appendChild(clone);
+    dragGhost.current = clone;
+
+    event.dataTransfer.setDragImage(clone, event.clientX - box.left, event.clientY - box.top);
   };
 
   const endDrag = () => {
+    dragGhost.current?.remove();
+    dragGhost.current = null;
     setDraggingId(null);
     setDropTarget('');
   };

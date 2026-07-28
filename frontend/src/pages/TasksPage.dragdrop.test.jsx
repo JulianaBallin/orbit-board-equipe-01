@@ -28,7 +28,6 @@ function dataTransfer() {
     dropEffect: '',
     setData: (type, value) => { store[type] = String(value); },
     getData: (type) => store[type] ?? '',
-    setDragImage: () => {},
   };
 }
 
