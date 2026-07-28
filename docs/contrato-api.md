@@ -44,6 +44,8 @@ As datas usam o formato `AAAA-MM-DD`. Identificadores usam UUID. Os enums são e
 | `GET` | `/api/tasks/{id}/history` | `200` | Lista o histórico de mudanças de status de uma tarefa |
 | `GET` | `/api/team-members` | `200` | Lista integrantes disponíveis na aplicação |
 | `POST` | `/api/team-members` | `201` | Cadastra um integrante na equipe |
+| `PUT` | `/api/team-members/{id}` | `200` | Atualiza os dados de um integrante |
+| `DELETE` | `/api/team-members/{id}` | `204` | Exclui um integrante sem vínculos |
 
 ## Filtros de tarefas
 
@@ -107,6 +109,33 @@ Regras principais:
 - Responde `400` quando algum campo está fora das regras.
 
 O integrante cadastrado já pode ser escolhido como responsável de projeto e de tarefa.
+
+## Atualizar integrante
+
+`PUT /api/team-members/{id}`
+
+Aceita o mesmo corpo do cadastro. Valem as mesmas regras de tamanho e de formato de email.
+
+Regras principais:
+
+- O email continua sendo único entre os integrantes, mas manter o próprio email é permitido.
+- As iniciais são recalculadas a partir do nome enviado.
+- Responde `409` quando o email já pertence a outro integrante.
+- Responde `404` quando o integrante informado não existe.
+
+## Excluir integrante
+
+`DELETE /api/team-members/{id}`
+
+A exclusão é bloqueada enquanto o integrante estiver vinculado a algum trabalho.
+
+Regras principais:
+
+- Responde `204` quando o integrante não é responsável por nenhum projeto e não está atribuído a nenhuma tarefa.
+- Responde `409` quando existe ao menos um vínculo, e o `detail` informa quantos projetos e quantas tarefas.
+- Responde `404` quando o integrante informado não existe.
+
+O bloqueio evita registro órfão: o nome do responsável é resolvido a partir da lista de integrantes ao montar a resposta de projeto, então remover alguém ainda vinculado quebraria a listagem inteira.
 
 ## Criar tarefa
 
