@@ -20,7 +20,7 @@ export default function ProjectFormPage() {
 
     try {
       const [memberData, projectData] = await Promise.all([
-        api.team(),
+        api.team.list(),
         isEditing ? api.projects.get(id) : Promise.resolve(null)
       ]);
       setMembers(memberData);

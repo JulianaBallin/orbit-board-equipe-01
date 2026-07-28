@@ -9,7 +9,7 @@ export default function TeamPage() {
   const load = useCallback(async () => {
     setError('');
     try {
-      setMembers(await api.team());
+      setMembers(await api.team.list());
     } catch (err) {
       setError(err.message);
     }
