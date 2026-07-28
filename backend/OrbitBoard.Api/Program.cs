@@ -25,12 +25,16 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddSingleton<IWorkspaceService, WorkspaceService>();
 
+var allowedOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>() ?? ["http://localhost:5173"];
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Frontend", policy =>
     {
         policy
-            .WithOrigins("http://localhost:5173")
+            .WithOrigins(allowedOrigins)
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -54,3 +58,6 @@ app.MapGet("/health", () => Results.Ok(new
 })).WithTags("Health");
 
 app.Run();
+
+public partial class Program;
+

@@ -1,4 +1,8 @@
-# OrbitBoard — Frontend
+<p align="center">
+  <img src="../docs/assets/orbitboard-logo.png" alt="OrbitBoard" width="220" />
+</p>
+
+# OrbitBoard | Frontend
 
 Aplicação web em **React 18 + Vite** para consumir a API OrbitBoard e demonstrar integração full stack.
 
@@ -7,6 +11,7 @@ Aplicação web em **React 18 + Vite** para consumir a API OrbitBoard e demonstr
 - Dashboard com métricas e distribuição de tarefas.
 - Tela de projetos com cadastro, edição, progresso e exclusão.
 - Quadro de tarefas com filtros, criação, edição, exclusão e mudança de status.
+- Modal de histórico de status de uma tarefa, acessível pelo quadro ou pela tabela.
 - Tela de equipe.
 - Estados de carregamento, vazio, sucesso e erro.
 - Tratamento das respostas `400`, `404`, `409` e `500` retornadas pela API.
@@ -15,7 +20,7 @@ Aplicação web em **React 18 + Vite** para consumir a API OrbitBoard e demonstr
 
 ## Requisitos
 
-- Node.js 20 ou superior.
+- Node.js 20.19 ou superior.
 - npm 10 ou superior.
 - Backend OrbitBoard executando em `http://localhost:5200`.
 
@@ -67,6 +72,24 @@ Para visualizar o build localmente:
 ```bash
 npm run preview
 ```
+
+## Testes automatizados
+
+```bash
+npm test
+```
+
+Os testes usam **Vitest** e **Testing Library** e cobrem o cliente HTTP (`src/api/client.js`) e os componentes de tarefas, incluindo o modal de histórico de status (`TaskHistoryModal`), o menu de ações da tabela e a integração com `TasksPage`.
+
+## Como executar com Docker
+
+A partir da raiz do repositório:
+
+```bash
+docker compose up --build frontend
+```
+
+O build usa `VITE_API_URL` para definir o endereço público da API. O Nginx publica o frontend na porta `5173` e disponibiliza seu health check em `/health`.
 
 ## Fluxos sugeridos para validação
 

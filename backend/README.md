@@ -1,4 +1,8 @@
-# OrbitBoard — Backend
+<p align="center">
+  <img src="../docs/assets/orbitboard-logo.png" alt="OrbitBoard" width="220" />
+</p>
+
+# OrbitBoard | Backend
 
 API REST em **.NET 8 / ASP.NET Core** para uma aplicação de acompanhamento de projetos, tarefas e equipe.
 
@@ -8,6 +12,7 @@ API REST em **.NET 8 / ASP.NET Core** para uma aplicação de acompanhamento de 
 - Cadastro, consulta, edição e exclusão de projetos.
 - Cadastro, consulta, edição e exclusão de tarefas.
 - Alteração rápida do status de uma tarefa.
+- Histórico de mudanças de status de uma tarefa, em ordem cronológica.
 - Filtros por projeto, status, prioridade, responsável e texto.
 - Listagem dos integrantes da equipe.
 - Validação de entrada por Data Annotations.
@@ -41,6 +46,20 @@ A API ficará disponível em:
 - Swagger: `http://localhost:5200/swagger`
 - Health check: `http://localhost:5200/health`
 
+## Como executar com Docker
+
+A partir da raiz do repositório:
+
+```bash
+docker compose up --build backend
+```
+
+O container escuta na porta interna `8080`, publicada por padrão como `5200`.
+
+## Configuração
+
+As origens permitidas pelo CORS ficam em `Cors:AllowedOrigins`. No Docker Compose, a primeira origem é configurada pela variável `CORS_ALLOWED_ORIGIN`.
+
 ## Endpoints principais
 
 ### Dashboard
@@ -69,6 +88,7 @@ A API ficará disponível em:
 | PUT | `/api/tasks/{id}` | Atualiza uma tarefa. |
 | PATCH | `/api/tasks/{id}/status` | Altera somente o status. |
 | DELETE | `/api/tasks/{id}` | Exclui uma tarefa. |
+| GET | `/api/tasks/{id}/history` | Lista o histórico de mudanças de status da tarefa. |
 
 Filtros aceitos em `GET /api/tasks`:
 

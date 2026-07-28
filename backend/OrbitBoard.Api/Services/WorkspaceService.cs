@@ -10,6 +10,7 @@ public sealed class WorkspaceService : IWorkspaceService
     private readonly List<Project> _projects = [];
     private readonly List<WorkItem> _workItems = [];
     private readonly List<TeamMember> _members = [];
+    private readonly List<TaskStatusHistoryEntry> _history = [];
 
     public WorkspaceService()
     {
@@ -39,6 +40,7 @@ public sealed class WorkspaceService : IWorkspaceService
     {
         lock (_sync)
         {
+            EnsureDefined(request.Status, "O status do projeto informado é inválido.");
             ValidateProjectDates(request.StartDate, request.DueDate);
             EnsureMemberExists(request.OwnerId);
             EnsureUniqueProjectName(request.Name);
@@ -63,6 +65,7 @@ public sealed class WorkspaceService : IWorkspaceService
         lock (_sync)
         {
             var project = FindProject(id);
+            EnsureDefined(request.Status, "O status do projeto informado é inválido.");
             ValidateProjectDates(request.StartDate, request.DueDate);
             EnsureMemberExists(request.OwnerId);
             EnsureUniqueProjectName(request.Name, id);
@@ -140,9 +143,12 @@ public sealed class WorkspaceService : IWorkspaceService
     {
         lock (_sync)
         {
-            FindProject(request.ProjectId);
+            var project = FindProject(request.ProjectId);
             if (request.AssigneeId.HasValue)
                 EnsureMemberExists(request.AssigneeId.Value);
+            EnsureDefined(request.Status, "O status da tarefa informado é inválido.");
+            EnsureDefined(request.Priority, "A prioridade informada é inválida.");
+            ValidateWorkItemDueDate(request.DueDate, project);
 
             var item = new WorkItem
             {
@@ -157,6 +163,7 @@ public sealed class WorkspaceService : IWorkspaceService
             };
 
             _workItems.Add(item);
+            RecordStatusHistory(item.Id, null, item.Status);
             return ToWorkItemResponse(item);
         }
     }
@@ -166,9 +173,14 @@ public sealed class WorkspaceService : IWorkspaceService
         lock (_sync)
         {
             var item = FindWorkItem(id);
-            FindProject(request.ProjectId);
+            var project = FindProject(request.ProjectId);
             if (request.AssigneeId.HasValue)
                 EnsureMemberExists(request.AssigneeId.Value);
+            EnsureDefined(request.Status, "O status da tarefa informado é inválido.");
+            EnsureDefined(request.Priority, "A prioridade informada é inválida.");
+            ValidateWorkItemDueDate(request.DueDate, project);
+
+            var previousStatus = item.Status;
 
             item.ProjectId = request.ProjectId;
             item.Title = request.Title.Trim();
@@ -180,6 +192,9 @@ public sealed class WorkspaceService : IWorkspaceService
             item.EstimatedHours = request.EstimatedHours;
             item.UpdatedAt = DateTimeOffset.UtcNow;
 
+            if (previousStatus != item.Status)
+                RecordStatusHistory(item.Id, previousStatus, item.Status);
+
             return ToWorkItemResponse(item);
         }
     }
@@ -189,8 +204,15 @@ public sealed class WorkspaceService : IWorkspaceService
         lock (_sync)
         {
             var item = FindWorkItem(id);
+            EnsureDefined(request.Status, "O status da tarefa informado é inválido.");
+            var previousStatus = item.Status;
+
             item.Status = request.Status;
             item.UpdatedAt = DateTimeOffset.UtcNow;
+
+            if (previousStatus != item.Status)
+                RecordStatusHistory(item.Id, previousStatus, item.Status);
+
             return ToWorkItemResponse(item);
         }
     }
@@ -200,6 +222,19 @@ public sealed class WorkspaceService : IWorkspaceService
         lock (_sync)
         {
             _workItems.Remove(FindWorkItem(id));
+        }
+    }
+
+    public IReadOnlyList<TaskHistoryEntryResponse> GetWorkItemHistory(Guid id)
+    {
+        lock (_sync)
+        {
+            FindWorkItem(id);
+            return _history
+                .Where(entry => entry.WorkItemId == id)
+                .OrderBy(entry => entry.ChangedAt)
+                .Select(ToHistoryResponse)
+                .ToList();
         }
     }
 
@@ -246,6 +281,14 @@ public sealed class WorkspaceService : IWorkspaceService
         _projects.FirstOrDefault(project => project.Id == id)
         ?? throw new NotFoundException("Projeto não encontrado.");
 
+    private void RecordStatusHistory(Guid workItemId, WorkItemStatus? fromStatus, WorkItemStatus toStatus) =>
+        _history.Add(new TaskStatusHistoryEntry
+        {
+            WorkItemId = workItemId,
+            FromStatus = fromStatus,
+            ToStatus = toStatus
+        });
+
     private WorkItem FindWorkItem(Guid id) =>
         _workItems.FirstOrDefault(item => item.Id == id)
         ?? throw new NotFoundException("Tarefa não encontrada.");
@@ -270,6 +313,24 @@ public sealed class WorkspaceService : IWorkspaceService
     {
         if (dueDate.HasValue && dueDate.Value < startDate)
             throw new ValidationException("A data final não pode ser anterior à data inicial.");
+    }
+
+    private static void ValidateWorkItemDueDate(DateOnly? dueDate, Project project)
+    {
+        if (!dueDate.HasValue)
+            return;
+
+        if (dueDate.Value < project.StartDate)
+            throw new ValidationException("O prazo da tarefa não pode ser anterior à data inicial do projeto.");
+
+        if (project.DueDate.HasValue && dueDate.Value > project.DueDate.Value)
+            throw new ValidationException("O prazo da tarefa não pode ser posterior ao prazo do projeto.");
+    }
+
+    private static void EnsureDefined<TEnum>(TEnum value, string message) where TEnum : struct, Enum
+    {
+        if (!Enum.IsDefined(value))
+            throw new ValidationException(message);
     }
 
     private ProjectResponse ToProjectResponse(Project project)
@@ -313,6 +374,9 @@ public sealed class WorkspaceService : IWorkspaceService
             item.CreatedAt,
             item.UpdatedAt);
     }
+
+    private static TaskHistoryEntryResponse ToHistoryResponse(TaskStatusHistoryEntry entry) =>
+        new(entry.Id, entry.WorkItemId, entry.FromStatus, entry.ToStatus, entry.ChangedAt);
 
     private void Seed()
     {

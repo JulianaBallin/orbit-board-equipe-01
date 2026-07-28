@@ -4,6 +4,10 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrbitBoard.Api", "OrbitBoard.Api\OrbitBoard.Api.csproj", "{60F4AB28-4E5B-46C5-B2F1-01E8E9C9A345}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrbitBoard.Api.Tests", "OrbitBoard.Api.Tests\OrbitBoard.Api.Tests.csproj", "{7B2E1A44-9C3D-4F5E-8A6B-1D2C3E4F5A6B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrbitBoard.Api.IntegrationTests", "OrbitBoard.Api.IntegrationTests\OrbitBoard.Api.IntegrationTests.csproj", "{8C3F2B55-AD4E-4A6F-9B7C-2E3D4F5A6B7C}"
+EndProject
 Global
     GlobalSection(SolutionConfigurationPlatforms) = preSolution
         Debug|Any CPU = Debug|Any CPU
@@ -14,5 +18,13 @@ Global
         {60F4AB28-4E5B-46C5-B2F1-01E8E9C9A345}.Debug|Any CPU.Build.0 = Debug|Any CPU
         {60F4AB28-4E5B-46C5-B2F1-01E8E9C9A345}.Release|Any CPU.ActiveCfg = Release|Any CPU
         {60F4AB28-4E5B-46C5-B2F1-01E8E9C9A345}.Release|Any CPU.Build.0 = Release|Any CPU
+        {7B2E1A44-9C3D-4F5E-8A6B-1D2C3E4F5A6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {7B2E1A44-9C3D-4F5E-8A6B-1D2C3E4F5A6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {7B2E1A44-9C3D-4F5E-8A6B-1D2C3E4F5A6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {7B2E1A44-9C3D-4F5E-8A6B-1D2C3E4F5A6B}.Release|Any CPU.Build.0 = Release|Any CPU
+        {8C3F2B55-AD4E-4A6F-9B7C-2E3D4F5A6B7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {8C3F2B55-AD4E-4A6F-9B7C-2E3D4F5A6B7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {8C3F2B55-AD4E-4A6F-9B7C-2E3D4F5A6B7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {8C3F2B55-AD4E-4A6F-9B7C-2E3D4F5A6B7C}.Release|Any CPU.Build.0 = Release|Any CPU
     EndGlobalSection
 EndGlobal
