@@ -39,6 +39,7 @@ As datas usam o formato `AAAA-MM-DD`. Identificadores usam UUID. Os enums são e
 | `POST` | `/api/tasks` | `201` | Cria uma tarefa |
 | `PUT` | `/api/tasks/{id}` | `200` | Atualiza uma tarefa |
 | `PATCH` | `/api/tasks/{id}/status` | `200` | Altera o status de uma tarefa |
+| `PATCH` | `/api/tasks/{id}/position` | `200` | Move a tarefa de coluna e de posição |
 | `DELETE` | `/api/tasks/{id}` | `204` | Exclui uma tarefa |
 | `GET` | `/api/tasks/{id}/history` | `200` | Lista o histórico de mudanças de status de uma tarefa |
 | `GET` | `/api/team-members` | `200` | Lista integrantes disponíveis na aplicação |
@@ -128,6 +129,30 @@ Content-Type: application/json
   "status": "Done"
 }
 ```
+
+## Mover a tarefa de posição
+
+`PATCH /api/tasks/{id}/position`
+
+```json
+{
+  "status": "Review",
+  "position": 0
+}
+```
+
+A ordem do quadro é definida primeiro pela prioridade e depois pela posição manual. Ou seja, a posição só reordena a tarefa entre as outras que têm a mesma prioridade na mesma coluna.
+
+Regras principais:
+
+- `position` é o índice, começando em zero, dentro do grupo formado pelo status informado e pela prioridade atual da tarefa.
+- Valores acima do tamanho do grupo colocam a tarefa no fim dele, sem erro.
+- `position` negativa responde `400`.
+- Quando o `status` informado é diferente do atual, a tarefa muda de coluna e o histórico de status registra a transição, igual ao endpoint de status.
+- As posições do grupo de origem e do grupo de destino são renumeradas em sequência, sem deixar buracos.
+- Responde `404` quando a tarefa informada não existe.
+
+A resposta é a tarefa atualizada, no mesmo formato de `GET /api/tasks/{id}`, incluindo o campo `position`.
 
 ## Histórico de status da tarefa
 
