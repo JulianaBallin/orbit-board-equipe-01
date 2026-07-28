@@ -22,7 +22,7 @@ export default function TaskFormPage() {
     try {
       const [projectData, memberData, taskData] = await Promise.all([
         api.projects.list(),
-        api.team(),
+        api.team.list(),
         isEditing ? api.tasks.get(id) : Promise.resolve(null)
       ]);
       setProjects(projectData);

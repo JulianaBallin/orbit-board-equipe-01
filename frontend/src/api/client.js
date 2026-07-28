@@ -61,5 +61,8 @@ export const api = {
     remove: (id) => request(`/api/tasks/${id}`, { method: 'DELETE' }),
     history: (id) => request(`/api/tasks/${id}/history`)
   },
-  team: () => request('/api/team-members')
+  team: {
+    list: () => request('/api/team-members'),
+    create: (data) => request('/api/team-members', { method: 'POST', body: JSON.stringify(data) })
+  }
 };

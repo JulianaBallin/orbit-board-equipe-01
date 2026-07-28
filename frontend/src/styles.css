@@ -87,6 +87,7 @@ input:focus, select:focus, textarea:focus { outline: 3px solid rgba(78, 101, 220
 textarea { resize: vertical; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
 .form-actions, .card-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.form-hint { margin: 0; color: #7b879c; font-size: .78rem; }
 .cards-list { display: grid; gap: 14px; }
 .project-card { padding: 20px; }
 .project-card h3 { margin: 14px 0 7px; }
