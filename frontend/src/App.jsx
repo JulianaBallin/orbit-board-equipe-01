@@ -5,6 +5,7 @@ import ProjectFormPage from './pages/ProjectFormPage';
 import ProjectsPage from './pages/ProjectsPage';
 import TaskFormPage from './pages/TaskFormPage';
 import TasksPage from './pages/TasksPage';
+import TeamMemberFormPage from './pages/TeamMemberFormPage';
 import TeamPage from './pages/TeamPage';
 
 export default function App() {
@@ -20,6 +21,7 @@ export default function App() {
         <Route path="/tasks/new" element={<TaskFormPage />} />
         <Route path="/tasks/:id/edit" element={<TaskFormPage />} />
         <Route path="/team" element={<TeamPage />} />
+        <Route path="/team/new" element={<TeamMemberFormPage />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </Layout>
