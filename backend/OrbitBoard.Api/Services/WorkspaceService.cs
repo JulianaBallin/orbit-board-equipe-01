@@ -291,6 +291,44 @@ public sealed class WorkspaceService : IWorkspaceService
         }
     }
 
+    public TeamMember CreateTeamMember(CreateTeamMemberRequest request)
+    {
+        lock (_sync)
+        {
+            var email = request.Email.Trim();
+            if (_members.Any(member => string.Equals(member.Email, email, StringComparison.OrdinalIgnoreCase)))
+                throw new ConflictException("Já existe um integrante com esse email.");
+
+            var member = new TeamMember
+            {
+                Name = request.Name.Trim(),
+                Role = request.Role.Trim(),
+                Email = email,
+                Initials = BuildInitials(request.Name)
+            };
+
+            _members.Add(member);
+            return member;
+        }
+    }
+
+    private static string BuildInitials(string name)
+    {
+        var parts = name
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Where(part => char.IsLetter(part[0]))
+            .ToList();
+
+        if (parts.Count == 0)
+            return string.Empty;
+
+        var first = char.ToUpperInvariant(parts[0][0]);
+        if (parts.Count == 1)
+            return first.ToString();
+
+        return $"{first}{char.ToUpperInvariant(parts[^1][0])}";
+    }
+
     public IReadOnlyList<TeamMember> GetTeamMembers()
     {
         lock (_sync)
@@ -447,36 +485,43 @@ public sealed class WorkspaceService : IWorkspaceService
 
     private void Seed()
     {
-        var ana = new TeamMember
+        var allef = new TeamMember
         {
-            Name = "Ana Ribeiro",
-            Role = "Product Designer",
-            Email = "ana.ribeiro@example.com",
+            Name = "Allef Oliveira Ramos",
+            Role = "Frontend Developer",
+            Email = "allef.ramos@example.com",
             Initials = "AR"
         };
-        var bruno = new TeamMember
+        var camila = new TeamMember
         {
-            Name = "Bruno Martins",
+            Name = "Camila Félix dos Reis",
             Role = "Backend Developer",
-            Email = "bruno.martins@example.com",
-            Initials = "BM"
+            Email = "camila.reis@example.com",
+            Initials = "CR"
         };
-        var carla = new TeamMember
+        var fernanda = new TeamMember
         {
-            Name = "Carla Nunes",
-            Role = "Frontend Developer",
-            Email = "carla.nunes@example.com",
-            Initials = "CN"
+            Name = "Fernanda de Oliveira da Costa",
+            Role = "Backend Developer",
+            Email = "fernanda.costa@example.com",
+            Initials = "FC"
         };
-        var diego = new TeamMember
+        var juliana = new TeamMember
         {
-            Name = "Diego Lima",
-            Role = "Quality Analyst",
-            Email = "diego.lima@example.com",
-            Initials = "DL"
+            Name = "Juliana Ballin Lima",
+            Role = "Backend Developer",
+            Email = "juliana.lima@example.com",
+            Initials = "JL"
+        };
+        var pedro = new TeamMember
+        {
+            Name = "Pedro Henrique Oliveira Dias",
+            Role = "Backend Developer",
+            Email = "pedro.dias@example.com",
+            Initials = "PD"
         };
 
-        _members.AddRange([ana, bruno, carla, diego]);
+        _members.AddRange([allef, camila, fernanda, juliana, pedro]);
 
         var portal = new Project
         {
@@ -485,7 +530,7 @@ public sealed class WorkspaceService : IWorkspaceService
             Status = ProjectStatus.Active,
             StartDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-35)),
             DueDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(28)),
-            OwnerId = ana.Id
+            OwnerId = camila.Id
         };
         var eventos = new Project
         {
@@ -494,7 +539,7 @@ public sealed class WorkspaceService : IWorkspaceService
             Status = ProjectStatus.Active,
             StartDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-18)),
             DueDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(45)),
-            OwnerId = bruno.Id
+            OwnerId = juliana.Id
         };
         var biblioteca = new Project
         {
@@ -503,7 +548,7 @@ public sealed class WorkspaceService : IWorkspaceService
             Status = ProjectStatus.Planning,
             StartDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(7)),
             DueDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(90)),
-            OwnerId = carla.Id
+            OwnerId = fernanda.Id
         };
 
         _projects.AddRange([portal, eventos, biblioteca]);
@@ -516,7 +561,7 @@ public sealed class WorkspaceService : IWorkspaceService
                 Description = "Exibir métricas de trilhas iniciadas, concluídas e em andamento.",
                 Status = WorkItemStatus.InProgress,
                 Priority = WorkItemPriority.High,
-                AssigneeId = carla.Id,
+                AssigneeId = allef.Id,
                 DueDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(6)),
                 EstimatedHours = 16
             },
@@ -527,7 +572,7 @@ public sealed class WorkspaceService : IWorkspaceService
                 Description = "Revisar exemplos de requisição e resposta na documentação da API.",
                 Status = WorkItemStatus.Review,
                 Priority = WorkItemPriority.Medium,
-                AssigneeId = bruno.Id,
+                AssigneeId = juliana.Id,
                 DueDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(2)),
                 EstimatedHours = 5
             },
@@ -538,7 +583,7 @@ public sealed class WorkspaceService : IWorkspaceService
                 Description = "Testar cenários de sucesso, lotação e cancelamento de inscrição.",
                 Status = WorkItemStatus.Backlog,
                 Priority = WorkItemPriority.Critical,
-                AssigneeId = diego.Id,
+                AssigneeId = pedro.Id,
                 DueDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(9)),
                 EstimatedHours = 12
             },
@@ -549,7 +594,7 @@ public sealed class WorkspaceService : IWorkspaceService
                 Description = "Criar endpoint com filtros por data, categoria e disponibilidade.",
                 Status = WorkItemStatus.Done,
                 Priority = WorkItemPriority.High,
-                AssigneeId = bruno.Id,
+                AssigneeId = juliana.Id,
                 DueDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-3)),
                 EstimatedHours = 10
             },
@@ -560,7 +605,7 @@ public sealed class WorkspaceService : IWorkspaceService
                 Description = "Mapear campos, regras e relacionamento entre livro, leitor e nota.",
                 Status = WorkItemStatus.Backlog,
                 Priority = WorkItemPriority.Medium,
-                AssigneeId = ana.Id,
+                AssigneeId = camila.Id,
                 DueDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(20)),
                 EstimatedHours = 6
             }

@@ -63,7 +63,73 @@ public sealed class ApiEndpointsTests : IDisposable
         var members = await _client.GetFromJsonAsync<List<TeamMember>>("/api/team-members", JsonOptions);
 
         Assert.NotNull(members);
-        Assert.Equal(4, members!.Count);
+        Assert.Equal(5, members!.Count);
+    }
+
+    [Fact]
+    public async Task CreateTeamMember_WithValidData_Returns201AndIsListed()
+    {
+        var request = new CreateTeamMemberRequest
+        {
+            Name = "Renata Vasconcelos",
+            Role = "Backend Developer",
+            Email = "renata.vasconcelos@example.com"
+        };
+
+        var response = await _client.PostAsJsonAsync("/api/team-members", request, JsonOptions);
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+
+        var created = await response.Content.ReadFromJsonAsync<TeamMember>(JsonOptions);
+        Assert.Equal("RV", created!.Initials);
+
+        var members = await _client.GetFromJsonAsync<List<TeamMember>>("/api/team-members", JsonOptions);
+        Assert.Contains(members!, member => member.Id == created.Id);
+    }
+
+    [Fact]
+    public async Task CreateTeamMember_WithDuplicateEmail_Returns409()
+    {
+        var members = await _client.GetFromJsonAsync<List<TeamMember>>("/api/team-members", JsonOptions);
+        var request = new CreateTeamMemberRequest
+        {
+            Name = "Integrante Repetido",
+            Role = "Designer",
+            Email = members!.First().Email
+        };
+
+        var response = await _client.PostAsJsonAsync("/api/team-members", request, JsonOptions);
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task CreateTeamMember_WithInvalidEmail_Returns400()
+    {
+        var request = new CreateTeamMemberRequest
+        {
+            Name = "Integrante Inválido",
+            Role = "Designer",
+            Email = "isso-nao-e-um-email"
+        };
+
+        var response = await _client.PostAsJsonAsync("/api/team-members", request, JsonOptions);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task CreateTeamMember_WithShortName_Returns400()
+    {
+        var request = new CreateTeamMemberRequest
+        {
+            Name = "Ab",
+            Role = "Designer",
+            Email = "ab@example.com"
+        };
+
+        var response = await _client.PostAsJsonAsync("/api/team-members", request, JsonOptions);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     [Fact]
