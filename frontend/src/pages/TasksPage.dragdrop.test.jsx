@@ -16,6 +16,7 @@ const backlogTask = {
   assigneeName: 'Diego Lima',
   priority: 'Critical',
   status: 'Backlog',
+  position: 0,
   dueDate: null,
   estimatedHours: 12,
 };
@@ -32,6 +33,19 @@ const column = (status) => screen.getByLabelText(`Coluna ${statusLabel(status)}`
 
 function pointAt(status) {
   document.elementFromPoint = () => column(status);
+}
+
+function stackCards(cards) {
+  cards.forEach((card, index) => {
+    card.getBoundingClientRect = () => ({
+      top: index * 100,
+      height: 100,
+      left: 0,
+      width: 300,
+      bottom: index * 100 + 100,
+      right: 300,
+    });
+  });
 }
 
 async function dragCardTo(status, { drop = true } = {}) {
@@ -58,22 +72,44 @@ describe('TasksPage pointer dragging', () => {
   });
 
   it('moves the task to the column where the pointer was released', async () => {
-    const changeStatus = vi.spyOn(api.tasks, 'changeStatus').mockResolvedValue({});
+    const move = vi.spyOn(api.tasks, 'move').mockResolvedValue({});
 
     renderPage();
     await dragCardTo('Done');
 
-    await waitFor(() => expect(changeStatus).toHaveBeenCalledWith('task-1', 'Done'));
+    await waitFor(() => expect(move).toHaveBeenCalledWith('task-1', 'Done', 0));
   });
 
   it('does not call the API when released over its own column', async () => {
-    const changeStatus = vi.spyOn(api.tasks, 'changeStatus').mockResolvedValue({});
+    const move = vi.spyOn(api.tasks, 'move').mockResolvedValue({});
 
     renderPage();
     await dragCardTo('Backlog');
 
     await waitFor(() => expect(api.tasks.list).toHaveBeenCalled());
-    expect(changeStatus).not.toHaveBeenCalled();
+    expect(move).not.toHaveBeenCalled();
+  });
+
+  it('reorders inside the same column when dropped over a peer', async () => {
+    const peer = {
+      ...backlogTask,
+      id: 'task-2',
+      title: 'Segunda tarefa do backlog',
+      position: 1,
+    };
+    api.tasks.list.mockResolvedValue([backlogTask, peer]);
+    const move = vi.spyOn(api.tasks, 'move').mockResolvedValue({});
+
+    renderPage();
+    const cards = await screen.findAllByTitle('Arraste para mover a tarefa de estágio');
+    stackCards(cards);
+    pointAt('Backlog');
+
+    fireEvent.pointerDown(cards[1], { button: 0, clientX: 10, clientY: 400 });
+    fireEvent.pointerMove(window, { clientX: 10, clientY: 20 });
+    fireEvent.pointerUp(window, { clientX: 10, clientY: 20 });
+
+    await waitFor(() => expect(move).toHaveBeenCalledWith('task-2', 'Backlog', 0));
   });
 
   it('shows a floating copy of the card while dragging', async () => {
@@ -101,7 +137,7 @@ describe('TasksPage pointer dragging', () => {
   });
 
   it('ignores a press that starts on the controls inside the card', async () => {
-    const changeStatus = vi.spyOn(api.tasks, 'changeStatus').mockResolvedValue({});
+    const move = vi.spyOn(api.tasks, 'move').mockResolvedValue({});
 
     renderPage();
     await screen.findByTitle('Arraste para mover a tarefa de estágio');
@@ -113,11 +149,11 @@ describe('TasksPage pointer dragging', () => {
     fireEvent.pointerUp(window, { clientX: 300, clientY: 300 });
 
     expect(document.querySelector('.drag-layer')).toBeNull();
-    expect(changeStatus).not.toHaveBeenCalled();
+    expect(move).not.toHaveBeenCalled();
   });
 
   it('does not drag on a plain click without movement', async () => {
-    const changeStatus = vi.spyOn(api.tasks, 'changeStatus').mockResolvedValue({});
+    const move = vi.spyOn(api.tasks, 'move').mockResolvedValue({});
 
     renderPage();
     const card = await screen.findByTitle('Arraste para mover a tarefa de estágio');
@@ -128,11 +164,11 @@ describe('TasksPage pointer dragging', () => {
     fireEvent.pointerUp(window, { clientX: 12, clientY: 11 });
 
     expect(document.querySelector('.drag-layer')).toBeNull();
-    expect(changeStatus).not.toHaveBeenCalled();
+    expect(move).not.toHaveBeenCalled();
   });
 
   it('reloads the board and reports the error when the move fails', async () => {
-    vi.spyOn(api.tasks, 'changeStatus').mockRejectedValue(new Error('Falha ao mover a tarefa.'));
+    vi.spyOn(api.tasks, 'move').mockRejectedValue(new Error('Falha ao mover a tarefa.'));
 
     renderPage();
     await dragCardTo('Done');

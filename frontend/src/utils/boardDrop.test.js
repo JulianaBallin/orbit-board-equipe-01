@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dropIndexFor, reorder } from './boardDrop';
+import { dropIndexFor, landingFor, reorder } from './boardDrop';
 
 const boxes = [
   { top: 0, height: 100 },
@@ -25,6 +25,39 @@ describe('dropIndexFor', () => {
 
   it('lands at the start of an empty column', () => {
     expect(dropIndexFor([], 400)).toBe(0);
+  });
+});
+
+describe('landingFor', () => {
+  const column = [
+    { id: 'a', priority: 'Critical' },
+    { id: 'b', priority: 'High' },
+    { id: 'c', priority: 'High' },
+    { id: 'd', priority: 'Low' },
+  ];
+
+  it('counts the position only among tasks of the same priority', () => {
+    expect(landingFor(column, 2, 'High')).toEqual({ position: 1, index: 2 });
+  });
+
+  it('lands first in its group when dropped above everything', () => {
+    expect(landingFor(column, 0, 'High')).toEqual({ position: 0, index: 1 });
+  });
+
+  it('lands last in its group when dropped below everything', () => {
+    expect(landingFor(column, 4, 'High')).toEqual({ position: 2, index: 3 });
+  });
+
+  it('keeps a low priority task under the higher ones even when dropped on top', () => {
+    expect(landingFor(column, 0, 'Low')).toEqual({ position: 0, index: 3 });
+  });
+
+  it('keeps a critical task above the others even when dropped at the bottom', () => {
+    expect(landingFor(column, 4, 'Critical')).toEqual({ position: 1, index: 1 });
+  });
+
+  it('lands at the start of an empty column', () => {
+    expect(landingFor([], 0, 'Medium')).toEqual({ position: 0, index: 0 });
   });
 });
 

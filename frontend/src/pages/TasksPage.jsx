@@ -7,7 +7,7 @@ import TaskTable from '../components/TaskTable';
 import TaskHistoryModal from '../components/TaskHistoryModal';
 import ConfirmDialog from '../components/ConfirmDialog';
 import { priorityLabel, priorityTone, statusLabel } from '../utils/labels';
-import { dropIndexFor } from '../utils/boardDrop';
+import { dropIndexFor, landingFor, reorder } from '../utils/boardDrop';
 
 const initialFilters = { projectId: '', status: '', priority: '', assigneeId: '', search: '' };
 const statuses = ['Backlog', 'InProgress', 'Review', 'Done'];
@@ -68,15 +68,16 @@ export default function TasksPage() {
 
   const locateDrop = (x, y, task) => {
     const column = document.elementFromPoint(x, y)?.closest('.task-column');
-    if (!column) return { status: null, index: null };
+    if (!column) return { status: null, index: null, position: null };
 
+    const status = column.dataset.status;
     const cards = Array.from(column.querySelectorAll('.task-card'))
       .filter((element) => element.dataset.taskId !== task.id);
+    const dropIndex = dropIndexFor(cards.map((element) => element.getBoundingClientRect()), y);
+    const columnTasks = tasks.filter((item) => item.status === status && item.id !== task.id);
+    const landing = landingFor(columnTasks, dropIndex, task.priority);
 
-    return {
-      status: column.dataset.status,
-      index: dropIndexFor(cards.map((element) => element.getBoundingClientRect()), y),
-    };
+    return { status, index: landing.index, position: landing.position };
   };
 
   const beginDrag = (event, task) => {
@@ -111,6 +112,18 @@ export default function TasksPage() {
       });
     };
 
+    const applyLanding = () => {
+      const columnTasks = tasks.filter((item) => item.status === landing.status);
+      const from = columnTasks.findIndex((item) => item.id === task.id);
+      const others = tasks.filter((item) => item.status !== landing.status);
+      const moved = { ...task, status: landing.status };
+      const target = from >= 0
+        ? reorder(columnTasks, from, landing.index > from ? landing.index + 1 : landing.index)
+        : [...columnTasks.slice(0, landing.index), moved, ...columnTasks.slice(landing.index)];
+
+      setTasks([...others, ...target.map((item) => (item.id === task.id ? moved : item))]);
+    };
+
     const detach = () => {
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup', onUp);
@@ -122,11 +135,17 @@ export default function TasksPage() {
       detach();
       setDrag(null);
 
-      if (!moving || !landing.status || landing.status === task.status) return;
+      if (!moving || !landing.status) return;
+      if (landing.status === task.status && landing.position === task.position) return;
 
-      setTasks((current) =>
-        current.map((item) => (item.id === task.id ? { ...item, status: landing.status } : item)));
-      await changeStatus(task.id, landing.status);
+      applyLanding();
+      try {
+        await api.tasks.move(task.id, landing.status, landing.position);
+        await loadTasks();
+      } catch (err) {
+        await loadTasks();
+        setError(err.message);
+      }
     };
 
     releaseDrag.current = detach;

@@ -25,6 +25,8 @@ Adicione nesta pasta as evidências visuais da execução final. O relatório La
 | `E15-exclusao-permitida.png` | Confirmação de exclusão liberada em projeto com todas as tarefas concluídas, com os demais projetos bloqueados |
 | `E16-exclusao-concluida.png` | Listagem após a exclusão, sem o projeto e com o aviso de sucesso |
 | `E17-arrastar-tarefa.png` | Card sendo arrastado entre colunas do quadro, com a coluna de destino destacada |
+| `E18-ordem-por-prioridade.png` | Coluna agrupando as tarefas por prioridade, da mais alta para a mais baixa |
+| `E19-ordem-manual-persistida.png` | Tarefas de mesma prioridade em ordem definida manualmente pelo arraste |
 
 ## Regras
 
