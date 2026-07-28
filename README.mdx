@@ -18,7 +18,7 @@
 <div align="center">
   <img alt=".NET" src="https://img.shields.io/badge/.NET-8.0-512BD4?style=for-the-badge&logo=dotnet&logoColor=white" />
   <img alt="ASP.NET Core" src="https://img.shields.io/badge/ASP.NET_Core-API-512BD4?style=for-the-badge&logo=dotnet&logoColor=white" />
-  <img alt="React" src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-adge&logo=react&logoColor=black" />
+  <img alt="React" src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black" />
   <img alt="React Router" src="https://img.shields.io/badge/React_Router-6-CA4245?style=for-the-badge&logo=reactrouter&logoColor=white" />
   <img alt="Vite" src="https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white" />
   <img alt="Docker" src="https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
@@ -43,7 +43,7 @@ Os dados são mantidos em memória para concentrar a atividade na integração f
 | Funcionalidade                    | Descrição                                                                                                 |
 | --------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | **Dashboard**                     | Exibe indicadores de projetos, tarefas, itens concluídos, atrasos e atividades recentes                   |
-| **Projetos**                      | Permite consultar, cadastrar, editar e excluir projetos que não possuem tarefas vinculadas                |
+| **Projetos**                      | Permite consultar, cadastrar, editar e excluir projetos, bloqueando a exclusão enquanto houver tarefa não concluída |
 | **Cadastro e edição de projetos** | Disponibiliza formulários em páginas próprias para criar ou atualizar projetos                            |
 | **Quadro de tarefas**             | Organiza as tarefas nas colunas Backlog, Em andamento, Revisão e Concluído                                |
 | **Tabela de tarefas**             | Apresenta as tarefas em formato tabular, com projeto, responsável, prioridade, prazo, estimativa e status |
@@ -58,6 +58,7 @@ Os dados são mantidos em memória para concentrar a atividade na integração f
 | **Arraste no quadro**             | Move tarefas entre colunas arrastando o card, com indicação do ponto de queda antes de soltar             |
 | **Ordenação manual**              | Permite ordenar tarefas de mesma prioridade dentro da coluna, e a ordem é gravada na API                  |
 | **Confirmação de exclusão**       | Pede confirmação em um modal próprio antes de excluir projeto, tarefa ou colaborador                      |
+| **Tema escuro**                   | Alterna entre tema claro e escuro, com a preferência salva no navegador                                   |
 | **Validação**                     | Verifica campos obrigatórios, datas, referências e nomes duplicados                                       |
 | **Tratamento de erros**           | Apresenta na interface as mensagens de erro recebidas da API                                              |
 | **Interface responsiva**          | Adapta páginas, filtros, tabelas e menus a diferentes larguras de tela                                    |
@@ -274,6 +275,7 @@ orbit-board-equipe-01/
 │   ├── contrato-api.md
 │   ├── contribuicoes.md
 │   ├── evidencias-testes.md
+│   ├── fluxo-git.md
 │   └── registro-ajustes.md
 ├── .env.example
 ├── .gitignore
