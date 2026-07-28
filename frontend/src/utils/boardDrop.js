@@ -1,3 +1,18 @@
+const priorityRank = ['Critical', 'High', 'Medium', 'Low'];
+
+export function landingFor(columnTasks, dropIndex, priority) {
+  const rank = priorityRank.indexOf(priority);
+  const position = columnTasks
+    .slice(0, dropIndex)
+    .filter((task) => task.priority === priority)
+    .length;
+  const above = columnTasks
+    .filter((task) => priorityRank.indexOf(task.priority) < rank)
+    .length;
+
+  return { position, index: above + position };
+}
+
 export function dropIndexFor(boxes, pointerY) {
   for (let index = 0; index < boxes.length; index += 1) {
     const box = boxes[index];
