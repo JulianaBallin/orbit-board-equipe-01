@@ -43,6 +43,39 @@ describe('TaskHistoryModal', () => {
     expect(rows[1]).toHaveTextContent('Backlog');
   });
 
+  it('limits the collapsed history to three entries and expands the hidden changes', async () => {
+    vi.spyOn(api.tasks, 'history').mockResolvedValue([
+      { id: '1', fromStatus: null, toStatus: 'Backlog', changedAt: '2026-01-01T10:00:00Z' },
+      { id: '2', fromStatus: 'Backlog', toStatus: 'InProgress', changedAt: '2026-01-02T10:00:00Z' },
+      { id: '3', fromStatus: 'InProgress', toStatus: 'Review', changedAt: '2026-01-03T10:00:00Z' },
+      { id: '4', fromStatus: 'Review', toStatus: 'Done', changedAt: '2026-01-04T10:00:00Z' },
+      { id: '5', fromStatus: 'Done', toStatus: 'Backlog', changedAt: '2026-01-05T10:00:00Z' },
+    ]);
+
+    render(<TaskHistoryModal task={task} onClose={vi.fn()} />);
+
+    const showMoreButton = await screen.findByRole('button', {
+      name: 'Ver mais 2 alterações',
+    });
+    let rows = document.querySelectorAll('.compact-item');
+
+    expect(rows).toHaveLength(3);
+    expect(rows[0]).toHaveTextContent('Concluída');
+    expect(rows[0]).toHaveTextContent('Backlog');
+    expect(rows[1]).toHaveTextContent('Em revisão');
+    expect(rows[1]).toHaveTextContent('Concluída');
+    expect(rows[2]).toHaveTextContent('Criada');
+    expect(showMoreButton.nextElementSibling).toBe(rows[2]);
+
+    await userEvent.click(showMoreButton);
+
+    rows = document.querySelectorAll('.compact-item');
+    expect(rows).toHaveLength(5);
+    expect(
+      screen.queryByRole('button', { name: 'Ver mais 2 alterações' }),
+    ).not.toBeInTheDocument();
+  });
+
   it('shows the empty state when there is no history yet', async () => {
     vi.spyOn(api.tasks, 'history').mockResolvedValue([]);
 
