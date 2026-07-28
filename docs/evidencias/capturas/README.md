@@ -30,6 +30,8 @@ Adicione nesta pasta as evidências visuais da execução final. O relatório La
 | `E20-cargo-lista-cadastro.png` | Formulário de cadastro de colaborador com a lista de cargos aberta |
 | `E21-colaborador-cadastrado.png` | Tela de Equipe com a equipe do projeto e um integrante cadastrado pela interface |
 | `E22-colaborador-email-repetido.png` | Mensagem de conflito ao cadastrar colaborador com email já usado |
+| `E23-tema-escuro.png` | Interface com o tema escuro aplicado e o controle de alternância visível |
+| `E24-testes-tema.png` | Saída da suíte do frontend com 45 testes aprovados, incluindo os testes do `themeService`, sem warnings |
 
 ## Regras
 

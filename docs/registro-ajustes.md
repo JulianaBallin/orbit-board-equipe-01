@@ -14,6 +14,8 @@ Este registro relaciona o estado inicial, as alterações da equipe e as evidên
 | CORS | Origem do frontend fixa no código | Lista de origens carregada da configuração | Alterar `CORS_ALLOWED_ORIGIN` e testar |
 | Configuração local | Variável apenas no frontend | `.env.example` centraliza portas, URL pública da API e origem permitida | `docker compose config` |
 | Dependências do frontend | Vite 5 com alertas no `npm audit` | Vite 8 e plugin React compatível com Node 20.19 | `npm audit` e `npm run build` |
+| Tema da interface | Apenas tema claro, sem preferência persistida | Temas claro e escuro, alternância pela interface e persistência no `localStorage` por meio do `themeService` | Alternar o tema, recarregar a página e conferir a E23 |
+| Testes do tema | Serviço sem cobertura automatizada específica | Sete testes do `themeService` e ajustes no `MemoryRouter` e no fluxo de drag and drop para eliminar warnings | `npm test` e evidência E24 |
 | Documentação | READMEs separados da base | Arquitetura, contrato, testes, apresentação e contribuições organizados em `docs/` | Revisar os links no README principal |
 
 ## Ajustes ainda reservados para a equipe
