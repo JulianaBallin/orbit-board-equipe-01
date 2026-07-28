@@ -43,6 +43,7 @@ As datas usam o formato `AAAA-MM-DD`. Identificadores usam UUID. Os enums são e
 | `DELETE` | `/api/tasks/{id}` | `204` | Exclui uma tarefa |
 | `GET` | `/api/tasks/{id}/history` | `200` | Lista o histórico de mudanças de status de uma tarefa |
 | `GET` | `/api/team-members` | `200` | Lista integrantes disponíveis na aplicação |
+| `POST` | `/api/team-members` | `201` | Cadastra um integrante na equipe |
 
 ## Filtros de tarefas
 
@@ -83,6 +84,29 @@ Regras principais:
 - `status` deve ser um dos valores aceitos para status de projeto.
 - `ownerId` deve existir na lista de integrantes.
 - `dueDate` não pode ser anterior a `startDate`.
+
+## Cadastrar integrante
+
+`POST /api/team-members`
+
+```json
+{
+  "name": "Renata Vasconcelos",
+  "role": "Backend Developer",
+  "email": "renata.vasconcelos@example.com"
+}
+```
+
+Regras principais:
+
+- `name` tem de 3 a 80 caracteres.
+- `role` tem de 3 a 60 caracteres.
+- `email` precisa ter formato válido, no máximo 120 caracteres, e não pode repetir o de outro integrante. A comparação ignora maiúsculas e minúsculas.
+- As iniciais são geradas automaticamente a partir do nome, usando a primeira letra do primeiro e do último nome. Nome com uma palavra só gera uma inicial.
+- Responde `409` quando o email já pertence a outro integrante.
+- Responde `400` quando algum campo está fora das regras.
+
+O integrante cadastrado já pode ser escolhido como responsável de projeto e de tarefa.
 
 ## Criar tarefa
 
