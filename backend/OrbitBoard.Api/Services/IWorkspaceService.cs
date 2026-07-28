@@ -21,6 +21,7 @@ public interface IWorkspaceService
     WorkItemResponse CreateWorkItem(CreateWorkItemRequest request);
     WorkItemResponse UpdateWorkItem(Guid id, UpdateWorkItemRequest request);
     WorkItemResponse ChangeWorkItemStatus(Guid id, ChangeWorkItemStatusRequest request);
+    WorkItemResponse MoveWorkItem(Guid id, MoveWorkItemRequest request);
     void DeleteWorkItem(Guid id);
     IReadOnlyList<TaskHistoryEntryResponse> GetWorkItemHistory(Guid id);
 
