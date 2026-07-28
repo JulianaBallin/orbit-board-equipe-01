@@ -79,15 +79,34 @@ describe('ProjectFormPage', () => {
     expect(await screen.findByRole('heading', { name: 'Projects destination' })).toBeInTheDocument();
   });
 
-  it('shows a retry state instead of an empty edit form when loading fails', async () => {
+  it('returns to projects instead of retrying when the project does not exist', async () => {
     vi.spyOn(api.team, 'list').mockResolvedValue([member]);
-    vi.spyOn(api.projects, 'get').mockRejectedValue(new Error('Projeto não encontrado.'));
+    vi.spyOn(api.projects, 'get').mockRejectedValue(
+      Object.assign(new Error('Projeto não encontrado.'), { status: 404 })
+    );
 
     renderPage('/projects/missing/edit');
 
     expect(await screen.findByText('Projeto não encontrado.')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Tentar novamente' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Tentar novamente' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Salvar projeto' })).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Voltar para projetos' }));
+    expect(await screen.findByRole('heading', { name: 'Projects destination' })).toBeInTheDocument();
+  });
+
+  it('retries a temporary loading failure and restores the edit form', async () => {
+    vi.spyOn(api.team, 'list').mockResolvedValue([member]);
+    vi.spyOn(api.projects, 'get')
+      .mockRejectedValueOnce(new Error('Backend indisponível.'))
+      .mockResolvedValueOnce(project);
+
+    renderPage('/projects/project-1/edit');
+
+    expect(await screen.findByText('Backend indisponível.')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Tentar novamente' }));
+
+    expect(await screen.findByDisplayValue('Projeto existente')).toBeInTheDocument();
+    expect(api.projects.get).toHaveBeenCalledTimes(2);
   });
 
   it('keeps the form visible when the API rejects the save', async () => {
@@ -102,5 +121,6 @@ describe('ProjectFormPage', () => {
 
     expect(await screen.findByText('Já existe um projeto com esse nome.')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Projeto de teste')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Tentar novamente' })).not.toBeInTheDocument();
   });
 });

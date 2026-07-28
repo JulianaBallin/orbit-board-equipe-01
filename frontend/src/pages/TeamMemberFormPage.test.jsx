@@ -26,6 +26,7 @@ function renderEditPage(id) {
   return render(
     <MemoryRouter initialEntries={[`/team/${id}/edit`]}>
       <Routes>
+        <Route path="/team" element={<h1>Team destination</h1>} />
         <Route path="/team/:id/edit" element={<TeamMemberFormPage />} />
       </Routes>
     </MemoryRouter>,
@@ -79,6 +80,7 @@ describe('TeamMemberFormPage', () => {
 
     expect(await screen.findByText('Já existe um integrante com esse email.')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Cadastrar colaborador' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Tentar novamente' })).not.toBeInTheDocument();
   });
 
   it('does not call the API when a required field is empty', async () => {
@@ -102,13 +104,35 @@ describe('TeamMemberFormPage', () => {
     expect(create).not.toHaveBeenCalled();
   });
 
-  it('shows a retry state instead of a blank form when the member does not exist', async () => {
+  it('returns to the team instead of retrying when the member does not exist', async () => {
     vi.spyOn(api.team, 'list').mockResolvedValue([]);
 
     renderEditPage('missing');
 
     expect(await screen.findByText('Integrante não encontrado.')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Tentar novamente' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Tentar novamente' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Salvar alterações' })).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Voltar para equipe' }));
+    expect(await screen.findByRole('heading', { name: 'Team destination' })).toBeInTheDocument();
+  });
+
+  it('retries a temporary list failure and restores the edit form', async () => {
+    vi.spyOn(api.team, 'list')
+      .mockRejectedValueOnce(new Error('Backend indisponível.'))
+      .mockResolvedValueOnce([{
+        id: 'member-1',
+        name: 'Renata Vasconcelos',
+        role: 'Backend Developer',
+        email: 'renata.vasconcelos@example.com',
+        initials: 'RV',
+      }]);
+
+    renderEditPage('member-1');
+
+    expect(await screen.findByText('Backend indisponível.')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Tentar novamente' }));
+
+    expect(await screen.findByDisplayValue('Renata Vasconcelos')).toBeInTheDocument();
+    expect(api.team.list).toHaveBeenCalledTimes(2);
   });
 });

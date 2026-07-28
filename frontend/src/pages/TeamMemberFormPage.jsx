@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../api/client';
 import TeamMemberForm from '../components/TeamMemberForm';
-import { ErrorState, LoadingState } from '../components/Common';
+import { ErrorState, LoadingState, NotFoundState } from '../components/Common';
 
 export default function TeamMemberFormPage() {
   const navigate = useNavigate();
@@ -11,25 +11,28 @@ export default function TeamMemberFormPage() {
   const [member, setMember] = useState(null);
   const [loading, setLoading] = useState(isEditing);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState('');
-  const [loadFailed, setLoadFailed] = useState(false);
+  const [loadError, setLoadError] = useState('');
+  const [saveError, setSaveError] = useState('');
+  const [notFound, setNotFound] = useState(false);
 
   const load = useCallback(async () => {
     if (!isEditing) return;
 
     setLoading(true);
-    setError('');
-    setLoadFailed(false);
+    setLoadError('');
+    setSaveError('');
+    setNotFound(false);
+    setMember(null);
     try {
       const members = await api.team.list();
       const selected = members.find((item) => item.id === id);
       if (!selected) {
-        throw new Error('Integrante não encontrado.');
+        setNotFound(true);
+        return;
       }
       setMember(selected);
     } catch (err) {
-      setError(err.message);
-      setLoadFailed(true);
+      setLoadError(err.message);
     } finally {
       setLoading(false);
     }
@@ -39,7 +42,7 @@ export default function TeamMemberFormPage() {
 
   const save = async (data) => {
     setBusy(true);
-    setError('');
+    setSaveError('');
 
     try {
       if (isEditing) {
@@ -49,14 +52,24 @@ export default function TeamMemberFormPage() {
       }
       navigate('/team', { replace: true });
     } catch (err) {
-      setError(err.message);
+      setSaveError(err.message);
     } finally {
       setBusy(false);
     }
   };
 
   if (loading) return <LoadingState />;
-  if (loadFailed) return <ErrorState message={error} onRetry={load} />;
+  if (notFound) {
+    return (
+      <NotFoundState
+        title="Integrante não encontrado."
+        message="O integrante pode ter sido removido ou o endereço está incorreto."
+        onBack={() => navigate('/team', { replace: true })}
+        backLabel="Voltar para equipe"
+      />
+    );
+  }
+  if (loadError) return <ErrorState message={loadError} onRetry={load} />;
 
   return (
     <section className="page-stack">
@@ -72,7 +85,7 @@ export default function TeamMemberFormPage() {
         </div>
       </div>
 
-      {error && (
+      {saveError && (
         <div className="state-box error" role="alert">
           <div>
             <strong>
@@ -80,7 +93,7 @@ export default function TeamMemberFormPage() {
                 ? 'Não foi possível salvar as alterações.'
                 : 'Não foi possível cadastrar o colaborador.'}
             </strong>
-            <p>{error}</p>
+            <p>{saveError}</p>
           </div>
         </div>
       )}

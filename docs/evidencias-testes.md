@@ -56,7 +56,7 @@ Não inclua tokens, senhas, emails pessoais, cookies ou outros segredos nas imag
 | E21 | Cadastrar um colaborador válido e voltar para a Equipe | Resposta `201` e integrante novo na grade, junto da equipe do projeto | `E21-colaborador-cadastrado.png` | Camila Félix | Concluído |
 | E22 | Cadastrar colaborador com email já usado | Resposta `409`, mensagem explicando o conflito e formulário preservado | `E22-colaborador-email-repetido.png` | Camila Félix | Concluído |
 | E23 | Alternar a interface para o tema escuro | Tema aplicado em toda a interface, com componentes legíveis e controle de alternância visível | `E23-tema-escuro.png` | Allef Oliveira | Concluído |
-| E24 | Executar os testes automatizados do frontend após as alterações | 88 testes em 17 arquivos aprovados, sem warnings | `E24-testes-tema.png` | Equipe | Concluído |
+| E24 | Executar os testes automatizados do frontend após as alterações | 91 testes em 17 arquivos aprovados, sem warnings | `E24-testes-tema.png` | Equipe | Concluído |
 | E27 | Abrir a tela de Equipe com a gestão completa | Cada card exibe as ações de editar e excluir | `E27-acoes-colaborador.png` | Camila Félix | Concluído |
 | E28 | Excluir integrante responsável por projeto e tarefa | Resposta `409` informando quantos vínculos existem, com a lista preservada | `E28-bloqueio-exclusao-colaborador.png` | Camila Félix | Concluído |
 | E29 | Excluir integrante sem vínculo | Resposta `204`, aviso de sucesso e grade sem o integrante | `E29-colaborador-excluido.png` | Camila Félix | Concluído |
@@ -165,13 +165,14 @@ Executada em 28 de julho de 2026 na branch `chore/final-audit`, criada a partir 
 | Verificação | Resultado |
 |---|---|
 | `dotnet test backend/OrbitBoard.Api.sln --configuration Release` | Aprovado, 73 testes: 42 unitários e 31 de integração |
-| `npm test` | Aprovado, 88 testes em 17 arquivos |
+| `npm test` | Aprovado, 91 testes em 17 arquivos |
 | `npm run build` | Aprovado com React Router 7.18.1 e Vite 8.1.5 |
 | Compatibilidade com Node 20 | Aprovada após fixar `@testing-library/jest-dom` em 6.9.1 |
 | `docker compose config` | Aprovado |
 | `docker compose up --build --detach` | Aprovado, backend e frontend saudáveis |
 | Fluxo HTTP no Compose | Aprovadas as 19 operações da API, as 10 rotas de destino e os 2 redirecionamentos do SPA |
 | Renderização em navegador headless | Aprovadas 15 entradas do SPA, incluindo edição existente e erro para IDs inexistentes |
+| Estados das rotas de edição | Ausência retorna à listagem, falha temporária permite retry e rejeição de gravação preserva o formulário |
 | Frontend em `/dashboard` e backend em `/health` | Respostas `200` |
 | CORS para `http://localhost:5173` | Origem autorizada |
 | Cadastro e edição de colaborador | Respostas `201` e `200` |
@@ -246,8 +247,8 @@ Para cada falha encontrada, registre:
 
 | Cenário | Sintoma | Causa | Correção | Evidência |
 |---|---|---|---|---|
-| `npm audit` no frontend | React Router 6 relatava dois avisos moderados | A versão usada estava dentro dos intervalos afetados | Migração para React Router 7.18.1, com 88 testes e build aprovados | `npm test`, `npm run build` e `npm audit` |
+| `npm audit` no frontend | React Router 6 relatava dois avisos moderados | A versão usada estava dentro dos intervalos afetados | Migração para React Router 7.18.1, com 91 testes e build aprovados | `npm test`, `npm run build` e `npm audit` |
 | Auditoria após a migração | Duas ocorrências de severidade alta para o mesmo aviso de RSC | O aviso atual alcança a versão 7.18.1, mas o OrbitBoard não usa React Server Components | Risco analisado e registrado; `make audit` aceita somente esse aviso conhecido e falha para qualquer outro | GHSA-qwww-vcr4-c8h2 |
 | `npm ci` com Node 20 | Aviso `EBADENGINE` na biblioteca `@testing-library/jest-dom` 7 | A versão 7 exige Node 22, enquanto o projeto e a CI usam Node 20 | Dependência ajustada para 6.9.1, compatível com Node 20 | `npm ci` |
 | `make validate` | A validação completa não executava testes automatizados | O alvo dependia somente de builds, auditoria e Compose | Criados `backend-test`, `frontend-test` e `test`; `validate` agora inclui as duas suítes | `Makefile` |
-| Rota de edição com ID inexistente | Formulários de projeto, tarefa e integrante podiam aparecer vazios após falha de carga | O erro de carregamento compartilhava o mesmo estado do erro de gravação | Falha de carga separada do formulário, com mensagem e tentativa novamente; casos automatizados adicionados | `ProjectFormPage.test.jsx`, `TaskFormPage.test.jsx` e `TeamMemberFormPage.test.jsx` |
+| Estados incorretos nas rotas de edição | Formulários podiam aparecer vazios e um registro comprovadamente inexistente oferecia retry | Ausência, falha temporária e rejeição de gravação compartilhavam o mesmo estado | Ausência retorna à listagem, somente falha temporária oferece retry e a rejeição de gravação preserva o formulário | `ProjectFormPage.test.jsx`, `TaskFormPage.test.jsx` e `TeamMemberFormPage.test.jsx` |

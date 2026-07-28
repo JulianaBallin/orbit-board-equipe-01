@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../api/client';
 import TaskForm from '../components/TaskForm';
-import { ErrorState, LoadingState } from '../components/Common';
+import { ErrorState, LoadingState, NotFoundState } from '../components/Common';
 
 export default function TaskFormPage() {
   const navigate = useNavigate();
@@ -13,13 +13,16 @@ export default function TaskFormPage() {
   const [task, setTask] = useState(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState('');
-  const [loadFailed, setLoadFailed] = useState(false);
+  const [loadError, setLoadError] = useState('');
+  const [saveError, setSaveError] = useState('');
+  const [notFound, setNotFound] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
-    setError('');
-    setLoadFailed(false);
+    setLoadError('');
+    setSaveError('');
+    setNotFound(false);
+    setTask(null);
 
     try {
       const [projectData, memberData, taskData] = await Promise.all([
@@ -31,8 +34,11 @@ export default function TaskFormPage() {
       setMembers(memberData);
       setTask(taskData);
     } catch (err) {
-      setError(err.message);
-      setLoadFailed(true);
+      if (isEditing && err.status === 404) {
+        setNotFound(true);
+      } else {
+        setLoadError(err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -44,7 +50,7 @@ export default function TaskFormPage() {
 
   const save = async (data) => {
     setBusy(true);
-    setError('');
+    setSaveError('');
 
     try {
       if (isEditing) {
@@ -54,14 +60,24 @@ export default function TaskFormPage() {
       }
       navigate('/tasks', { replace: true });
     } catch (err) {
-      setError(err.message);
+      setSaveError(err.message);
     } finally {
       setBusy(false);
     }
   };
 
   if (loading) return <LoadingState />;
-  if (loadFailed) return <ErrorState message={error} onRetry={load} />;
+  if (notFound) {
+    return (
+      <NotFoundState
+        title="Tarefa não encontrada."
+        message="A tarefa pode ter sido removida ou o endereço está incorreto."
+        onBack={() => navigate('/tasks', { replace: true })}
+        backLabel="Voltar para tarefas"
+      />
+    );
+  }
+  if (loadError) return <ErrorState message={loadError} onRetry={load} />;
 
   return (
     <section className="page-stack">
@@ -77,7 +93,12 @@ export default function TaskFormPage() {
         </div>
       </div>
 
-      {error && <ErrorState message={error} onRetry={load} />}
+      {saveError && (
+        <ErrorState
+          title="Não foi possível salvar a tarefa."
+          message={saveError}
+        />
+      )}
 
       <TaskForm
         projects={projects}

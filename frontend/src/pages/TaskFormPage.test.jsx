@@ -91,15 +91,34 @@ describe('TaskFormPage', () => {
     expect(await screen.findByRole('heading', { name: 'Tasks destination' })).toBeInTheDocument();
   });
 
-  it('shows a retry state instead of an empty edit form when loading fails', async () => {
+  it('returns to tasks instead of retrying when the task does not exist', async () => {
     prepareReferences();
-    vi.spyOn(api.tasks, 'get').mockRejectedValue(new Error('Tarefa não encontrada.'));
+    vi.spyOn(api.tasks, 'get').mockRejectedValue(
+      Object.assign(new Error('Tarefa não encontrada.'), { status: 404 })
+    );
 
     renderPage('/tasks/missing/edit');
 
     expect(await screen.findByText('Tarefa não encontrada.')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Tentar novamente' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Tentar novamente' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Salvar tarefa' })).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Voltar para tarefas' }));
+    expect(await screen.findByRole('heading', { name: 'Tasks destination' })).toBeInTheDocument();
+  });
+
+  it('retries a temporary loading failure and restores the edit form', async () => {
+    prepareReferences();
+    vi.spyOn(api.tasks, 'get')
+      .mockRejectedValueOnce(new Error('Backend indisponível.'))
+      .mockResolvedValueOnce(task);
+
+    renderPage('/tasks/task-1/edit');
+
+    expect(await screen.findByText('Backend indisponível.')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Tentar novamente' }));
+
+    expect(await screen.findByDisplayValue('Tarefa existente')).toBeInTheDocument();
+    expect(api.tasks.get).toHaveBeenCalledTimes(2);
   });
 
   it('keeps the form visible when the API rejects the save', async () => {
@@ -114,5 +133,6 @@ describe('TaskFormPage', () => {
 
     expect(await screen.findByText('O prazo da tarefa é inválido.')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Tarefa de teste')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Tentar novamente' })).not.toBeInTheDocument();
   });
 });
