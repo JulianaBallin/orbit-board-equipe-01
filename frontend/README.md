@@ -7,6 +7,7 @@ Aplicação web em **React 18 + Vite** para consumir a API OrbitBoard e demonstr
 - Dashboard com métricas e distribuição de tarefas.
 - Tela de projetos com cadastro, edição, progresso e exclusão.
 - Quadro de tarefas com filtros, criação, edição, exclusão e mudança de status.
+- Modal de histórico de status de uma tarefa, acessível pelo quadro ou pela tabela.
 - Tela de equipe.
 - Estados de carregamento, vazio, sucesso e erro.
 - Tratamento das respostas `400`, `404`, `409` e `500` retornadas pela API.
@@ -67,6 +68,14 @@ Para visualizar o build localmente:
 ```bash
 npm run preview
 ```
+
+## Testes automatizados
+
+```bash
+npm test
+```
+
+Os testes usam **Vitest** e **Testing Library** e cobrem o cliente HTTP (`src/api/client.js`) e os componentes de tarefas, incluindo o modal de histórico de status (`TaskHistoryModal`), o menu de ações da tabela e a integração com `TasksPage`.
 
 ## Como executar com Docker
 
