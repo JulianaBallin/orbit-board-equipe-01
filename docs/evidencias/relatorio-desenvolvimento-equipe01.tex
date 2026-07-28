@@ -85,7 +85,7 @@
 \fancyhead[R]{\small\color{OrbitViolet}\textbf{Equipe 01}}
 \fancyfoot[L]{\scriptsize\color{OrbitText}Módulo 5 | Integração Full Stack}
 \fancyfoot[C]{\scriptsize\color{OrbitText}Página \thepage\ de \pageref{LastPage}}
-\fancyfoot[R]{\scriptsize\color{OrbitText}OrbitBoard | Versão 1.3}
+\fancyfoot[R]{\scriptsize\color{OrbitText}OrbitBoard | Versão 1.4}
 \renewcommand{\headrulewidth}{0.6pt}
 \renewcommand{\footrulewidth}{0.4pt}
 \renewcommand{\headrule}{\hbox to\headwidth{\color{OrbitLine}\leaders\hrule height \headrulewidth\hfill}}
@@ -98,7 +98,7 @@
   \fancyhead[R]{\small\color{OrbitViolet}\textbf{Equipe 01}}
   \fancyfoot[L]{\scriptsize\color{OrbitText}Módulo 5 | Integração Full Stack}
   \fancyfoot[C]{\scriptsize\color{OrbitText}Página \thepage\ de \pageref{LastPage}}
-  \fancyfoot[R]{\scriptsize\color{OrbitText}OrbitBoard | Versão 1.3}
+  \fancyfoot[R]{\scriptsize\color{OrbitText}OrbitBoard | Versão 1.4}
   \renewcommand{\headrulewidth}{0.6pt}
   \renewcommand{\footrulewidth}{0.4pt}
 }
@@ -249,7 +249,7 @@
   Módulo & Módulo 5 de Integração Full Stack \\
   Repositório & \url{https://github.com/JulianaBallin/orbit-board-equipe-01} \\
   Branch de desenvolvimento & \texttt{develop} \\
-  Versão & 1.3 \\
+  Versão & 1.4 \\
   Data de referência & 28 de julho de 2026 \\
   Situação & Auditoria técnica concluída, evidências completas e apresentação preparada \\
 \end{tabularx}
@@ -268,7 +268,7 @@ A equipe adotou a aplicação base fornecida pelo docente e concentrou o desenvo
 \begin{resumobox}[Resultado técnico atual]
   \begin{itemize}
     \item Backend compilado sem erros e sem avisos, com 73 testes automatizados aprovados.
-    \item Frontend compilado com Vite 8.1.5 e 88 testes automatizados aprovados em 17 arquivos.
+    \item Frontend compilado com Vite 8.1.5 e 91 testes automatizados aprovados em 17 arquivos.
     \item Docker Compose validado com backend e frontend saudáveis.
     \item Swagger, frontend e endpoints de saúde acessíveis nas portas documentadas.
     \item Pipeline do GitHub Actions aprovada para backend, frontend e containers.
@@ -770,10 +770,11 @@ Verificação & Resultado & Situação \\
 Build Release do backend & Sem erros e sem avisos & \statusok \\
 Testes do backend & 73 aprovados: 42 unitários e 31 de integração & \statusok \\
 Build do frontend & Vite 8.1.5 concluído & \statusok \\
-Testes do frontend & 88 aprovados em 17 arquivos & \statusok \\
+Testes do frontend & 91 aprovados em 17 arquivos & \statusok \\
 Rotas da API & 19 operações cobertas por testes de integração & \statusok \\
 Rotas do frontend & 10 destinos e 2 redirecionamentos cobertos & \statusok \\
 Renderização do SPA & 15 entradas conferidas em navegador headless & \statusok \\
+Estados das rotas de edição & Ausência, falha temporária e erro de gravação diferenciados & \statusok \\
 Persistência no processo & Escrita e leitura posterior confirmadas & \statusok \\
 Reinício do backend & Carga inicial restaurada conforme o escopo em memória & \statusok \\
 Auditoria npm & Aviso de RSC analisado, sem caminho de execução nesta SPA & \statusok \\
@@ -819,7 +820,7 @@ E20 & Abrir a lista de cargos & Cargos pré-definidos disponíveis \\
 E21 & Cadastrar colaborador & Resposta 201 e integrante na equipe \\
 E22 & Repetir email de colaborador & Resposta 409 e formulário preservado \\
 E23 & Alternar para o tema escuro & Tema aplicado e preferência persistida \\
-E24 & Executar a suíte do frontend & 88 testes aprovados em 17 arquivos \\
+E24 & Executar a suíte do frontend & 91 testes aprovados em 17 arquivos \\
 E27 & Abrir as ações de colaborador & Edição e exclusão disponíveis \\
 E28 & Excluir colaborador com vínculos & Resposta 409 e lista preservada \\
 E29 & Excluir colaborador sem vínculos & Resposta 204 e lista atualizada \\
@@ -836,20 +837,20 @@ A revisão final identificou e tratou as seguintes falhas técnicas:
 Falha & Causa & Correção \\
 \midrule
 \endhead
-Avisos moderados no React Router 6 & A versão anterior estava nos intervalos afetados por avisos de navegação e hidratação & Migração para React Router 7.18.1, validada por 88 testes e pelo build de produção \\
+Avisos moderados no React Router 6 & A versão anterior estava nos intervalos afetados por avisos de navegação e hidratação & Migração para React Router 7.18.1, validada por 91 testes e pelo build de produção \\
 Aviso atual no \texttt{npm audit} & Duas ocorrências de severidade alta apontam o mesmo problema no modo React Server Components & Aplicabilidade analisada: o OrbitBoard é uma SPA com Vite e não usa RSC; \texttt{make audit} aceita somente esse aviso conhecido e falha para qualquer outro \\
 Dependência incompatível com Node 20 & \texttt{@testing-library/jest-dom} 7 exige Node 22, mas o projeto e a pipeline usam Node 20 & Dependência fixada em 6.9.1, sem aviso \texttt{EBADENGINE} \\
 Validação sem testes & O alvo \texttt{make validate} executava builds, auditoria e Compose, mas não as suítes & Alvos de teste adicionados ao Makefile e incluídos na validação completa \\
 Captura \texttt{E05} não incorporada ao PDF & Arquivo salvo como \texttt{e05-criar-projeto.png}, em minúsculas, não coincidia com a referência \texttt{E05-criar-projeto.png} usada pelo relatório em um sistema de arquivos sensível a maiúsculas e minúsculas & Arquivo renomeado para \texttt{E05-criar-projeto.png}; a imagem passou a ser incorporada corretamente \\
 Nota desatualizada no catálogo de capturas & O catálogo indicava que o bloqueio de exclusão de projeto com tarefas (E10) ainda precisava ser implementado no backend e no frontend & Regra confirmada por teste automatizado; nota removida e captura \texttt{E10} registrada \\
-Formulário vazio em rota de edição inválida & A falha de carga compartilhava o estado do erro de gravação & Projeto, tarefa e integrante agora exibem erro recuperável sem formulário vazio; casos automatizados adicionados \\
+Estados incorretos nas rotas de edição & Ausência, falha temporária e rejeição de gravação compartilhavam o mesmo estado & Ausência volta à listagem, somente falha temporária oferece retry e a rejeição preserva o formulário \\
 \bottomrule
 \end{longtable}
 
 \section{Acertos técnicos confirmados}
 
 \begin{itemize}
-  \item Todos os 73 testes automatizados do backend (42 unitários e 31 de integração) e os 88 testes automatizados do frontend passam sem falhas.
+  \item Todos os 73 testes automatizados do backend (42 unitários e 31 de integração) e os 91 testes automatizados do frontend passam sem falhas.
   \item As 19 operações HTTP da API, as 10 rotas de destino do frontend e os 2 redirecionamentos possuem cobertura automatizada aprovada.
   \item A persistência durante a vida do processo foi confirmada por escrita e leitura posterior de projetos, tarefas, integrantes, posição e histórico. O reinício restaura os dados iniciais conforme o escopo em memória.
   \item O bloqueio de exclusão de projeto com tarefas, o histórico de status e o tratamento de erro \texttt{409} por nome duplicado funcionam de ponta a ponta, do backend à interface.
@@ -882,7 +883,7 @@ As imagens desta seção são carregadas da pasta \texttt{docs/evidencias/captur
 \evidencia{E21-colaborador-cadastrado.png}{Equipe do projeto com um colaborador cadastrado pela interface}{Captura registrada pela equipe}
 \evidencia{E22-colaborador-email-repetido.png}{Conflito ao cadastrar colaborador com email já usado}{Captura registrada pela equipe}
 \evidencia{E23-tema-escuro.png}{Interface com o tema escuro aplicado e o controle de alternância visível}{Captura registrada pela equipe}
-\evidencia{E24-testes-tema.png}{Suíte do frontend com 88 testes aprovados em 17 arquivos}{Captura registrada pela equipe}
+\evidencia{E24-testes-tema.png}{Suíte do frontend com 91 testes aprovados em 17 arquivos}{Captura registrada pela equipe}
 \evidencia{E27-acoes-colaborador.png}{Cards da equipe com as ações de editar e excluir}{Captura registrada pela equipe}
 \evidencia{E28-bloqueio-exclusao-colaborador.png}{Bloqueio ao excluir integrante responsável por projeto e tarefa}{Captura registrada pela equipe}
 \evidencia{E29-colaborador-excluido.png}{Aviso de sucesso e grade atualizada após excluir um colaborador}{Captura registrada pela equipe}
@@ -939,7 +940,7 @@ Tempo & Tema & Conteúdo \\
 1:15 a 3:30 & Demonstração & Quadro, arraste, histórico, equipe e tema escuro \\
 3:30 a 4:15 & API & Swagger, JSON, health check e erro 409 \\
 4:15 a 5:00 & Infraestrutura & Compose, portas e variáveis \\
-5:00 a 6:15 & Qualidade & 161 testes, CI e 28 evidências \\
+5:00 a 6:15 & Qualidade & 164 testes, CI e 28 evidências \\
 6:15 a 7:00 & Encerramento & Melhorias, contribuições e limitações \\
 \bottomrule
 \end{longtable}
@@ -1106,7 +1107,7 @@ E20-cargo-lista-cadastro.png & Cargo em lista pré-definida \\
 E21-colaborador-cadastrado.png & Colaborador cadastrado \\
 E22-colaborador-email-repetido.png & Conflito de email \\
 E23-tema-escuro.png & Tema escuro aplicado \\
-E24-testes-tema.png & 88 testes do frontend aprovados \\
+E24-testes-tema.png & 91 testes do frontend aprovados \\
 E27-acoes-colaborador.png & Ações de editar e excluir \\
 E28-bloqueio-exclusao-colaborador.png & Exclusão bloqueada por vínculo \\
 E29-colaborador-excluido.png & Colaborador excluído \\

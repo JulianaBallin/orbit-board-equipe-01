@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../api/client';
 import ProjectForm from '../components/ProjectForm';
-import { ErrorState, LoadingState } from '../components/Common';
+import { ErrorState, LoadingState, NotFoundState } from '../components/Common';
 
 export default function ProjectFormPage() {
   const navigate = useNavigate();
@@ -12,13 +12,16 @@ export default function ProjectFormPage() {
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState('');
-  const [loadFailed, setLoadFailed] = useState(false);
+  const [loadError, setLoadError] = useState('');
+  const [saveError, setSaveError] = useState('');
+  const [notFound, setNotFound] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
-    setError('');
-    setLoadFailed(false);
+    setLoadError('');
+    setSaveError('');
+    setNotFound(false);
+    setProject(null);
 
     try {
       const [memberData, projectData] = await Promise.all([
@@ -28,8 +31,11 @@ export default function ProjectFormPage() {
       setMembers(memberData);
       setProject(projectData);
     } catch (err) {
-      setError(err.message);
-      setLoadFailed(true);
+      if (isEditing && err.status === 404) {
+        setNotFound(true);
+      } else {
+        setLoadError(err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -41,7 +47,7 @@ export default function ProjectFormPage() {
 
   const save = async (data) => {
     setBusy(true);
-    setError('');
+    setSaveError('');
 
     try {
       if (isEditing) {
@@ -51,14 +57,24 @@ export default function ProjectFormPage() {
       }
       navigate('/projects', { replace: true });
     } catch (err) {
-      setError(err.message);
+      setSaveError(err.message);
     } finally {
       setBusy(false);
     }
   };
 
   if (loading) return <LoadingState />;
-  if (loadFailed) return <ErrorState message={error} onRetry={load} />;
+  if (notFound) {
+    return (
+      <NotFoundState
+        title="Projeto não encontrado."
+        message="O projeto pode ter sido removido ou o endereço está incorreto."
+        onBack={() => navigate('/projects', { replace: true })}
+        backLabel="Voltar para projetos"
+      />
+    );
+  }
+  if (loadError) return <ErrorState message={loadError} onRetry={load} />;
 
   return (
     <section className="page-stack">
@@ -74,7 +90,12 @@ export default function ProjectFormPage() {
         </div>
       </div>
 
-      {error && <ErrorState message={error} onRetry={load} />}
+      {saveError && (
+        <ErrorState
+          title="Não foi possível salvar o projeto."
+          message={saveError}
+        />
+      )}
 
       <ProjectForm
         members={members}
