@@ -13,8 +13,9 @@ API REST em **.NET 8 / ASP.NET Core** para uma aplicação de acompanhamento de 
 - Cadastro, consulta, edição e exclusão de tarefas.
 - Alteração rápida do status de uma tarefa.
 - Histórico de mudanças de status de uma tarefa, em ordem cronológica.
+- Reposicionamento de tarefas no quadro (arraste), com ordenação persistida por prioridade.
 - Filtros por projeto, status, prioridade, responsável e texto.
-- Listagem dos integrantes da equipe.
+- Cadastro, edição e exclusão de integrantes da equipe, com bloqueio de exclusão quando o integrante responde por um projeto ou uma tarefa.
 - Validação de entrada por Data Annotations.
 - Respostas de erro padronizadas com `ProblemDetails`.
 - Swagger/OpenAPI.
@@ -76,7 +77,7 @@ As origens permitidas pelo CORS ficam em `Cors:AllowedOrigins`. No Docker Compos
 | GET | `/api/projects/{id}` | Consulta um projeto. |
 | POST | `/api/projects` | Cria um projeto. |
 | PUT | `/api/projects/{id}` | Atualiza um projeto. |
-| DELETE | `/api/projects/{id}` | Exclui um projeto sem tarefas. |
+| DELETE | `/api/projects/{id}` | Exclui um projeto sem tarefas pendentes (bloqueado enquanto houver tarefa não concluída). |
 
 ### Tarefas
 
@@ -87,6 +88,7 @@ As origens permitidas pelo CORS ficam em `Cors:AllowedOrigins`. No Docker Compos
 | POST | `/api/tasks` | Cria uma tarefa. |
 | PUT | `/api/tasks/{id}` | Atualiza uma tarefa. |
 | PATCH | `/api/tasks/{id}/status` | Altera somente o status. |
+| PATCH | `/api/tasks/{id}/position` | Move a tarefa de coluna e posição (arraste e ordenação manual). |
 | DELETE | `/api/tasks/{id}` | Exclui uma tarefa. |
 | GET | `/api/tasks/{id}/history` | Lista o histórico de mudanças de status da tarefa. |
 
@@ -100,11 +102,16 @@ assigneeId
 search
 ```
 
+As tarefas são ordenadas por status, depois por prioridade (da mais alta para a mais baixa) e, dentro da mesma prioridade, pela posição manual definida pelo arraste no quadro.
+
 ### Equipe
 
 | Método | Endpoint | Descrição |
 |---|---|---|
 | GET | `/api/team-members` | Lista os integrantes. |
+| POST | `/api/team-members` | Cadastra um integrante. |
+| PUT | `/api/team-members/{id}` | Atualiza um integrante. |
+| DELETE | `/api/team-members/{id}` | Exclui um integrante sem vínculo com projeto ou tarefa. |
 
 ## Exemplo de criação de tarefa
 
