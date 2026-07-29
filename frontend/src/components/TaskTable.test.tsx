@@ -2,8 +2,10 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TaskTable from './TaskTable';
+import { makeWorkItem } from '../test/fixtures';
+import type { WorkItemStatus } from '../types/api';
 
-const task = {
+const task = makeWorkItem({
   id: 'task-1',
   title: 'Validar fluxo de inscrição',
   description: '',
@@ -13,9 +15,9 @@ const task = {
   status: 'Backlog',
   dueDate: null,
   estimatedHours: 12,
-};
+});
 
-const statuses = ['Backlog', 'InProgress', 'Review', 'Done'];
+const statuses: WorkItemStatus[] = ['Backlog', 'InProgress', 'Review', 'Done'];
 
 describe('TaskTable actions menu', () => {
   afterEach(() => {

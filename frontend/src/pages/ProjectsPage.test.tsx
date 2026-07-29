@@ -4,8 +4,9 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import ProjectsPage from "./ProjectsPage";
 import { api } from "../api/client";
+import { makeProject } from "../test/fixtures";
 
-const projectWithPending = {
+const projectWithPending = makeProject({
   id: "proj-1",
   name: "Project With Pending Tasks",
   description: "Project that still has open tasks.",
@@ -14,9 +15,9 @@ const projectWithPending = {
   dueDate: null,
   totalTasks: 4,
   completedTasks: 2,
-};
+});
 
-const projectAllDone = {
+const projectAllDone = makeProject({
   id: "proj-2",
   name: "Fully Concluded Project",
   description: "Project whose tasks are all done.",
@@ -25,16 +26,11 @@ const projectAllDone = {
   dueDate: null,
   totalTasks: 3,
   completedTasks: 3,
-};
+});
 
 function renderPage() {
   return render(
-    <MemoryRouter
-      future={{
-        v7_startTransition: true,
-        v7_relativeSplatPath: true,
-      }}
-    >
+    <MemoryRouter>
       <ProjectsPage />
     </MemoryRouter>,
   );
@@ -47,7 +43,7 @@ describe("ProjectsPage delete guard", () => {
 
   it("disables deletion while the project still has unfinished tasks", async () => {
     vi.spyOn(api.projects, "list").mockResolvedValue([projectWithPending]);
-    const remove = vi.spyOn(api.projects, "remove").mockResolvedValue(null);
+    const remove = vi.spyOn(api.projects, "remove").mockResolvedValue(undefined);
 
     renderPage();
 
@@ -58,7 +54,7 @@ describe("ProjectsPage delete guard", () => {
 
   it("allows deletion once every task is concluded", async () => {
     vi.spyOn(api.projects, "list").mockResolvedValue([projectAllDone]);
-    const remove = vi.spyOn(api.projects, "remove").mockResolvedValue(null);
+    const remove = vi.spyOn(api.projects, "remove").mockResolvedValue(undefined);
 
     renderPage();
 
@@ -76,7 +72,7 @@ describe("ProjectsPage delete guard", () => {
 
   it("warns that concluded tasks are removed together with the project", async () => {
     vi.spyOn(api.projects, "list").mockResolvedValue([projectAllDone]);
-    vi.spyOn(api.projects, "remove").mockResolvedValue(null);
+    vi.spyOn(api.projects, "remove").mockResolvedValue(undefined);
 
     renderPage();
 
@@ -93,7 +89,7 @@ describe("ProjectsPage delete guard", () => {
 
   it("keeps the project when the confirmation is dismissed", async () => {
     vi.spyOn(api.projects, "list").mockResolvedValue([projectAllDone]);
-    const remove = vi.spyOn(api.projects, "remove").mockResolvedValue(null);
+    const remove = vi.spyOn(api.projects, "remove").mockResolvedValue(undefined);
 
     renderPage();
 

@@ -12,7 +12,10 @@ import type {
   WorkItemStatus,
 } from '../types/api';
 
-const API_URL = String(import.meta.env.VITE_API_URL) || 'http://localhost:5200';
+const configuredApiUrl = import.meta.env.VITE_API_URL;
+const API_URL = configuredApiUrl && configuredApiUrl !== 'undefined'
+  ? configuredApiUrl
+  : 'http://localhost:5200';
 
 export class ApiError extends Error {
   constructor(

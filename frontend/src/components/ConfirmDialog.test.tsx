@@ -39,7 +39,9 @@ describe('ConfirmDialog', () => {
     const { onCancel } = renderDialog();
 
     await userEvent.click(screen.getByRole('button', { name: 'Cancelar' }));
-    await userEvent.click(document.querySelector('.modal-backdrop'));
+    const backdrop = document.querySelector('.modal-backdrop');
+    if (!backdrop) throw new Error('Backdrop não encontrado.');
+    await userEvent.click(backdrop);
     await userEvent.keyboard('{Escape}');
 
     expect(onCancel).toHaveBeenCalledTimes(3);

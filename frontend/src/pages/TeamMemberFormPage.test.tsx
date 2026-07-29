@@ -5,15 +5,11 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import TeamMemberFormPage from './TeamMemberFormPage';
 import TeamPage from './TeamPage';
 import { api } from '../api/client';
+import { makeMember } from '../test/fixtures';
 
 function renderPage() {
   return render(
-    <MemoryRouter
-      initialEntries={['/team/new']}
-      future={{
-        v7_startTransition: true,
-        v7_relativeSplatPath: true,
-      }}>
+    <MemoryRouter initialEntries={['/team/new']}>
       <Routes>
         <Route path="/team" element={<TeamPage />} />
         <Route path="/team/new" element={<TeamMemberFormPage />} />
@@ -22,7 +18,7 @@ function renderPage() {
   );
 }
 
-function renderEditPage(id) {
+function renderEditPage(id: string) {
   return render(
     <MemoryRouter initialEntries={[`/team/${id}/edit`]}>
       <Routes>
@@ -45,7 +41,7 @@ describe('TeamMemberFormPage', () => {
   });
 
   it('sends the trimmed data and goes back to the team list', async () => {
-    const create = vi.spyOn(api.team, 'create').mockResolvedValue({ id: 'member-1' });
+    const create = vi.spyOn(api.team, 'create').mockResolvedValue(makeMember({ id: 'member-1' }));
     vi.spyOn(api.team, 'list').mockResolvedValue([]);
 
     renderPage();
@@ -84,7 +80,7 @@ describe('TeamMemberFormPage', () => {
   });
 
   it('does not call the API when a required field is empty', async () => {
-    const create = vi.spyOn(api.team, 'create').mockResolvedValue({});
+    const create = vi.spyOn(api.team, 'create').mockResolvedValue(makeMember());
 
     renderPage();
     await userEvent.type(screen.getByLabelText('Nome'), 'Renata Vasconcelos');
@@ -94,7 +90,7 @@ describe('TeamMemberFormPage', () => {
   });
 
   it('goes back to the team list when cancelled', async () => {
-    const create = vi.spyOn(api.team, 'create').mockResolvedValue({});
+    const create = vi.spyOn(api.team, 'create').mockResolvedValue(makeMember());
     vi.spyOn(api.team, 'list').mockResolvedValue([]);
 
     renderPage();

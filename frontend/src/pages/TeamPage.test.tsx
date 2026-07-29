@@ -40,7 +40,7 @@ describe('TeamPage actions', () => {
 
   it('asks for confirmation before removing and reloads the list', async () => {
     const list = vi.spyOn(api.team, 'list').mockResolvedValue([member]);
-    const remove = vi.spyOn(api.team, 'remove').mockResolvedValue(null);
+    const remove = vi.spyOn(api.team, 'remove').mockResolvedValue(undefined);
 
     renderPage();
     await userEvent.click(await screen.findByRole('button', { name: 'Excluir' }));
@@ -56,7 +56,7 @@ describe('TeamPage actions', () => {
 
   it('keeps the collaborator when the confirmation is dismissed', async () => {
     vi.spyOn(api.team, 'list').mockResolvedValue([member]);
-    const remove = vi.spyOn(api.team, 'remove').mockResolvedValue(null);
+    const remove = vi.spyOn(api.team, 'remove').mockResolvedValue(undefined);
 
     renderPage();
     await userEvent.click(await screen.findByRole('button', { name: 'Excluir' }));

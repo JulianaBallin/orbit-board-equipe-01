@@ -4,9 +4,11 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import ProjectFormPage from './ProjectFormPage';
 import { api } from '../api/client';
+import { ApiError } from '../api/client';
+import { makeMember, makeProject } from '../test/fixtures';
 
-const member = { id: 'member-1', name: 'Camila Félix' };
-const project = {
+const member = makeMember({ id: 'member-1', name: 'Camila Félix' });
+const project = makeProject({
   id: 'project-1',
   name: 'Projeto existente',
   description: 'Descrição válida do projeto existente.',
@@ -14,9 +16,9 @@ const project = {
   startDate: '2026-07-20',
   dueDate: '2026-08-20',
   ownerId: member.id
-};
+});
 
-function renderPage(path) {
+function renderPage(path: string) {
   return render(
     <MemoryRouter initialEntries={[path]}>
       <Routes>
@@ -43,7 +45,7 @@ describe('ProjectFormPage', () => {
 
   it('creates a project and returns to the listing', async () => {
     vi.spyOn(api.team, 'list').mockResolvedValue([member]);
-    const create = vi.spyOn(api.projects, 'create').mockResolvedValue({ id: 'project-2' });
+    const create = vi.spyOn(api.projects, 'create').mockResolvedValue(makeProject({ id: 'project-2' }));
 
     renderPage('/projects/new');
     await fillNewProject();
@@ -82,7 +84,7 @@ describe('ProjectFormPage', () => {
   it('returns to projects instead of retrying when the project does not exist', async () => {
     vi.spyOn(api.team, 'list').mockResolvedValue([member]);
     vi.spyOn(api.projects, 'get').mockRejectedValue(
-      Object.assign(new Error('Projeto não encontrado.'), { status: 404 })
+      new ApiError('Projeto não encontrado.', 404, {})
     );
 
     renderPage('/projects/missing/edit');

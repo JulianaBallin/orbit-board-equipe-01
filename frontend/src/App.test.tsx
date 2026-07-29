@@ -2,9 +2,10 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import App from './App';
+import type { ReactNode } from 'react';
 
 vi.mock('./components/Layout', () => ({
-  default: ({ children }) => <main>{children}</main>
+  default: ({ children }: { children: ReactNode }) => <main>{children}</main>
 }));
 vi.mock('./pages/DashboardPage', () => ({
   default: () => <h1>Dashboard route</h1>
@@ -28,7 +29,7 @@ vi.mock('./pages/TeamPage', () => ({
   default: () => <h1>Team route</h1>
 }));
 
-function renderRoute(path) {
+function renderRoute(path: string) {
   return render(
     <MemoryRouter initialEntries={[path]}>
       <App />

@@ -1,9 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, useNavigate } from "react-router-dom";
 import TasksPage from "./TasksPage";
 import { api } from "../api/client";
+import { makeProject, makeWorkItem } from "../test/fixtures";
+import { renderWithTheme } from "../test/renderWithTheme";
 
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");
@@ -15,14 +17,14 @@ vi.mock("react-router-dom", async () => {
 });
 
 const projects = [
-  {
+  makeProject({
     id: "proj-1",
     name: "Agenda de Eventos",
-  },
+  }),
 ];
 
 const tasks = [
-  {
+  makeWorkItem({
     id: "task-1",
     title: "Validar fluxo de inscrição",
     description: "Testar cenários de sucesso.",
@@ -34,8 +36,8 @@ const tasks = [
     position: 0,
     dueDate: null,
     estimatedHours: 12,
-  },
-  {
+  }),
+  makeWorkItem({
     id: "task-2",
     title: "Revisar documentação",
     description: "Validar documentação técnica.",
@@ -47,23 +49,18 @@ const tasks = [
     position: 0,
     dueDate: "2026-08-15",
     estimatedHours: 4,
-  },
+  }),
 ];
 
 function renderPage() {
-  return render(
-    <MemoryRouter
-      future={{
-        v7_startTransition: true,
-        v7_relativeSplatPath: true,
-      }}
-    >
+  return renderWithTheme(
+    <MemoryRouter>
       <TasksPage />
     </MemoryRouter>,
   );
 }
 
-async function findTaskCard(title) {
+async function findTaskCard(title: string): Promise<HTMLElement> {
   const taskTitle = await screen.findByRole("heading", {
     name: title,
   });
@@ -74,6 +71,7 @@ async function findTaskCard(title) {
     throw new Error(`Task card "${title}" was not found.`);
   }
 
+  if (!(taskCard instanceof HTMLElement)) throw new Error('Card de tarefa inválido.');
   return taskCard;
 }
 
@@ -86,8 +84,8 @@ describe("TasksPage", () => {
     vi.spyOn(api.projects, "list").mockResolvedValue(projects);
     vi.spyOn(api.tasks, "list").mockResolvedValue(tasks);
     vi.spyOn(api.tasks, "history").mockResolvedValue([]);
-    vi.spyOn(api.tasks, "changeStatus").mockResolvedValue(null);
-    vi.spyOn(api.tasks, "remove").mockResolvedValue(null);
+    vi.spyOn(api.tasks, "changeStatus").mockResolvedValue(makeWorkItem());
+    vi.spyOn(api.tasks, "remove").mockResolvedValue(undefined);
   });
 
   afterEach(() => {

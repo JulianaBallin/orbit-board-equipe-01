@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TaskHistoryModal from './TaskHistoryModal';
 import { api } from '../api/client';
+import type { TaskHistoryEntry } from '../types/api';
 
 const task = { id: 'task-1', title: 'Validar fluxo de inscrição' };
 
@@ -12,7 +13,7 @@ describe('TaskHistoryModal', () => {
   });
 
   it('shows a loading state before the history resolves', async () => {
-    let resolveHistory;
+    let resolveHistory: (entries: TaskHistoryEntry[]) => void = () => undefined;
     vi.spyOn(api.tasks, 'history').mockReturnValue(
       new Promise((resolve) => {
         resolveHistory = resolve;
@@ -28,8 +29,8 @@ describe('TaskHistoryModal', () => {
 
   it('renders entries from most recent to oldest, marking the first change as "Criada"', async () => {
     vi.spyOn(api.tasks, 'history').mockResolvedValue([
-      { id: '1', fromStatus: null, toStatus: 'Backlog', changedAt: '2026-01-01T10:00:00Z' },
-      { id: '2', fromStatus: 'Backlog', toStatus: 'InProgress', changedAt: '2026-01-02T10:00:00Z' },
+      { id: '1', workItemId: task.id, fromStatus: null, toStatus: 'Backlog', changedAt: '2026-01-01T10:00:00Z' },
+      { id: '2', workItemId: task.id, fromStatus: 'Backlog', toStatus: 'InProgress', changedAt: '2026-01-02T10:00:00Z' },
     ]);
 
     render(<TaskHistoryModal task={task} onClose={vi.fn()} />);
@@ -45,11 +46,11 @@ describe('TaskHistoryModal', () => {
 
   it('limits the collapsed history to three entries and expands the hidden changes', async () => {
     vi.spyOn(api.tasks, 'history').mockResolvedValue([
-      { id: '1', fromStatus: null, toStatus: 'Backlog', changedAt: '2026-01-01T10:00:00Z' },
-      { id: '2', fromStatus: 'Backlog', toStatus: 'InProgress', changedAt: '2026-01-02T10:00:00Z' },
-      { id: '3', fromStatus: 'InProgress', toStatus: 'Review', changedAt: '2026-01-03T10:00:00Z' },
-      { id: '4', fromStatus: 'Review', toStatus: 'Done', changedAt: '2026-01-04T10:00:00Z' },
-      { id: '5', fromStatus: 'Done', toStatus: 'Backlog', changedAt: '2026-01-05T10:00:00Z' },
+      { id: '1', workItemId: task.id, fromStatus: null, toStatus: 'Backlog', changedAt: '2026-01-01T10:00:00Z' },
+      { id: '2', workItemId: task.id, fromStatus: 'Backlog', toStatus: 'InProgress', changedAt: '2026-01-02T10:00:00Z' },
+      { id: '3', workItemId: task.id, fromStatus: 'InProgress', toStatus: 'Review', changedAt: '2026-01-03T10:00:00Z' },
+      { id: '4', workItemId: task.id, fromStatus: 'Review', toStatus: 'Done', changedAt: '2026-01-04T10:00:00Z' },
+      { id: '5', workItemId: task.id, fromStatus: 'Done', toStatus: 'Backlog', changedAt: '2026-01-05T10:00:00Z' },
     ]);
 
     render(<TaskHistoryModal task={task} onClose={vi.fn()} />);
@@ -122,7 +123,9 @@ describe('TaskHistoryModal', () => {
     await userEvent.click(screen.getByRole('dialog'));
     expect(onClose).not.toHaveBeenCalled();
 
-    await userEvent.click(document.querySelector('.modal-backdrop'));
+    const backdrop = document.querySelector('.modal-backdrop');
+    if (!backdrop) throw new Error('Backdrop não encontrado.');
+    await userEvent.click(backdrop);
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 });

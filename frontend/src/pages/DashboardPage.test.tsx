@@ -3,8 +3,9 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DashboardPage from './DashboardPage';
 import { api } from '../api/client';
+import { makeDashboard, makeWorkItem } from '../test/fixtures';
 
-const dashboard = {
+const dashboard = makeDashboard({
   totalProjects: 3,
   activeProjects: 2,
   totalTasks: 5,
@@ -17,16 +18,16 @@ const dashboard = {
     Done: 1
   },
   recentTasks: [
-    {
+    makeWorkItem({
       id: 'task-1',
       title: 'Validar dashboard',
       projectName: 'OrbitBoard',
       assigneeName: 'Camila Félix',
       priority: 'High',
       status: 'InProgress'
-    }
+    })
   ]
-};
+});
 
 describe('DashboardPage', () => {
   afterEach(() => {

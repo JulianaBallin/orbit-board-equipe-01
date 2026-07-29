@@ -4,10 +4,12 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import TaskFormPage from './TaskFormPage';
 import { api } from '../api/client';
+import { ApiError } from '../api/client';
+import { makeMember, makeProject, makeWorkItem } from '../test/fixtures';
 
-const project = { id: 'project-1', name: 'OrbitBoard' };
-const member = { id: 'member-1', name: 'Pedro Henrique' };
-const task = {
+const project = makeProject({ id: 'project-1', name: 'OrbitBoard' });
+const member = makeMember({ id: 'member-1', name: 'Pedro Henrique' });
+const task = makeWorkItem({
   id: 'task-1',
   projectId: project.id,
   title: 'Tarefa existente',
@@ -17,14 +19,14 @@ const task = {
   assigneeId: member.id,
   dueDate: '2026-08-10',
   estimatedHours: 5
-};
+});
 
 function prepareReferences() {
   vi.spyOn(api.projects, 'list').mockResolvedValue([project]);
   vi.spyOn(api.team, 'list').mockResolvedValue([member]);
 }
 
-function renderPage(path) {
+function renderPage(path: string) {
   return render(
     <MemoryRouter initialEntries={[path]}>
       <Routes>
@@ -51,7 +53,7 @@ describe('TaskFormPage', () => {
 
   it('creates a task and returns to the listing', async () => {
     prepareReferences();
-    const create = vi.spyOn(api.tasks, 'create').mockResolvedValue({ id: 'task-2' });
+    const create = vi.spyOn(api.tasks, 'create').mockResolvedValue(makeWorkItem({ id: 'task-2' }));
 
     renderPage('/tasks/new');
     await fillNewTask();
@@ -94,7 +96,7 @@ describe('TaskFormPage', () => {
   it('returns to tasks instead of retrying when the task does not exist', async () => {
     prepareReferences();
     vi.spyOn(api.tasks, 'get').mockRejectedValue(
-      Object.assign(new Error('Tarefa não encontrada.'), { status: 404 })
+      new ApiError('Tarefa não encontrada.', 404, {})
     );
 
     renderPage('/tasks/missing/edit');

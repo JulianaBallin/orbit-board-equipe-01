@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { dropIndexFor, landingFor, reorder } from './boardDrop';
+import type { WorkItemPriority } from '../types/api';
 
 const boxes = [
   { top: 0, height: 100 },
@@ -29,11 +30,11 @@ describe('dropIndexFor', () => {
 });
 
 describe('landingFor', () => {
-  const column = [
-    { id: 'a', priority: 'Critical' },
-    { id: 'b', priority: 'High' },
-    { id: 'c', priority: 'High' },
-    { id: 'd', priority: 'Low' },
+  const column: Array<{priority: WorkItemPriority }> = [
+    { priority: 'Critical' },
+    { priority: 'High' },
+    { priority: 'High' },
+    { priority: 'Low' },
   ];
 
   it('counts the position only among tasks of the same priority', () => {

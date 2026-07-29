@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   act,
   fireEvent,
-  render,
   screen,
   waitFor,
 } from "@testing-library/react";
@@ -10,10 +9,13 @@ import { MemoryRouter } from "react-router-dom";
 import TasksPage from "./TasksPage";
 import { api } from "../api/client";
 import { statusLabel } from "../utils/labels";
+import { makeProject, makeWorkItem } from "../test/fixtures";
+import type { WorkItemStatus } from "../types/api";
+import { renderWithTheme } from "../test/renderWithTheme";
 
-const projects = [{ id: "proj-1", name: "Agenda de Eventos" }];
+const projects = [makeProject({ id: "proj-1", name: "Agenda de Eventos" })];
 
-const backlogTask = {
+const backlogTask = makeWorkItem({
   id: "task-1",
   title: "Validar fluxo de inscrição",
   description: "Testar cenários de sucesso.",
@@ -25,42 +27,30 @@ const backlogTask = {
   position: 0,
   dueDate: null,
   estimatedHours: 12,
-};
+});
 
 function renderPage() {
-  return render(
-    <MemoryRouter
-      future={{
-        v7_startTransition: true,
-        v7_relativeSplatPath: true,
-      }}
-    >
+  return renderWithTheme(
+    <MemoryRouter>
       <TasksPage />
     </MemoryRouter>,
   );
 }
 
-const column = (status) =>
+const column = (status: WorkItemStatus) =>
   screen.getByLabelText(`Coluna ${statusLabel(status)}`);
 
-function pointAt(status) {
+function pointAt(status: WorkItemStatus) {
   document.elementFromPoint = () => column(status);
 }
 
-function stackCards(cards) {
+function stackCards(cards: HTMLElement[]) {
   cards.forEach((card, index) => {
-    card.getBoundingClientRect = () => ({
-      top: index * 100,
-      height: 100,
-      left: 0,
-      width: 300,
-      bottom: index * 100 + 100,
-      right: 300,
-    });
+    card.getBoundingClientRect = () => new DOMRect(0, index * 100, 300, 100);
   });
 }
 
-async function dragCardTo(status, { drop = true } = {}) {
+async function dragCardTo(status: WorkItemStatus, { drop = true }: { drop?: boolean } = {}) {
   const card = await screen.findByTitle(
     "Arraste para mover a tarefa de estágio",
   );
@@ -98,24 +88,24 @@ describe("TasksPage pointer dragging", () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
-    delete document.elementFromPoint;
+    document.elementFromPoint = () => null;
     document.body.classList.remove("is-dragging-task");
   });
 
   it("moves the task to the column where the pointer was released", async () => {
-    const move = vi.spyOn(api.tasks, "move").mockResolvedValue({});
+    const move = vi.spyOn(api.tasks, "move").mockResolvedValue(makeWorkItem({ status: "Done" }));
 
     renderPage();
     await dragCardTo("Done");
 
     await waitFor(() => {
       expect(move).toHaveBeenCalledWith("task-1", "Done", 0);
-      expect(api.tasks.list.mock.calls.length).toBeGreaterThan(1);
+      expect(vi.mocked(api.tasks.list).mock.calls.length).toBeGreaterThan(1);
     });
   });
 
   it("does not call the API when released over its own column", async () => {
-    const move = vi.spyOn(api.tasks, "move").mockResolvedValue({});
+    const move = vi.spyOn(api.tasks, "move").mockResolvedValue(backlogTask);
 
     renderPage();
     await dragCardTo("Backlog");
@@ -131,8 +121,8 @@ describe("TasksPage pointer dragging", () => {
       title: "Segunda tarefa do backlog",
       position: 1,
     };
-    api.tasks.list.mockResolvedValue([backlogTask, peer]);
-    const move = vi.spyOn(api.tasks, "move").mockResolvedValue({});
+    vi.mocked(api.tasks.list).mockResolvedValue([backlogTask, peer]);
+    const move = vi.spyOn(api.tasks, "move").mockResolvedValue(backlogTask);
 
     renderPage();
     const cards = await screen.findAllByTitle(
@@ -141,7 +131,9 @@ describe("TasksPage pointer dragging", () => {
     stackCards(cards);
     pointAt("Backlog");
 
-    fireEvent.pointerDown(cards[1], { button: 0, clientX: 10, clientY: 400 });
+    const peerCard = cards[1];
+    if (!peerCard) throw new Error('Card par não encontrado.');
+    fireEvent.pointerDown(peerCard, { button: 0, clientX: 10, clientY: 400 });
     fireEvent.pointerMove(window, { clientX: 10, clientY: 20 });
     fireEvent.pointerUp(window, { clientX: 10, clientY: 20 });
 
@@ -155,7 +147,7 @@ describe("TasksPage pointer dragging", () => {
     await dragCardTo("Done", { drop: false });
 
     const layer = document.querySelector(".drag-layer");
-    expect(layer).not.toBeNull();
+    if (!layer) throw new Error('Camada de arraste não encontrada.');
     expect(layer.textContent).toContain("Validar fluxo de inscrição");
     expect(document.body).toHaveClass("is-dragging-task");
 
@@ -177,7 +169,7 @@ describe("TasksPage pointer dragging", () => {
   });
 
   it("ignores a press that starts on the controls inside the card", async () => {
-    const move = vi.spyOn(api.tasks, "move").mockResolvedValue({});
+    const move = vi.spyOn(api.tasks, "move").mockResolvedValue(backlogTask);
 
     renderPage();
     await screen.findByTitle("Arraste para mover a tarefa de estágio");
@@ -193,7 +185,7 @@ describe("TasksPage pointer dragging", () => {
   });
 
   it("does not drag on a plain click without movement", async () => {
-    const move = vi.spyOn(api.tasks, "move").mockResolvedValue({});
+    const move = vi.spyOn(api.tasks, "move").mockResolvedValue(backlogTask);
 
     renderPage();
     const card = await screen.findByTitle(
@@ -222,7 +214,7 @@ describe("TasksPage pointer dragging", () => {
     ).toBeInTheDocument();
 
     await waitFor(() => {
-      expect(api.tasks.list.mock.calls.length).toBeGreaterThan(1);
+      expect(vi.mocked(api.tasks.list).mock.calls.length).toBeGreaterThan(1);
     });
   });
 });
