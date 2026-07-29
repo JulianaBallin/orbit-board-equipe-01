@@ -1,12 +1,12 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import Layout from './components/Layout';
-import DashboardPage from './pages/DashboardPage';
-import ProjectFormPage from './pages/ProjectFormPage';
-import ProjectsPage from './pages/ProjectsPage';
-import TaskFormPage from './pages/TaskFormPage';
-import TasksPage from './pages/TasksPage';
-import TeamMemberFormPage from './pages/TeamMemberFormPage';
-import TeamPage from './pages/TeamPage';
+import Layout from './components/Layout/Layout';
+import DashboardPage from './pages/DashboardPage/DashboardPage';
+import ProjectFormPage from './pages/ProjectFormPage/ProjectFormPage';
+import ProjectsPage from './pages/ProjectsPage/ProjectsPage';
+import TaskFormPage from './pages/TaskFormPage/TaskFormPage';
+import TasksPage from './pages/TasksPage/TasksPage';
+import TeamMemberFormPage from './pages/TeamMemberFormPage/TeamMemberFormPage';
+import TeamPage from './pages/TeamPage/TeamPage';
 
 export default function App() {
   return (

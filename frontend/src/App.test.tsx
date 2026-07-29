@@ -4,28 +4,28 @@ import { describe, expect, it, vi } from 'vitest';
 import App from './App';
 import type { ReactNode } from 'react';
 
-vi.mock('./components/Layout', () => ({
+vi.mock('./components/Layout/Layout', () => ({
   default: ({ children }: { children: ReactNode }) => <main>{children}</main>
 }));
-vi.mock('./pages/DashboardPage', () => ({
+vi.mock('./pages/DashboardPage/DashboardPage', () => ({
   default: () => <h1>Dashboard route</h1>
 }));
-vi.mock('./pages/ProjectFormPage', () => ({
+vi.mock('./pages/ProjectFormPage/ProjectFormPage', () => ({
   default: () => <h1>Project form route</h1>
 }));
-vi.mock('./pages/ProjectsPage', () => ({
+vi.mock('./pages/ProjectsPage/ProjectsPage', () => ({
   default: () => <h1>Projects route</h1>
 }));
-vi.mock('./pages/TaskFormPage', () => ({
+vi.mock('./pages/TaskFormPage/TaskFormPage', () => ({
   default: () => <h1>Task form route</h1>
 }));
-vi.mock('./pages/TasksPage', () => ({
+vi.mock('./pages/TasksPage/TasksPage', () => ({
   default: () => <h1>Tasks route</h1>
 }));
-vi.mock('./pages/TeamMemberFormPage', () => ({
+vi.mock('./pages/TeamMemberFormPage/TeamMemberFormPage', () => ({
   default: () => <h1>Team member form route</h1>
 }));
-vi.mock('./pages/TeamPage', () => ({
+vi.mock('./pages/TeamPage/TeamPage', () => ({
   default: () => <h1>Team route</h1>
 }));
 
