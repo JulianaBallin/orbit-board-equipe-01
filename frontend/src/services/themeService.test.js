@@ -22,9 +22,31 @@ function mockSystemTheme(prefersDark) {
   }));
 }
 
+const createLocalStorageMock = () => {
+  let storage = {};
+
+  return {
+    getItem: vi.fn((key) => storage[key] ?? null),
+
+    setItem: vi.fn((key, value) => {
+      storage[key] = String(value);
+    }),
+
+    removeItem: vi.fn((key) => {
+      delete storage[key];
+    }),
+
+    clear: vi.fn(() => {
+      storage = {};
+    }),
+  };
+};
+
+
 describe('themeService', () => {
   beforeEach(() => {
-    localStorage.clear();
+    vi.stubGlobal("localStorage", createLocalStorageMock());
+    window.localStorage.clear();
     delete document.documentElement.dataset.theme;
     document.documentElement.style.colorScheme = '';
     mockSystemTheme(false);
@@ -42,7 +64,7 @@ describe('themeService', () => {
   });
 
   it('initializes the dark theme from storage before the system preference', () => {
-    localStorage.setItem(STORAGE_KEY, 'dark');
+    window.localStorage.setItem(STORAGE_KEY, 'dark');
 
     expect(initializeTheme()).toBe('dark');
     expect(document.documentElement.dataset.theme).toBe('dark');
@@ -50,7 +72,7 @@ describe('themeService', () => {
   });
 
   it('ignores an invalid stored theme and uses the system preference', () => {
-    localStorage.setItem(STORAGE_KEY, 'invalid');
+    window.localStorage.setItem(STORAGE_KEY, 'invalid');
     mockSystemTheme(true);
 
     expect(initializeTheme()).toBe('dark');
@@ -58,7 +80,7 @@ describe('themeService', () => {
 
   it('returns the applied theme before consulting storage or the system', () => {
     document.documentElement.dataset.theme = 'dark';
-    localStorage.setItem(STORAGE_KEY, 'light');
+    window.localStorage.setItem(STORAGE_KEY, 'light');
 
     expect(getTheme()).toBe('dark');
   });
@@ -68,7 +90,7 @@ describe('themeService', () => {
     window.addEventListener(THEME_CHANGE_EVENT, listener, { once: true });
 
     expect(setTheme('dark')).toBe('dark');
-    expect(localStorage.getItem(STORAGE_KEY)).toBe('dark');
+    expect(window.localStorage.getItem(STORAGE_KEY)).toBe('dark');
     expect(document.documentElement.dataset.theme).toBe('dark');
     expect(document.documentElement.style.colorScheme).toBe('dark');
     expect(listener).toHaveBeenCalledTimes(1);
@@ -80,7 +102,7 @@ describe('themeService', () => {
 
     expect(toggleTheme()).toBe('dark');
     expect(toggleTheme()).toBe('light');
-    expect(localStorage.getItem(STORAGE_KEY)).toBe('light');
+    expect(window.localStorage.getItem(STORAGE_KEY)).toBe('light');
   });
 
   it('rejects an unsupported theme without changing the current theme', () => {
@@ -88,6 +110,6 @@ describe('themeService', () => {
 
     expect(() => setTheme('contrast')).toThrow('Invalid theme: contrast');
     expect(getTheme()).toBe('light');
-    expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+    expect(window.localStorage.getItem(STORAGE_KEY)).toBeNull();
   });
 });

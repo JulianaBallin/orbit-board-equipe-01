@@ -57,6 +57,8 @@ Não inclua tokens, senhas, emails pessoais, cookies ou outros segredos nas imag
 | E22 | Cadastrar colaborador com email já usado | Resposta `409`, mensagem explicando o conflito e formulário preservado | `E22-colaborador-email-repetido.png` | Camila Félix | Concluído |
 | E23 | Alternar a interface para o tema escuro | Tema aplicado em toda a interface, com componentes legíveis e controle de alternância visível | `E23-tema-escuro.png` | Allef Oliveira | Concluído |
 | E24 | Executar os testes automatizados do frontend após as alterações | 91 testes em 17 arquivos aprovados, sem warnings | `E24-testes-tema.png` | Equipe | Concluído |
+| E25 | Executar `npm run test:coverage` | Relatório de cobertura gerado com limites globais mínimos de 80% para statements, branches, functions e lines | `E25-cobertura-testes-frontend.png` | Allef Ramos | Concluído |
+| E26 | Conferir a ampliação dos testes do cliente da API e do `TasksPage` | Cenários de resposta, erros, filtros, navegação, status, exclusão e estados da interface aprovados | `E26-ampliacao-testes-frontend.png` | Allef Ramos | Concluído |
 | E27 | Abrir a tela de Equipe com a gestão completa | Cada card exibe as ações de editar e excluir | `E27-acoes-colaborador.png` | Camila Félix | Concluído |
 | E28 | Excluir integrante responsável por projeto e tarefa | Resposta `409` informando quantos vínculos existem, com a lista preservada | `E28-bloqueio-exclusao-colaborador.png` | Camila Félix | Concluído |
 | E29 | Excluir integrante sem vínculo | Resposta `204`, aviso de sucesso e grade sem o integrante | `E29-colaborador-excluido.png` | Camila Félix | Concluído |
@@ -157,6 +159,22 @@ Executada em 28 de julho de 2026 após a implementação dos temas claro e escur
 | Warnings da suíte | Execução sem warnings do React Router e de atualizações fora de `act(...)` |
 
 Os testes do `themeService` cobrem a preferência do sistema, o tema persistido, a prioridade do tema já aplicado, a persistência, o evento `themechange`, a alternância e a rejeição de valores inválidos. As capturas E23 e E24 registram, respectivamente, o resultado visual e a saída final da suíte.
+
+### Reverificação da cobertura e ampliação dos testes do frontend
+
+Executada em 28 de julho de 2026 por Allef Ramos no PR [#40](https://github.com/JulianaBallin/orbit-board-equipe-01/pull/40).
+
+| Verificação | Resultado |
+|---|---|
+| Comando de cobertura | Adicionado `npm run test:coverage`, executando `vitest run --coverage` |
+| Provedor e relatórios | V8 com relatórios `text`, `html` e `json` |
+| Limites mínimos globais | 80% para statements, branches, functions e lines |
+| Integração contínua | Job do frontend alterado para executar `npm run test:coverage` |
+| Cliente da API | Cobertura ampliada para JSON, texto, `204`, erros e endpoints de dashboard, projetos, tarefas e equipe |
+| `TasksPage` | Cobertura ampliada para histórico, navegação, filtros, alternância de visualização, status, exclusão, erros de carregamento, datas e valores padrão |
+| Compatibilidade do `themeService` | Mock explícito de `localStorage` para execução estável com cobertura |
+
+As evidências E25 e E26 registram, respectivamente, o relatório de cobertura e a execução dos cenários ampliados. Esta atividade está associada ao PR #40 e à autoria de Allef Ramos.
 
 ### Reverificação final
 
