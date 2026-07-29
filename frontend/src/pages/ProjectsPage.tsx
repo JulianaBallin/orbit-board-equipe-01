@@ -1,17 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../api/client';
+import { api, getErrorMessage } from '../api/client';
+import type { Project } from '../types/api';
 import { Badge, EmptyState, ErrorState, LoadingState, Notice } from '../components/Common';
 import ConfirmDialog from '../components/ConfirmDialog';
 import { projectStatusLabel, projectStatusTone } from '../utils/labels';
 
 export default function ProjectsPage() {
   const navigate = useNavigate();
-  const [projects, setProjects] = useState([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
-  const [confirmTarget, setConfirmTarget] = useState(null);
+  const [confirmTarget, setConfirmTarget] = useState<Project | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -19,7 +20,7 @@ export default function ProjectsPage() {
     try {
       setProjects(await api.projects.list());
     } catch (err) {
-      setError(err.message);
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -27,7 +28,7 @@ export default function ProjectsPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  const askRemove = (project) => {
+  const askRemove = (project: Project) => {
     const pending = pendingTasks(project);
     if (pending > 0) {
       setError(`O projeto “${project.name}” possui ${pending} tarefa(s) não concluída(s) e não pode ser excluído.`);
@@ -41,12 +42,13 @@ export default function ProjectsPage() {
     const project = confirmTarget;
     setConfirmTarget(null);
     setError('');
+    if (!project) return;
     try {
       await api.projects.remove(project.id);
       setNotice('Projeto excluído.');
       await load();
     } catch (err) {
-      setError(err.message);
+      setError(getErrorMessage(err));
     }
   };
 
@@ -130,10 +132,10 @@ export default function ProjectsPage() {
   );
 }
 
-function pendingTasks(project) {
+function pendingTasks(project: Project): number {
   return Math.max(0, (project.totalTasks ?? 0) - (project.completedTasks ?? 0));
 }
 
-function formatDate(value) {
+function formatDate(value: string): string {
   return new Intl.DateTimeFormat('pt-BR').format(new Date(`${value}T00:00:00`));
 }

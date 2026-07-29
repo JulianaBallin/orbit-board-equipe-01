@@ -1,23 +1,24 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../api/client';
+import { api, getErrorMessage } from '../api/client';
+import type { TeamMember } from '../types/api';
 import { EmptyState, ErrorState, LoadingState, Notice } from '../components/Common';
 import ConfirmDialog from '../components/ConfirmDialog';
 
 export default function TeamPage() {
   const navigate = useNavigate();
-  const [members, setMembers] = useState(null);
+  const [members, setMembers] = useState<TeamMember[] | null>(null);
   const [error, setError] = useState('');
   const [actionError, setActionError] = useState('');
   const [notice, setNotice] = useState('');
-  const [confirmTarget, setConfirmTarget] = useState(null);
+  const [confirmTarget, setConfirmTarget] = useState<TeamMember | null>(null);
 
   const load = useCallback(async () => {
     setError('');
     try {
       setMembers(await api.team.list());
     } catch (err) {
-      setError(err.message);
+      setError(getErrorMessage(err));
     }
   }, []);
 
@@ -27,18 +28,20 @@ export default function TeamPage() {
     const member = confirmTarget;
     setConfirmTarget(null);
     setActionError('');
+    if (!member) return;
 
     try {
       await api.team.remove(member.id);
       setNotice('Colaborador excluído.');
       await load();
     } catch (err) {
-      setActionError(err.message);
+      setActionError(getErrorMessage(err));
     }
   };
 
   if (!members && !error) return <LoadingState />;
   if (error) return <ErrorState message={error} onRetry={load} />;
+  if (!members) return null;
 
   return (
     <section className="page-stack">

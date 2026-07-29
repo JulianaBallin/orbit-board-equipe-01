@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { api } from '../api/client';
+import { api, ApiError, getErrorMessage } from '../api/client';
+import type { Project, ProjectMutation, TeamMember } from '../types/api';
 import ProjectForm from '../components/ProjectForm';
 import { ErrorState, LoadingState, NotFoundState } from '../components/Common';
 
@@ -8,8 +9,8 @@ export default function ProjectFormPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditing = Boolean(id);
-  const [members, setMembers] = useState([]);
-  const [project, setProject] = useState(null);
+  const [members, setMembers] = useState<TeamMember[]>([]);
+  const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [loadError, setLoadError] = useState('');
@@ -26,15 +27,15 @@ export default function ProjectFormPage() {
     try {
       const [memberData, projectData] = await Promise.all([
         api.team.list(),
-        isEditing ? api.projects.get(id) : Promise.resolve(null)
+        isEditing && id ? api.projects.get(id) : Promise.resolve(null)
       ]);
       setMembers(memberData);
       setProject(projectData);
     } catch (err) {
-      if (isEditing && err.status === 404) {
+      if (isEditing && err instanceof ApiError && err.status === 404) {
         setNotFound(true);
       } else {
-        setLoadError(err.message);
+        setLoadError(getErrorMessage(err));
       }
     } finally {
       setLoading(false);
@@ -45,19 +46,19 @@ export default function ProjectFormPage() {
     load();
   }, [load]);
 
-  const save = async (data) => {
+  const save = async (data: ProjectMutation) => {
     setBusy(true);
     setSaveError('');
 
     try {
       if (isEditing) {
-        await api.projects.update(id, data);
+        await api.projects.update(id ?? '', data);
       } else {
         await api.projects.create(data);
       }
       navigate('/projects', { replace: true });
     } catch (err) {
-      setSaveError(err.message);
+      setSaveError(getErrorMessage(err));
     } finally {
       setBusy(false);
     }

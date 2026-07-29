@@ -1,8 +1,17 @@
-export function LoadingState({ message = 'Carregando informações...' }) {
+import type { ReactNode } from 'react';
+import type { Tone } from '../utils/labels';
+
+export function LoadingState({ message = 'Carregando informações...' }: { message?: string }) {
   return <div className="state-box loading"><span className="spinner" />{message}</div>;
 }
 
-export function ErrorState({ title = 'Não foi possível carregar os dados.', message, onRetry }) {
+interface ErrorStateProps {
+  title?: string;
+  message: string;
+  onRetry?: () => void;
+}
+
+export function ErrorState({ title = 'Não foi possível carregar os dados.', message, onRetry }: ErrorStateProps) {
   return (
     <div className="state-box error" role="alert">
       <div>
@@ -14,7 +23,14 @@ export function ErrorState({ title = 'Não foi possível carregar os dados.', me
   );
 }
 
-export function NotFoundState({ title, message, onBack, backLabel }) {
+interface NotFoundStateProps {
+  title: string;
+  message: string;
+  onBack: () => void;
+  backLabel: string;
+}
+
+export function NotFoundState({ title, message, onBack, backLabel }: NotFoundStateProps) {
   return (
     <div className="state-box empty" role="status">
       <div>
@@ -26,7 +42,7 @@ export function NotFoundState({ title, message, onBack, backLabel }) {
   );
 }
 
-export function EmptyState({ title, description }) {
+export function EmptyState({ title, description }: { title: string; description: string }) {
   return (
     <div className="state-box empty">
       <strong>{title}</strong>
@@ -35,7 +51,7 @@ export function EmptyState({ title, description }) {
   );
 }
 
-export function StatCard({ label, value, detail }) {
+export function StatCard({ label, value, detail }: { label: string; value: number; detail: string }) {
   return (
     <article className="stat-card">
       <span>{label}</span>
@@ -45,11 +61,15 @@ export function StatCard({ label, value, detail }) {
   );
 }
 
-export function Badge({ children, tone = 'neutral' }) {
+export function Badge({ children, tone = 'neutral' }: { children: ReactNode; tone?: Tone }) {
   return <span className={`badge ${tone}`}>{children}</span>;
 }
 
-export function Notice({ type = 'success', children, onClose }) {
+export function Notice({ type = 'success', children, onClose }: {
+  type?: Tone;
+  children: ReactNode;
+  onClose?: () => void;
+}) {
   return (
     <div className={`notice ${type}`}>
       <span>{children}</span>

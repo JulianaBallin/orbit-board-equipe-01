@@ -1,5 +1,17 @@
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import type { Tone } from '../utils/labels';
+
+interface ConfirmDialogProps {
+  title: string;
+  message: string;
+  detail?: string | null;
+  confirmLabel?: string;
+  cancelLabel?: string;
+  tone?: Tone;
+  onConfirm: () => void;
+  onCancel: () => void;
+}
 
 export default function ConfirmDialog({
   title,
@@ -10,15 +22,15 @@ export default function ConfirmDialog({
   tone = 'danger',
   onConfirm,
   onCancel,
-}) {
-  const cancelRef = useRef(null);
+}: ConfirmDialogProps) {
+  const cancelRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     cancelRef.current?.focus();
   }, []);
 
   useEffect(() => {
-    function handleKeyDown(event) {
+    function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') onCancel();
     }
 

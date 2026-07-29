@@ -3,11 +3,18 @@ import { createPortal } from "react-dom";
 import { api } from "../api/client";
 import { Badge, EmptyState, ErrorState, LoadingState } from "./Common";
 import { statusLabel, statusTone } from "../utils/labels";
+import { getErrorMessage } from "../api/client";
+import type { TaskHistoryEntry, WorkItem } from "../types/api";
 
 const COLLAPSED_HISTORY_LIMIT = 3;
 
-export default function TaskHistoryModal({ task, onClose }) {
-  const [entries, setEntries] = useState([]);
+interface TaskHistoryModalProps {
+  task: Pick<WorkItem, 'id' | 'title'>;
+  onClose: () => void;
+}
+
+export default function TaskHistoryModal({ task, onClose }: TaskHistoryModalProps) {
+  const [entries, setEntries] = useState<TaskHistoryEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
@@ -20,7 +27,7 @@ export default function TaskHistoryModal({ task, onClose }) {
       const data = await api.tasks.history(task.id);
       setEntries([...data].reverse());
     } catch (err) {
-      setError(err.message);
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -33,7 +40,7 @@ export default function TaskHistoryModal({ task, onClose }) {
   }, [task.id]);
 
   useEffect(() => {
-    function handleKeyDown(event) {
+    function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") onClose();
     }
 
@@ -89,6 +96,7 @@ export default function TaskHistoryModal({ task, onClose }) {
             <>
               <div className="compact-list">
                 {visibleEntries.map((entry, index) => {
+                  if (!entry) return null;
                   const isCreationEntry = index === visibleEntries.length - 1;
 
                   return (
@@ -144,7 +152,7 @@ export default function TaskHistoryModal({ task, onClose }) {
   );
 }
 
-function formatDateTime(value) {
+function formatDateTime(value: string): string {
   return new Intl.DateTimeFormat("pt-BR", {
     dateStyle: "short",
     timeStyle: "short",

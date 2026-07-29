@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { api } from '../api/client';
+import { api, getErrorMessage } from '../api/client';
+import type { TeamMember, TeamMemberMutation } from '../types/api';
 import TeamMemberForm from '../components/TeamMemberForm';
 import { ErrorState, LoadingState, NotFoundState } from '../components/Common';
 
@@ -8,7 +9,7 @@ export default function TeamMemberFormPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditing = Boolean(id);
-  const [member, setMember] = useState(null);
+  const [member, setMember] = useState<TeamMember | null>(null);
   const [loading, setLoading] = useState(isEditing);
   const [busy, setBusy] = useState(false);
   const [loadError, setLoadError] = useState('');
@@ -32,7 +33,7 @@ export default function TeamMemberFormPage() {
       }
       setMember(selected);
     } catch (err) {
-      setLoadError(err.message);
+      setLoadError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -40,19 +41,19 @@ export default function TeamMemberFormPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  const save = async (data) => {
+  const save = async (data: TeamMemberMutation) => {
     setBusy(true);
     setSaveError('');
 
     try {
       if (isEditing) {
-        await api.team.update(id, data);
+        await api.team.update(id ?? '', data);
       } else {
         await api.team.create(data);
       }
       navigate('/team', { replace: true });
     } catch (err) {
-      setSaveError(err.message);
+      setSaveError(getErrorMessage(err));
     } finally {
       setBusy(false);
     }

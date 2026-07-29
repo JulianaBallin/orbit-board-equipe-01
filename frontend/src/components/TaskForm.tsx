@@ -1,6 +1,20 @@
 import { useEffect, useState } from 'react';
+import type { ChangeEvent, FormEvent } from 'react';
+import type {
+  Project,
+  TeamMember,
+  WorkItem,
+  WorkItemMutation,
+  WorkItemPriority,
+  WorkItemStatus,
+} from '../types/api';
 
-const emptyForm = {
+interface TaskFormState extends Omit<WorkItemMutation, 'assigneeId' | 'dueDate'> {
+  assigneeId: string;
+  dueDate: string;
+}
+
+const emptyForm: TaskFormState = {
   projectId: '',
   title: '',
   description: '',
@@ -11,8 +25,17 @@ const emptyForm = {
   estimatedHours: 4
 };
 
-export default function TaskForm({ projects, members, editing, onSubmit, onCancel, busy }) {
-  const [form, setForm] = useState(emptyForm);
+interface TaskFormProps {
+  projects: Project[];
+  members: TeamMember[];
+  editing: WorkItem | null;
+  onSubmit: (data: WorkItemMutation) => Promise<void>;
+  onCancel: () => void;
+  busy: boolean;
+}
+
+export default function TaskForm({ projects, members, editing, onSubmit, onCancel, busy }: TaskFormProps) {
+  const [form, setForm] = useState<TaskFormState>(emptyForm);
 
   useEffect(() => {
     if (editing) {
@@ -35,15 +58,21 @@ export default function TaskForm({ projects, members, editing, onSubmit, onCance
     }
   }, [editing, projects, members]);
 
-  const change = (event) => {
+  const change = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
     setForm((current) => ({
       ...current,
-      [name]: name === 'estimatedHours' ? Number(value) : value
+      [name]: name === 'estimatedHours'
+        ? Number(value)
+        : name === 'status'
+          ? value as WorkItemStatus
+          : name === 'priority'
+            ? value as WorkItemPriority
+            : value,
     }));
   };
 
-  const submit = (event) => {
+  const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     onSubmit({
       ...form,
@@ -63,12 +92,12 @@ export default function TaskForm({ projects, members, editing, onSubmit, onCance
 
       <label>
         Título
-        <input name="title" value={form.title} onChange={change} minLength="3" maxLength="120" required />
+        <input name="title" value={form.title} onChange={change} minLength={3} maxLength={120} required />
       </label>
 
       <label>
         Descrição
-        <textarea name="description" value={form.description} onChange={change} minLength="5" maxLength="800" rows="4" required />
+        <textarea name="description" value={form.description} onChange={change} minLength={5} maxLength={800} rows={4} required />
       </label>
 
       <div className="form-grid">

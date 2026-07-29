@@ -1,11 +1,7 @@
-import { useEffect, useState } from "react";
+import type { ReactNode } from "react";
 import { NavLink } from "react-router-dom";
 import orbitBoardLogo from "../assets/OrbitBoard-logo.svg";
-import {
-  getTheme,
-  THEME_CHANGE_EVENT,
-  toggleTheme,
-} from "../services/themeService";
+import { useAppTheme } from "../theme/ThemeProvider";
 
 const links = [
   { to: "/dashboard", label: "Visão geral", icon: "⌂" },
@@ -14,18 +10,9 @@ const links = [
   { to: "/team", label: "Equipe", icon: "◎" },
 ];
 
-export default function Layout({ children }) {
-  const [theme, setCurrentTheme] = useState(getTheme);
-
-  useEffect(() => {
-    const handleThemeChange = (event) => setCurrentTheme(event.detail.theme);
-
-    window.addEventListener(THEME_CHANGE_EVENT, handleThemeChange);
-    return () =>
-      window.removeEventListener(THEME_CHANGE_EVENT, handleThemeChange);
-  }, []);
-
-  const isDarkTheme = theme === "dark";
+export default function Layout({ children }: { children: ReactNode }) {
+  const { resolvedTheme, toggleTheme } = useAppTheme();
+  const isDarkTheme = resolvedTheme === "dark";
 
   return (
     <div className="app-shell">

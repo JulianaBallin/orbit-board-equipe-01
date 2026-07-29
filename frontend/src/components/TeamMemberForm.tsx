@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import type { ChangeEvent, FormEvent } from 'react';
+import type { TeamMember, TeamMemberMutation } from '../types/api';
 
 const roles = [
   'Backend Developer',
@@ -9,11 +11,24 @@ const roles = [
   'Tech Lead',
   'Product Owner',
   'Scrum Master'
-];
+] as const;
 
-const emptyForm = { name: '', role: roles[0], email: '' };
+interface TeamMemberFormState {
+  name: string;
+  role: string;
+  email: string;
+}
 
-export default function TeamMemberForm({ editing, onSubmit, onCancel, busy }) {
+const emptyForm: TeamMemberFormState = { name: '', role: roles[0], email: '' };
+
+interface TeamMemberFormProps {
+  editing: TeamMember | null;
+  onSubmit: (data: TeamMemberMutation) => Promise<void>;
+  onCancel: () => void;
+  busy: boolean;
+}
+
+export default function TeamMemberForm({ editing, onSubmit, onCancel, busy }: TeamMemberFormProps) {
   const [form, setForm] = useState(emptyForm);
 
   useEffect(() => {
@@ -25,14 +40,16 @@ export default function TeamMemberForm({ editing, onSubmit, onCancel, busy }) {
     });
   }, [editing]);
 
-  const roleOptions = roles.includes(form.role) ? roles : [form.role, ...roles];
+  const roleOptions: readonly string[] = roles.some((role) => role === form.role)
+    ? roles
+    : [form.role, ...roles];
 
-  const change = (event) => {
+  const change = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
     setForm((current) => ({ ...current, [name]: value }));
   };
 
-  const submit = (event) => {
+  const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     onSubmit({
       name: form.name.trim(),
@@ -52,7 +69,7 @@ export default function TeamMemberForm({ editing, onSubmit, onCancel, busy }) {
 
       <label>
         Nome
-        <input name="name" value={form.name} onChange={change} minLength="3" maxLength="80" required />
+        <input name="name" value={form.name} onChange={change} minLength={3} maxLength={80} required />
       </label>
 
       <label>
@@ -69,7 +86,7 @@ export default function TeamMemberForm({ editing, onSubmit, onCancel, busy }) {
           type="email"
           value={form.email}
           onChange={change}
-          maxLength="120"
+          maxLength={120}
           required
         />
       </label>

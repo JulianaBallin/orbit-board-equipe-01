@@ -2,9 +2,28 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import { createPortal } from 'react-dom';
 import { Badge, EmptyState } from './Common';
 import { priorityLabel, priorityTone, statusLabel } from '../utils/labels';
+import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react';
+import type { WorkItem, WorkItemStatus } from '../types/api';
 
 const MENU_GAP = 8;
 const VIEWPORT_PADDING = 8;
+
+interface TaskTableProps {
+  tasks?: WorkItem[];
+  statuses?: WorkItemStatus[];
+  onStatusChange: (id: string, status: WorkItemStatus) => void;
+  onEdit: (task: WorkItem) => void;
+  onDelete: (task: WorkItem) => void;
+  onViewHistory: (task: WorkItem) => void;
+}
+
+interface MenuPosition {
+  left: number;
+  maxHeight: number;
+  maxWidth: number;
+  minWidth: number;
+  top: number;
+}
 
 export default function TaskTable({
   tasks = [],
@@ -13,12 +32,12 @@ export default function TaskTable({
   onEdit,
   onDelete,
   onViewHistory,
-}) {
-  const [openMenuId, setOpenMenuId] = useState(null);
-  const [menuPosition, setMenuPosition] = useState(null);
-  const actionsRef = useRef(null);
-  const menuRef = useRef(null);
-  const triggerRef = useRef(null);
+}: TaskTableProps) {
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null);
+  const actionsRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
 
   const updateMenuPosition = useCallback(() => {
     if (!triggerRef.current || !menuRef.current) {
@@ -71,16 +90,17 @@ export default function TaskTable({
   }, [openMenuId, updateMenuPosition]);
 
   useEffect(() => {
-    function handlePointerDown(event) {
-      const clickedTrigger = actionsRef.current?.contains(event.target);
-      const clickedMenu = menuRef.current?.contains(event.target);
+    function handlePointerDown(event: PointerEvent) {
+      const target = event.target instanceof Node ? event.target : null;
+      const clickedTrigger = target ? actionsRef.current?.contains(target) : false;
+      const clickedMenu = target ? menuRef.current?.contains(target) : false;
 
       if (!clickedTrigger && !clickedMenu) {
         setOpenMenuId(null);
       }
     }
 
-    function handleKeyDown(event) {
+    function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
         setOpenMenuId(null);
       }
@@ -103,7 +123,7 @@ export default function TaskTable({
     };
   }, [updateMenuPosition]);
 
-  function handleAction(action, task) {
+  function handleAction(action: (task: WorkItem) => void, task: WorkItem) {
     setOpenMenuId(null);
     action(task);
   }
@@ -157,7 +177,7 @@ export default function TaskTable({
                   <select
                     className="task-table-status"
                     value={task.status}
-                    onChange={(event) => onStatusChange(task.id, event.target.value)}
+                    onChange={(event) => onStatusChange(task.id, event.target.value as WorkItemStatus)}
                     aria-label={`Alterar status de ${task.title}`}
                   >
                     {statuses.map((status) => (
@@ -214,7 +234,7 @@ export default function TaskTable({
             top: menuPosition?.top ?? 0,
             visibility: menuPosition ? 'visible' : 'hidden',
             zIndex: 1000,
-          }}
+          } satisfies CSSProperties}
         >
           <button
             type="button"
@@ -245,6 +265,6 @@ export default function TaskTable({
   );
 }
 
-function formatDate(value) {
+function formatDate(value: string): string {
   return new Intl.DateTimeFormat('pt-BR').format(new Date(`${value}T00:00:00`));
 }

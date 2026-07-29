@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react';
+import type { ChangeEvent, FormEvent } from 'react';
+import type { Project, ProjectMutation, ProjectStatus, TeamMember } from '../types/api';
 
-const emptyForm = {
+interface ProjectFormState extends Omit<ProjectMutation, 'dueDate'> {
+  dueDate: string;
+}
+
+const emptyForm: ProjectFormState = {
   name: '',
   description: '',
   status: 'Planning',
@@ -9,8 +15,16 @@ const emptyForm = {
   ownerId: ''
 };
 
-export default function ProjectForm({ members, editing, onSubmit, onCancel, busy }) {
-  const [form, setForm] = useState(emptyForm);
+interface ProjectFormProps {
+  members: TeamMember[];
+  editing: Project | null;
+  onSubmit: (data: ProjectMutation) => Promise<void>;
+  onCancel: () => void;
+  busy: boolean;
+}
+
+export default function ProjectForm({ members, editing, onSubmit, onCancel, busy }: ProjectFormProps) {
+  const [form, setForm] = useState<ProjectFormState>(emptyForm);
 
   useEffect(() => {
     if (editing) {
@@ -27,12 +41,15 @@ export default function ProjectForm({ members, editing, onSubmit, onCancel, busy
     }
   }, [editing, members]);
 
-  const change = (event) => {
+  const change = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
-    setForm((current) => ({ ...current, [name]: value }));
+    setForm((current) => ({
+      ...current,
+      [name]: name === 'status' ? value as ProjectStatus : value,
+    }));
   };
 
-  const submit = (event) => {
+  const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     onSubmit({ ...form, dueDate: form.dueDate || null });
   };
@@ -48,12 +65,12 @@ export default function ProjectForm({ members, editing, onSubmit, onCancel, busy
 
       <label>
         Nome
-        <input name="name" value={form.name} onChange={change} minLength="3" maxLength="80" required />
+        <input name="name" value={form.name} onChange={change} minLength={3} maxLength={80} required />
       </label>
 
       <label>
         Descrição
-        <textarea name="description" value={form.description} onChange={change} minLength="10" maxLength="500" rows="4" required />
+        <textarea name="description" value={form.description} onChange={change} minLength={10} maxLength={500} rows={4} required />
       </label>
 
       <div className="form-grid">

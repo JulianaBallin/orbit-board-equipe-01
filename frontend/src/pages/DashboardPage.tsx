@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
-import { api } from '../api/client';
+import { api, getErrorMessage } from '../api/client';
+import type { Dashboard, WorkItemStatus } from '../types/api';
 import { Badge, ErrorState, LoadingState, StatCard } from '../components/Common';
 import { priorityLabel, priorityTone, statusLabel, statusTone } from '../utils/labels';
 
 export default function DashboardPage() {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<Dashboard | null>(null);
   const [error, setError] = useState('');
 
   const load = useCallback(async () => {
@@ -12,7 +13,7 @@ export default function DashboardPage() {
     try {
       setData(await api.dashboard());
     } catch (err) {
-      setError(err.message);
+      setError(getErrorMessage(err));
     }
   }, []);
 
@@ -20,6 +21,7 @@ export default function DashboardPage() {
 
   if (!data && !error) return <LoadingState />;
   if (error) return <ErrorState message={error} onRetry={load} />;
+  if (!data) return null;
 
   return (
     <section className="page-stack">
@@ -52,7 +54,7 @@ export default function DashboardPage() {
               const percentage = data.totalTasks ? (count / data.totalTasks) * 100 : 0;
               return (
                 <div className="status-row" key={status}>
-                  <div><span>{statusLabel(status)}</span><strong>{count}</strong></div>
+                  <div><span>{statusLabel(status as WorkItemStatus)}</span><strong>{count}</strong></div>
                   <div className="bar-track"><span style={{ width: `${percentage}%` }} /></div>
                 </div>
               );

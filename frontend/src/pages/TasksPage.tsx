@@ -1,31 +1,60 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import type { ChangeEvent, PointerEvent as ReactPointerEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../api/client';
+import { api, getErrorMessage } from '../api/client';
 import { Badge, EmptyState, ErrorState, LoadingState, Notice } from '../components/Common';
 import TaskTable from '../components/TaskTable';
 import TaskHistoryModal from '../components/TaskHistoryModal';
 import ConfirmDialog from '../components/ConfirmDialog';
 import { priorityLabel, priorityTone, statusLabel } from '../utils/labels';
 import { dropIndexFor, landingFor, reorder } from '../utils/boardDrop';
+import type {
+  Project,
+  WorkItem,
+  WorkItemFilters,
+  WorkItemPriority,
+  WorkItemStatus,
+} from '../types/api';
 
-const initialFilters = { projectId: '', status: '', priority: '', assigneeId: '', search: '' };
-const statuses = ['Backlog', 'InProgress', 'Review', 'Done'];
+const initialFilters: WorkItemFilters = {
+  projectId: '',
+  status: '',
+  priority: '',
+  assigneeId: '',
+  search: '',
+};
+const statuses: WorkItemStatus[] = ['Backlog', 'InProgress', 'Review', 'Done'];
 const DRAG_THRESHOLD = 6;
+
+interface DragState {
+  task: WorkItem;
+  left: number;
+  top: number;
+  width: number;
+  status: WorkItemStatus | null;
+  index: number | null;
+}
+
+interface Landing {
+  status: WorkItemStatus | null;
+  index: number | null;
+  position?: number | null;
+}
 
 export default function TasksPage() {
   const navigate = useNavigate();
-  const [tasks, setTasks] = useState([]);
-  const [projects, setProjects] = useState([]);
-  const [filters, setFilters] = useState(initialFilters);
+  const [tasks, setTasks] = useState<WorkItem[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [filters, setFilters] = useState<WorkItemFilters>(initialFilters);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
-  const [viewMode, setViewMode] = useState('board');
-  const [historyTask, setHistoryTask] = useState(null);
-  const [drag, setDrag] = useState(null);
-  const [confirmTarget, setConfirmTarget] = useState(null);
-  const releaseDrag = useRef(null);
+  const [viewMode, setViewMode] = useState<'board' | 'table'>('board');
+  const [historyTask, setHistoryTask] = useState<WorkItem | null>(null);
+  const [drag, setDrag] = useState<DragState | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<WorkItem | null>(null);
+  const releaseDrag = useRef<(() => void) | null>(null);
 
   useEffect(() => () => releaseDrag.current?.(), []);
 
@@ -39,39 +68,48 @@ export default function TasksPage() {
     try {
       setTasks(await api.tasks.list(filters));
     } catch (err) {
-      setError(err.message);
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
   }, [filters]);
 
   useEffect(() => {
-    loadReferenceData().catch((err) => setError(err.message));
+    loadReferenceData().catch((err: unknown) => setError(getErrorMessage(err)));
   }, [loadReferenceData]);
 
   useEffect(() => { loadTasks(); }, [loadTasks]);
 
-  const changeFilter = (event) => {
+  const changeFilter = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
-    setFilters((current) => ({ ...current, [name]: value }));
+    setFilters((current) => ({
+      ...current,
+      [name]: name === 'status'
+        ? value as WorkItemStatus | ''
+        : name === 'priority'
+          ? value as WorkItemPriority | ''
+          : value,
+    }));
   };
 
-  const changeStatus = async (id, status) => {
+  const changeStatus = async (id: string, status: WorkItemStatus) => {
     try {
       await api.tasks.changeStatus(id, status);
       await loadTasks();
     } catch (err) {
       await loadTasks();
-      setError(err.message);
+      setError(getErrorMessage(err));
     }
   };
 
-  const locateDrop = (x, y, task) => {
-    const column = document.elementFromPoint(x, y)?.closest('.task-column');
+  const locateDrop = (x: number, y: number, task: WorkItem): Landing => {
+    const column = document.elementFromPoint(x, y)?.closest<HTMLElement>('.task-column');
     if (!column) return { status: null, index: null, position: null };
 
-    const status = column.dataset.status;
-    const cards = Array.from(column.querySelectorAll('.task-card'))
+    if (!(column instanceof HTMLElement)) return { status: null, index: null, position: null };
+    const status = column.dataset.status as WorkItemStatus | undefined;
+    if (!status) return { status: null, index: null, position: null };
+    const cards = Array.from(column.querySelectorAll<HTMLElement>('.task-card'))
       .filter((element) => element.dataset.taskId !== task.id);
     const dropIndex = dropIndexFor(cards.map((element) => element.getBoundingClientRect()), y);
     const columnTasks = tasks.filter((item) => item.status === status && item.id !== task.id);
@@ -80,9 +118,9 @@ export default function TasksPage() {
     return { status, index: landing.index, position: landing.position };
   };
 
-  const beginDrag = (event, task) => {
+  const beginDrag = (event: ReactPointerEvent<HTMLElement>, task: WorkItem) => {
     if (event.button !== 0) return;
-    if (event.target.closest('button, select, input, textarea, label, a')) return;
+    if (event.target instanceof Element && event.target.closest('button, select, input, textarea, label, a')) return;
 
     const box = event.currentTarget.getBoundingClientRect();
     const offsetX = event.clientX - box.left;
@@ -91,9 +129,9 @@ export default function TasksPage() {
     const startY = event.clientY;
 
     let moving = false;
-    let landing = { status: task.status, index: null };
+    let landing: Landing = { status: task.status, index: null, position: task.position };
 
-    const onMove = (moveEvent) => {
+    const onMove = (moveEvent: PointerEvent) => {
       if (!moving) {
         const travelled = Math.abs(moveEvent.clientX - startX) + Math.abs(moveEvent.clientY - startY);
         if (travelled < DRAG_THRESHOLD) return;
@@ -113,10 +151,11 @@ export default function TasksPage() {
     };
 
     const applyLanding = () => {
+      if (!landing.status || landing.index === null) return;
       const columnTasks = tasks.filter((item) => item.status === landing.status);
       const from = columnTasks.findIndex((item) => item.id === task.id);
       const others = tasks.filter((item) => item.status !== landing.status);
-      const moved = { ...task, status: landing.status };
+      const moved: WorkItem = { ...task, status: landing.status };
       const target = from >= 0
         ? reorder(columnTasks, from, landing.index > from ? landing.index + 1 : landing.index)
         : [...columnTasks.slice(0, landing.index), moved, ...columnTasks.slice(landing.index)];
@@ -137,6 +176,7 @@ export default function TasksPage() {
 
       if (!moving || !landing.status) return;
       if (landing.status === task.status && landing.position === task.position) return;
+      if (landing.position === null || landing.position === undefined) return;
 
       applyLanding();
       try {
@@ -144,7 +184,7 @@ export default function TasksPage() {
         await loadTasks();
       } catch (err) {
         await loadTasks();
-        setError(err.message);
+        setError(getErrorMessage(err));
       }
     };
 
@@ -153,7 +193,7 @@ export default function TasksPage() {
     window.addEventListener('pointerup', onUp);
   };
 
-  const renderCard = (task) => (
+  const renderCard = (task: WorkItem) => (
     <article
       className="task-card"
       key={task.id}
@@ -174,7 +214,7 @@ export default function TasksPage() {
       </div>
       <label className="inline-control">
         Mover para
-        <select value={task.status} onChange={(event) => changeStatus(task.id, event.target.value)}>
+        <select value={task.status} onChange={(event) => changeStatus(task.id, event.target.value as WorkItemStatus)}>
           {statuses.map((value) => <option key={value} value={value}>{statusLabel(value)}</option>)}
         </select>
       </label>
@@ -191,12 +231,13 @@ export default function TasksPage() {
   const confirmRemove = async () => {
     const task = confirmTarget;
     setConfirmTarget(null);
+    if (!task) return;
     try {
       await api.tasks.remove(task.id);
       setNotice('Tarefa excluída.');
       await loadTasks();
     } catch (err) {
-      setError(err.message);
+      setError(getErrorMessage(err));
     }
   };
 
@@ -248,7 +289,7 @@ export default function TasksPage() {
         </select>
         <select name="priority" value={filters.priority} onChange={changeFilter}>
           <option value="">Todas as prioridades</option>
-          {['Low', 'Medium', 'High', 'Critical'].map((priority) => (
+          {(['Low', 'Medium', 'High', 'Critical'] satisfies WorkItemPriority[]).map((priority) => (
             <option key={priority} value={priority}>{priorityLabel(priority)}</option>
           ))}
         </select>
@@ -284,13 +325,13 @@ export default function TasksPage() {
                 {columnTasks
                   .filter((task) => task.id !== drag?.task.id)
                   .flatMap((task, position) => [
-                    active && drag.index === position
+                    active && drag?.index === position
                       ? <div className="drop-placeholder" key={`slot-${position}`} />
                       : null,
                     renderCard(task),
                   ])
                   .filter(Boolean)}
-                {active && drag.index >= columnTasks.filter((task) => task.id !== drag.task.id).length && (
+                {active && drag?.index !== null && drag.index >= columnTasks.filter((task) => task.id !== drag.task.id).length && (
                   <div className="drop-placeholder" />
                 )}
               </section>
@@ -337,6 +378,6 @@ export default function TasksPage() {
   );
 }
 
-function formatDate(value) {
+function formatDate(value: string): string {
   return new Intl.DateTimeFormat('pt-BR').format(new Date(`${value}T00:00:00`));
 }
