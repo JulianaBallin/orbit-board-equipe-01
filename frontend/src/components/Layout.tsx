@@ -1,7 +1,20 @@
 import type { ReactNode } from "react";
-import { NavLink } from "react-router-dom";
 import orbitBoardLogo from "../assets/OrbitBoard-logo.svg";
 import { useAppTheme } from "../theme/ThemeProvider";
+import {
+  Brand,
+  Environment,
+  Main,
+  Navigation,
+  NavigationLink,
+  NavIcon,
+  Shell,
+  Sidebar,
+  SidebarNote,
+  ThemeToggle,
+  Topbar,
+  TopbarActions,
+} from "./Layout.styles";
 
 const links = [
   { to: "/dashboard", label: "Visão geral", icon: "⌂" },
@@ -15,9 +28,9 @@ export default function Layout({ children }: { children: ReactNode }) {
   const isDarkTheme = resolvedTheme === "dark";
 
   return (
-    <div className="app-shell">
-      <aside className="sidebar">
-        <div className="brand">
+    <Shell>
+      <Sidebar>
+        <Brand>
           <img
             src={orbitBoardLogo}
             alt=""
@@ -29,42 +42,42 @@ export default function Layout({ children }: { children: ReactNode }) {
             <strong>OrbitBoard</strong>
             <span>Workspace</span>
           </div>
-        </div>
+        </Brand>
 
-        <nav className="nav-list">
+        <Navigation>
           {links.map((link) => (
-            <NavLink
+            <NavigationLink
               key={link.to}
               to={link.to}
               className={({ isActive }) =>
                 `nav-item ${isActive ? "active" : ""}`
               }
             >
-              <span className="nav-icon">{link.icon}</span>
+              <NavIcon>{link.icon}</NavIcon>
               {link.label}
-            </NavLink>
+            </NavigationLink>
           ))}
-        </nav>
+        </Navigation>
 
-        <div className="sidebar-note">
+        <SidebarNote>
           <strong>Aplicação didática</strong>
           <p>
             Explore chamadas HTTP, estados de interface e tratamento de erros.
           </p>
-        </div>
-      </aside>
+        </SidebarNote>
+      </Sidebar>
 
-      <main className="main-content">
-        <header className="topbar">
+      <Main>
+        <Topbar>
           <div>
             <span className="eyebrow">Integração Full Stack</span>
             <h1>Central de trabalho</h1>
           </div>
 
-          <div className="topbar-actions">
-            <div className="environment-pill">API local</div>
+          <TopbarActions>
+            <Environment>API local</Environment>
 
-            <button
+            <ThemeToggle
               type="button"
               className="theme-toggle"
               aria-label={`Alterar para o tema ${isDarkTheme ? "claro" : "escuro"}`}
@@ -72,12 +85,12 @@ export default function Layout({ children }: { children: ReactNode }) {
               onClick={toggleTheme}
             >
               <span aria-hidden="true">{isDarkTheme ? "☀" : "☾"}</span>
-            </button>
-          </div>
-        </header>
+            </ThemeToggle>
+          </TopbarActions>
+        </Topbar>
 
         {children}
-      </main>
-    </div>
+      </Main>
+    </Shell>
   );
 }

@@ -8,6 +8,7 @@ import type {
   WorkItemPriority,
   WorkItemStatus,
 } from '../types/api';
+import { FormCard, FormGrid } from './TaskForm.styles';
 
 interface TaskFormState extends Omit<WorkItemMutation, 'assigneeId' | 'dueDate'> {
   assigneeId: string;
@@ -82,7 +83,7 @@ export default function TaskForm({ projects, members, editing, onSubmit, onCance
   };
 
   return (
-    <form className="form-card" onSubmit={submit}>
+    <FormCard onSubmit={submit}>
       <div className="section-heading compact">
         <div>
           <span className="eyebrow">{editing ? 'Edição' : 'Nova demanda'}</span>
@@ -100,7 +101,7 @@ export default function TaskForm({ projects, members, editing, onSubmit, onCance
         <textarea name="description" value={form.description} onChange={change} minLength={5} maxLength={800} rows={4} required />
       </label>
 
-      <div className="form-grid">
+      <FormGrid>
         <label>
           Projeto
           <select name="projectId" value={form.projectId} onChange={change} required>
@@ -145,12 +146,12 @@ export default function TaskForm({ projects, members, editing, onSubmit, onCance
           Estimativa (horas)
           <input type="number" name="estimatedHours" value={form.estimatedHours} onChange={change} min="1" max="200" required />
         </label>
-      </div>
+      </FormGrid>
 
       <div className="form-actions">
         <button type="button" className="button secondary" onClick={onCancel}>Cancelar</button>
         <button className="button primary" disabled={busy}>{busy ? 'Salvando...' : 'Salvar tarefa'}</button>
       </div>
-    </form>
+    </FormCard>
   );
 }

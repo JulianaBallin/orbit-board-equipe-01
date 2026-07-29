@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { api, getErrorMessage } from '../api/client';
 import type { TeamMember, TeamMemberMutation } from '../types/api';
+import { Page } from './TeamMemberFormPage.styles';
 import TeamMemberForm from '../components/TeamMemberForm';
 import { ErrorState, LoadingState, NotFoundState } from '../components/Common';
 
@@ -73,7 +74,7 @@ export default function TeamMemberFormPage() {
   if (loadError) return <ErrorState message={loadError} onRetry={load} />;
 
   return (
-    <section className="page-stack">
+    <Page className="page-stack">
       <div className="section-heading">
         <div>
           <span className="eyebrow">Colaboração</span>
@@ -87,16 +88,12 @@ export default function TeamMemberFormPage() {
       </div>
 
       {saveError && (
-        <div className="state-box error" role="alert">
-          <div>
-            <strong>
-              {isEditing
-                ? 'Não foi possível salvar as alterações.'
-                : 'Não foi possível cadastrar o colaborador.'}
-            </strong>
-            <p>{saveError}</p>
-          </div>
-        </div>
+        <ErrorState
+          title={isEditing
+            ? 'Não foi possível salvar as alterações.'
+            : 'Não foi possível cadastrar o colaborador.'}
+          message={saveError}
+        />
       )}
 
       <TeamMemberForm
@@ -105,6 +102,6 @@ export default function TeamMemberFormPage() {
         onCancel={() => navigate('/team')}
         busy={busy}
       />
-    </section>
+    </Page>
   );
 }

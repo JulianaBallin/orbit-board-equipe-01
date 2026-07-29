@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { api, ApiError, getErrorMessage } from '../api/client';
 import type { Project, ProjectMutation, TeamMember } from '../types/api';
+import { Page } from './ProjectFormPage.styles';
 import ProjectForm from '../components/ProjectForm';
 import { ErrorState, LoadingState, NotFoundState } from '../components/Common';
 
@@ -78,7 +79,7 @@ export default function ProjectFormPage() {
   if (loadError) return <ErrorState message={loadError} onRetry={load} />;
 
   return (
-    <section className="page-stack">
+    <Page className="page-stack">
       <div className="section-heading">
         <div>
           <span className="eyebrow">Portfólio</span>
@@ -105,6 +106,6 @@ export default function ProjectFormPage() {
         onCancel={() => navigate('/projects')}
         busy={busy}
       />
-    </section>
+    </Page>
   );
 }

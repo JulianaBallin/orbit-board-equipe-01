@@ -1,12 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import { renderWithTheme } from '../test/renderWithTheme';
 import userEvent from '@testing-library/user-event';
 import ConfirmDialog from './ConfirmDialog';
 
 function renderDialog(props = {}) {
   const onConfirm = vi.fn();
   const onCancel = vi.fn();
-  render(
+  renderWithTheme(
     <ConfirmDialog
       title="Excluir tarefa"
       message="Tem certeza que deseja excluir a tarefa?"

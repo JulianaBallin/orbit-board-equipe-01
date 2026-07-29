@@ -5,6 +5,17 @@ import { Badge, EmptyState, ErrorState, LoadingState } from "./Common";
 import { statusLabel, statusTone } from "../utils/labels";
 import { getErrorMessage } from "../api/client";
 import type { TaskHistoryEntry, WorkItem } from "../types/api";
+import {
+  Arrow,
+  Backdrop,
+  Created,
+  Modal,
+  ModalBody,
+  ModalClose,
+  ModalHeader,
+  MoreButton,
+  Transition,
+} from "./TaskHistoryModal.styles";
 
 const COLLAPSED_HISTORY_LIMIT = 3;
 
@@ -61,29 +72,29 @@ export default function TaskHistoryModal({ task, onClose }: TaskHistoryModalProp
       : [...entries.slice(0, COLLAPSED_HISTORY_LIMIT - 1), entries.at(-1)];
 
   return createPortal(
-    <div className="modal-backdrop" onClick={onClose}>
-      <div
+    <Backdrop className="modal-backdrop" onClick={onClose}>
+      <Modal
         className="modal"
         role="dialog"
         aria-modal="true"
         aria-label={`Histórico de ${task.title}`}
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="modal-header">
+        <ModalHeader>
           <div>
             <span className="eyebrow">Histórico de status</span>
             <h3>{task.title}</h3>
           </div>
-          <button
+          <ModalClose
             type="button"
             className="modal-close"
             aria-label="Fechar"
             onClick={onClose}
           >
             ×
-          </button>
-        </div>
-        <div className="modal-body">
+          </ModalClose>
+        </ModalHeader>
+        <ModalBody>
           {loading && <LoadingState message="Carregando histórico..." />}
           {!loading && error && <ErrorState message={error} onRetry={load} />}
           {!loading && !error && entries.length === 0 && (
@@ -102,7 +113,7 @@ export default function TaskHistoryModal({ task, onClose }: TaskHistoryModalProp
                   return (
                     <Fragment key={entry.id}>
                       {hasHiddenEntries && !isExpanded && isCreationEntry && (
-                        <button
+                        <MoreButton
                           type="button"
                           className="history-more-indicator"
                           onClick={() => setIsExpanded(true)}
@@ -115,27 +126,27 @@ export default function TaskHistoryModal({ task, onClose }: TaskHistoryModalProp
                               : "alterações"}
                           </span>
                           <span aria-hidden="true">•••</span>
-                        </button>
+                        </MoreButton>
                       )}
 
                       <div className="compact-item">
-                        <div className="history-transition">
+                        <Transition>
                           {entry.fromStatus ? (
                             <Badge tone={statusTone(entry.fromStatus)}>
                               {statusLabel(entry.fromStatus)}
                             </Badge>
                           ) : (
-                            <span className="history-created">Criada</span>
+                            <Created>Criada</Created>
                           )}
 
-                          <span className="history-arrow" aria-hidden="true">
+                          <Arrow aria-hidden="true">
                             →
-                          </span>
+                          </Arrow>
 
                           <Badge tone={statusTone(entry.toStatus)}>
                             {statusLabel(entry.toStatus)}
                           </Badge>
-                        </div>
+                        </Transition>
 
                         <span>{formatDateTime(entry.changedAt)}</span>
                       </div>
@@ -145,9 +156,9 @@ export default function TaskHistoryModal({ task, onClose }: TaskHistoryModalProp
               </div>
             </>
           )}
-        </div>
-      </div>
-    </div>,
+        </ModalBody>
+      </Modal>
+    </Backdrop>,
     document.body,
   );
 }

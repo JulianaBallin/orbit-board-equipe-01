@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react';
 import type { Tone } from '../utils/labels';
+import { BadgeRoot, NoticeRoot, Spinner, Stat, StateBox } from './Common.styles';
 
 export function LoadingState({ message = 'Carregando informações...' }: { message?: string }) {
-  return <div className="state-box loading"><span className="spinner" />{message}</div>;
+  return <StateBox className="state-box loading" $kind="loading"><Spinner />{message}</StateBox>;
 }
 
 interface ErrorStateProps {
@@ -13,13 +14,13 @@ interface ErrorStateProps {
 
 export function ErrorState({ title = 'Não foi possível carregar os dados.', message, onRetry }: ErrorStateProps) {
   return (
-    <div className="state-box error" role="alert">
+    <StateBox className="state-box error" $kind="error" role="alert">
       <div>
         <strong>{title}</strong>
         <p>{message}</p>
       </div>
       {onRetry && <button className="button secondary" onClick={onRetry}>Tentar novamente</button>}
-    </div>
+    </StateBox>
   );
 }
 
@@ -32,37 +33,37 @@ interface NotFoundStateProps {
 
 export function NotFoundState({ title, message, onBack, backLabel }: NotFoundStateProps) {
   return (
-    <div className="state-box empty" role="status">
+    <StateBox className="state-box empty" $kind="empty" role="status">
       <div>
         <strong>{title}</strong>
         <p>{message}</p>
       </div>
       <button type="button" className="button secondary" onClick={onBack}>{backLabel}</button>
-    </div>
+    </StateBox>
   );
 }
 
 export function EmptyState({ title, description }: { title: string; description: string }) {
   return (
-    <div className="state-box empty">
+    <StateBox className="state-box empty" $kind="empty">
       <strong>{title}</strong>
       <p>{description}</p>
-    </div>
+    </StateBox>
   );
 }
 
 export function StatCard({ label, value, detail }: { label: string; value: number; detail: string }) {
   return (
-    <article className="stat-card">
+    <Stat className="stat-card">
       <span>{label}</span>
       <strong>{value}</strong>
       <small>{detail}</small>
-    </article>
+    </Stat>
   );
 }
 
 export function Badge({ children, tone = 'neutral' }: { children: ReactNode; tone?: Tone }) {
-  return <span className={`badge ${tone}`}>{children}</span>;
+  return <BadgeRoot className={`badge ${tone}`} $tone={tone}>{children}</BadgeRoot>;
 }
 
 export function Notice({ type = 'success', children, onClose }: {
@@ -71,9 +72,9 @@ export function Notice({ type = 'success', children, onClose }: {
   onClose?: () => void;
 }) {
   return (
-    <div className={`notice ${type}`}>
+    <NoticeRoot className={`notice ${type}`} $tone={type}>
       <span>{children}</span>
       {onClose && <button onClick={onClose} aria-label="Fechar">×</button>}
-    </div>
+    </NoticeRoot>
   );
 }

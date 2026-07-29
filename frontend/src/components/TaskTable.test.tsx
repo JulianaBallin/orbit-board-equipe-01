@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { render, screen, within } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
+import { renderWithTheme } from '../test/renderWithTheme';
 import userEvent from '@testing-library/user-event';
 import TaskTable from './TaskTable';
 import { makeWorkItem } from '../test/fixtures';
@@ -29,7 +30,7 @@ describe('TaskTable actions menu', () => {
     const onDelete = vi.fn();
     const onViewHistory = vi.fn();
 
-    render(
+    renderWithTheme(
       <TaskTable
         tasks={[task]}
         statuses={statuses}

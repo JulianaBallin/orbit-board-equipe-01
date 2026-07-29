@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api, getErrorMessage } from '../api/client';
 import type { Project } from '../types/api';
+import { Page } from './ProjectsPage.styles';
 import { Badge, EmptyState, ErrorState, LoadingState, Notice } from '../components/Common';
 import ConfirmDialog from '../components/ConfirmDialog';
 import { projectStatusLabel, projectStatusTone } from '../utils/labels';
@@ -55,7 +56,7 @@ export default function ProjectsPage() {
   if (loading) return <LoadingState />;
 
   return (
-    <section className="page-stack">
+    <Page className="page-stack">
       <div className="section-heading">
         <div>
           <span className="eyebrow">Portfólio</span>
@@ -128,7 +129,7 @@ export default function ProjectsPage() {
           onCancel={() => setConfirmTarget(null)}
         />
       )}
-    </section>
+    </Page>
   );
 }
 

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { api, ApiError, getErrorMessage } from '../api/client';
 import type { Project, TeamMember, WorkItem, WorkItemMutation } from '../types/api';
+import { Page } from './TaskFormPage.styles';
 import TaskForm from '../components/TaskForm';
 import { ErrorState, LoadingState, NotFoundState } from '../components/Common';
 
@@ -81,7 +82,7 @@ export default function TaskFormPage() {
   if (loadError) return <ErrorState message={loadError} onRetry={load} />;
 
   return (
-    <section className="page-stack">
+    <Page className="page-stack">
       <div className="section-heading">
         <div>
           <span className="eyebrow">Execução</span>
@@ -109,6 +110,6 @@ export default function TaskFormPage() {
         onCancel={() => navigate('/tasks')}
         busy={busy}
       />
-    </section>
+    </Page>
   );
 }

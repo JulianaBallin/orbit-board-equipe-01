@@ -1,6 +1,16 @@
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import type { Tone } from '../utils/labels';
+import {
+  Actions,
+  Backdrop,
+  ConfirmDetail,
+  ConfirmMessage,
+  ConfirmModal,
+  ModalBody,
+  ModalClose,
+  ModalHeader,
+} from './ConfirmDialog.styles';
 
 interface ConfirmDialogProps {
   title: string;
@@ -39,37 +49,37 @@ export default function ConfirmDialog({
   }, [onCancel]);
 
   return createPortal(
-    <div className="modal-backdrop" onClick={onCancel}>
-      <div
+    <Backdrop className="modal-backdrop" onClick={onCancel}>
+      <ConfirmModal
         className="modal confirm-modal"
         role="alertdialog"
         aria-modal="true"
         aria-label={title}
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="modal-header">
+        <ModalHeader>
           <div>
             <span className="eyebrow">Confirmação</span>
             <h3>{title}</h3>
           </div>
-          <button type="button" className="modal-close" onClick={onCancel} aria-label="Fechar">
+          <ModalClose type="button" onClick={onCancel} aria-label="Fechar">
             ×
-          </button>
-        </div>
-        <div className="modal-body">
-          <p className="confirm-message">{message}</p>
-          {detail && <p className="confirm-detail">{detail}</p>}
-          <div className="form-actions">
+          </ModalClose>
+        </ModalHeader>
+        <ModalBody>
+          <ConfirmMessage>{message}</ConfirmMessage>
+          {detail && <ConfirmDetail>{detail}</ConfirmDetail>}
+          <Actions>
             <button type="button" className="button secondary" onClick={onCancel} ref={cancelRef}>
               {cancelLabel}
             </button>
             <button type="button" className={`button ${tone}`} onClick={onConfirm}>
               {confirmLabel}
             </button>
-          </div>
-        </div>
-      </div>
-    </div>,
+          </Actions>
+        </ModalBody>
+      </ConfirmModal>
+    </Backdrop>,
     document.body,
   );
 }

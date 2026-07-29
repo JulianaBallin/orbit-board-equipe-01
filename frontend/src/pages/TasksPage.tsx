@@ -12,6 +12,7 @@ import TaskBoard from '../components/TaskBoard';
 import TaskCard from '../components/TaskCard';
 import TaskFilters from '../components/TaskFilters';
 import TaskViewSwitcher, { type TaskViewMode } from '../components/TaskViewSwitcher';
+import { Page } from './TasksPage.styles';
 import type {
   Project,
   WorkItem,
@@ -211,7 +212,7 @@ export default function TasksPage() {
   };
 
   return (
-    <section className="page-stack">
+    <Page className="page-stack">
       <div className="section-heading">
         <div>
           <span className="eyebrow">Execução</span>
@@ -285,6 +286,6 @@ export default function TasksPage() {
           onCancel={() => setConfirmTarget(null)}
         />
       )}
-    </section>
+    </Page>
   );
 }

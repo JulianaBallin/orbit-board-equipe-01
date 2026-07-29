@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import type { Project, ProjectMutation, ProjectStatus, TeamMember } from '../types/api';
+import { FormCard, FormGrid } from './ProjectForm.styles';
 
 interface ProjectFormState extends Omit<ProjectMutation, 'dueDate'> {
   dueDate: string;
@@ -55,7 +56,7 @@ export default function ProjectForm({ members, editing, onSubmit, onCancel, busy
   };
 
   return (
-    <form className="form-card" onSubmit={submit}>
+    <FormCard onSubmit={submit}>
       <div className="section-heading compact">
         <div>
           <span className="eyebrow">{editing ? 'Edição' : 'Novo registro'}</span>
@@ -73,7 +74,7 @@ export default function ProjectForm({ members, editing, onSubmit, onCancel, busy
         <textarea name="description" value={form.description} onChange={change} minLength={10} maxLength={500} rows={4} required />
       </label>
 
-      <div className="form-grid">
+      <FormGrid>
         <label>
           Status
           <select name="status" value={form.status} onChange={change}>
@@ -100,12 +101,12 @@ export default function ProjectForm({ members, editing, onSubmit, onCancel, busy
           Prazo
           <input type="date" name="dueDate" value={form.dueDate} onChange={change} />
         </label>
-      </div>
+      </FormGrid>
 
       <div className="form-actions">
         <button type="button" className="button secondary" onClick={onCancel}>Cancelar</button>
         <button className="button primary" disabled={busy}>{busy ? 'Salvando...' : 'Salvar projeto'}</button>
       </div>
-    </form>
+    </FormCard>
   );
 }

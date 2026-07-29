@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import { renderWithTheme } from '../test/renderWithTheme';
 import userEvent from '@testing-library/user-event';
 import DashboardPage from './DashboardPage';
 import { api } from '../api/client';
@@ -37,7 +38,7 @@ describe('DashboardPage', () => {
   it('renders the metrics, status distribution and recent tasks', async () => {
     vi.spyOn(api, 'dashboard').mockResolvedValue(dashboard);
 
-    render(<DashboardPage />);
+    renderWithTheme(<DashboardPage />);
 
     expect(await screen.findByRole('heading', { name: 'Visão geral' })).toBeInTheDocument();
     expect(screen.getByText('Validar dashboard')).toBeInTheDocument();
@@ -50,7 +51,7 @@ describe('DashboardPage', () => {
       .mockRejectedValueOnce(new Error('Backend indisponível.'))
       .mockResolvedValueOnce(dashboard);
 
-    render(<DashboardPage />);
+    renderWithTheme(<DashboardPage />);
 
     expect(await screen.findByText('Backend indisponível.')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Tentar novamente' }));

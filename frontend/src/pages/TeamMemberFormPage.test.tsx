@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import { renderWithTheme } from '../test/renderWithTheme';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import TeamMemberFormPage from './TeamMemberFormPage';
@@ -8,7 +9,7 @@ import { api } from '../api/client';
 import { makeMember } from '../test/fixtures';
 
 function renderPage() {
-  return render(
+  return renderWithTheme(
     <MemoryRouter initialEntries={['/team/new']}>
       <Routes>
         <Route path="/team" element={<TeamPage />} />
@@ -19,7 +20,7 @@ function renderPage() {
 }
 
 function renderEditPage(id: string) {
-  return render(
+  return renderWithTheme(
     <MemoryRouter initialEntries={[`/team/${id}/edit`]}>
       <Routes>
         <Route path="/team" element={<h1>Team destination</h1>} />

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { api, getErrorMessage } from '../api/client';
 import type { Dashboard, WorkItemStatus } from '../types/api';
+import { Page } from './DashboardPage.styles';
 import { Badge, ErrorState, LoadingState, StatCard } from '../components/Common';
 import { priorityLabel, priorityTone, statusLabel, statusTone } from '../utils/labels';
 
@@ -24,7 +25,7 @@ export default function DashboardPage() {
   if (!data) return null;
 
   return (
-    <section className="page-stack">
+    <Page className="page-stack">
       <div className="section-heading">
         <div>
           <span className="eyebrow">Acompanhamento</span>
@@ -85,6 +86,6 @@ export default function DashboardPage() {
           </div>
         </article>
       </div>
-    </section>
+    </Page>
   );
 }

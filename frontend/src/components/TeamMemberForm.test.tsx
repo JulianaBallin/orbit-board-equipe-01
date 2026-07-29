@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import { renderWithTheme } from '../test/renderWithTheme';
 import userEvent from '@testing-library/user-event';
 import TeamMemberForm from './TeamMemberForm';
 import { makeMember } from '../test/fixtures';
@@ -13,7 +14,7 @@ const memberWithCustomRole = makeMember({
 
 describe('TeamMemberForm', () => {
   it('preserves a role outside the preset list when editing', () => {
-    render(<TeamMemberForm editing={memberWithCustomRole} onSubmit={vi.fn()} onCancel={vi.fn()} busy={false} />);
+    renderWithTheme(<TeamMemberForm editing={memberWithCustomRole} onSubmit={vi.fn()} onCancel={vi.fn()} busy={false} />);
 
     expect(screen.getByLabelText('Cargo')).toHaveValue('Data Scientist');
     expect(screen.getByRole('option', { name: 'Data Scientist' })).toBeInTheDocument();
@@ -21,7 +22,7 @@ describe('TeamMemberForm', () => {
 
   it('submits the original role when the field is left untouched', async () => {
     const onSubmit = vi.fn();
-    render(<TeamMemberForm editing={memberWithCustomRole} onSubmit={onSubmit} onCancel={vi.fn()} busy={false} />);
+    renderWithTheme(<TeamMemberForm editing={memberWithCustomRole} onSubmit={onSubmit} onCancel={vi.fn()} busy={false} />);
 
     await userEvent.click(screen.getByRole('button', { name: 'Salvar alterações' }));
 
@@ -33,7 +34,7 @@ describe('TeamMemberForm', () => {
   });
 
   it('still offers the preset list for a member with a known role', () => {
-    render(
+    renderWithTheme(
       <TeamMemberForm
         editing={{ ...memberWithCustomRole, role: 'Tech Lead' }}
         onSubmit={vi.fn()}

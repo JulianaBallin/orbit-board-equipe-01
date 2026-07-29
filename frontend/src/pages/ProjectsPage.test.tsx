@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
+import { renderWithTheme } from "../test/renderWithTheme";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import ProjectsPage from "./ProjectsPage";
@@ -29,7 +30,7 @@ const projectAllDone = makeProject({
 });
 
 function renderPage() {
-  return render(
+  return renderWithTheme(
     <MemoryRouter>
       <ProjectsPage />
     </MemoryRouter>,

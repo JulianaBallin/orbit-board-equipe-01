@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api, getErrorMessage } from '../api/client';
 import type { TeamMember } from '../types/api';
+import { Page } from './TeamPage.styles';
 import { EmptyState, ErrorState, LoadingState, Notice } from '../components/Common';
 import ConfirmDialog from '../components/ConfirmDialog';
 
@@ -44,7 +45,7 @@ export default function TeamPage() {
   if (!members) return null;
 
   return (
-    <section className="page-stack">
+    <Page className="page-stack">
       <div className="section-heading">
         <div>
           <span className="eyebrow">Colaboração</span>
@@ -59,12 +60,10 @@ export default function TeamPage() {
       {notice && <Notice onClose={() => setNotice('')}>{notice}</Notice>}
 
       {actionError && (
-        <div className="state-box error" role="alert">
-          <div>
-            <strong>Não foi possível excluir o colaborador.</strong>
-            <p>{actionError}</p>
-          </div>
-        </div>
+        <ErrorState
+          title="Não foi possível excluir o colaborador."
+          message={actionError}
+        />
       )}
 
       {members.length === 0 && (
@@ -105,6 +104,6 @@ export default function TeamPage() {
           onCancel={() => setConfirmTarget(null)}
         />
       )}
-    </section>
+    </Page>
   );
 }

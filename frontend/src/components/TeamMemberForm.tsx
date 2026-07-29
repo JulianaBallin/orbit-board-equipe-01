@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import type { TeamMember, TeamMemberMutation } from '../types/api';
+import { FormCard, FormHint } from './TeamMemberForm.styles';
 
 const roles = [
   'Backend Developer',
@@ -59,7 +60,7 @@ export default function TeamMemberForm({ editing, onSubmit, onCancel, busy }: Te
   };
 
   return (
-    <form className="form-card" onSubmit={submit}>
+    <FormCard onSubmit={submit}>
       <div className="section-heading compact">
         <div>
           <span className="eyebrow">{editing ? 'Edição' : 'Novo registro'}</span>
@@ -91,7 +92,7 @@ export default function TeamMemberForm({ editing, onSubmit, onCancel, busy }: Te
         />
       </label>
 
-      <p className="form-hint">As iniciais do avatar são geradas a partir do nome informado.</p>
+      <FormHint>As iniciais do avatar são geradas a partir do nome informado.</FormHint>
 
       <div className="form-actions">
         <button type="button" className="button secondary" onClick={onCancel} disabled={busy}>
@@ -101,6 +102,6 @@ export default function TeamMemberForm({ editing, onSubmit, onCancel, busy }: Te
           {busy ? 'Salvando...' : editing ? 'Salvar alterações' : 'Cadastrar colaborador'}
         </button>
       </div>
-    </form>
+    </FormCard>
   );
 }

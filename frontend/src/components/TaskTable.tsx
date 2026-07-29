@@ -2,8 +2,15 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import { createPortal } from 'react-dom';
 import { Badge, EmptyState } from './Common';
 import { priorityLabel, priorityTone, statusLabel } from '../utils/labels';
-import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react';
+import type { CSSProperties } from 'react';
 import type { WorkItem, WorkItemStatus } from '../types/api';
+import {
+  Actions,
+  ActionsMenu,
+  ActionsTrigger,
+  Container,
+  Table,
+} from './TaskTable.styles';
 
 const MENU_GAP = 8;
 const VIEWPORT_PADDING = 8;
@@ -141,8 +148,8 @@ export default function TaskTable({
 
   return (
     <>
-      <div className="task-table-container">
-        <table className="task-table">
+      <Container>
+        <Table>
           <thead>
             <tr>
               <th scope="col">Tarefa</th>
@@ -188,11 +195,10 @@ export default function TaskTable({
                   </select>
                 </td>
                 <td className="task-table-actions-cell">
-                  <div
-                    className="task-table-actions"
+                  <Actions
                     ref={openMenuId === task.id ? actionsRef : null}
                   >
-                    <button
+                    <ActionsTrigger
                       type="button"
                       className="task-actions-trigger"
                       aria-label={`Abrir ações de ${task.title}`}
@@ -210,17 +216,17 @@ export default function TaskTable({
                       }}
                     >
                       <span aria-hidden="true">•••</span>
-                    </button>
-                  </div>
+                    </ActionsTrigger>
+                  </Actions>
                 </td>
               </tr>
             ))}
           </tbody>
-        </table>
-      </div>
+        </Table>
+      </Container>
 
       {openTask && createPortal(
-        <div
+        <ActionsMenu
           ref={menuRef}
           className="task-actions-menu"
           role="menu"
@@ -258,7 +264,7 @@ export default function TaskTable({
           >
             Excluir
           </button>
-        </div>,
+        </ActionsMenu>,
         document.body,
       )}
     </>

@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import { renderWithTheme } from '../test/renderWithTheme';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import TaskFormPage from './TaskFormPage';
@@ -27,7 +28,7 @@ function prepareReferences() {
 }
 
 function renderPage(path: string) {
-  return render(
+  return renderWithTheme(
     <MemoryRouter initialEntries={[path]}>
       <Routes>
         <Route path="/tasks" element={<h1>Tasks destination</h1>} />

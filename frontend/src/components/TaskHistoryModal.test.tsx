@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import { renderWithTheme } from '../test/renderWithTheme';
 import userEvent from '@testing-library/user-event';
 import TaskHistoryModal from './TaskHistoryModal';
 import { api } from '../api/client';
@@ -20,7 +21,7 @@ describe('TaskHistoryModal', () => {
       }),
     );
 
-    render(<TaskHistoryModal task={task} onClose={vi.fn()} />);
+    renderWithTheme(<TaskHistoryModal task={task} onClose={vi.fn()} />);
 
     expect(screen.getByText('Carregando histórico...')).toBeInTheDocument();
     resolveHistory([]);
@@ -33,7 +34,7 @@ describe('TaskHistoryModal', () => {
       { id: '2', workItemId: task.id, fromStatus: 'Backlog', toStatus: 'InProgress', changedAt: '2026-01-02T10:00:00Z' },
     ]);
 
-    render(<TaskHistoryModal task={task} onClose={vi.fn()} />);
+    renderWithTheme(<TaskHistoryModal task={task} onClose={vi.fn()} />);
 
     await waitFor(() => expect(document.querySelectorAll('.compact-item')).toHaveLength(2));
     const rows = document.querySelectorAll('.compact-item');
@@ -53,7 +54,7 @@ describe('TaskHistoryModal', () => {
       { id: '5', workItemId: task.id, fromStatus: 'Done', toStatus: 'Backlog', changedAt: '2026-01-05T10:00:00Z' },
     ]);
 
-    render(<TaskHistoryModal task={task} onClose={vi.fn()} />);
+    renderWithTheme(<TaskHistoryModal task={task} onClose={vi.fn()} />);
 
     const showMoreButton = await screen.findByRole('button', {
       name: 'Ver mais 2 alterações',
@@ -80,7 +81,7 @@ describe('TaskHistoryModal', () => {
   it('shows the empty state when there is no history yet', async () => {
     vi.spyOn(api.tasks, 'history').mockResolvedValue([]);
 
-    render(<TaskHistoryModal task={task} onClose={vi.fn()} />);
+    renderWithTheme(<TaskHistoryModal task={task} onClose={vi.fn()} />);
 
     expect(await screen.findByText('Sem alterações registradas')).toBeInTheDocument();
   });
@@ -91,7 +92,7 @@ describe('TaskHistoryModal', () => {
       .mockRejectedValueOnce(new Error('Tarefa não encontrada.'))
       .mockResolvedValueOnce([]);
 
-    render(<TaskHistoryModal task={task} onClose={vi.fn()} />);
+    renderWithTheme(<TaskHistoryModal task={task} onClose={vi.fn()} />);
 
     expect(await screen.findByText('Tarefa não encontrada.')).toBeInTheDocument();
 
@@ -105,7 +106,7 @@ describe('TaskHistoryModal', () => {
     vi.spyOn(api.tasks, 'history').mockResolvedValue([]);
     const onClose = vi.fn();
 
-    render(<TaskHistoryModal task={task} onClose={onClose} />);
+    renderWithTheme(<TaskHistoryModal task={task} onClose={onClose} />);
     await screen.findByText('Sem alterações registradas');
 
     await userEvent.keyboard('{Escape}');
@@ -117,7 +118,7 @@ describe('TaskHistoryModal', () => {
     vi.spyOn(api.tasks, 'history').mockResolvedValue([]);
     const onClose = vi.fn();
 
-    render(<TaskHistoryModal task={task} onClose={onClose} />);
+    renderWithTheme(<TaskHistoryModal task={task} onClose={onClose} />);
     await screen.findByText('Sem alterações registradas');
 
     await userEvent.click(screen.getByRole('dialog'));
